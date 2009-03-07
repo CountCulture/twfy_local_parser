@@ -5,6 +5,8 @@ class CommitteeTest < ActiveSupport::TestCase
   should_validate_presence_of :title, :url
   should_validate_uniqueness_of :title
   should_have_many :meetings
+  should_have_many :memberships
+  should_have_many :members, :through => :memberships
   
   context "A Committee instance" do
     setup do
