@@ -3,7 +3,7 @@ require 'test_helper'
 class MemberTest < ActiveSupport::TestCase
   # Replace this with your real tests.
   test "should create new member" do
-    assert new_member.valid? 
+    assert new_member.save
   end
   
   
