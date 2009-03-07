@@ -9,10 +9,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090307095403) do
+ActiveRecord::Schema.define(:version => 20090307095957) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "meetings", :force => true do |t|
+    t.date     "date_held"
+    t.string   "agenda_url"
+    t.string   "minutes_pdf"
+    t.string   "minutes_rtf"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

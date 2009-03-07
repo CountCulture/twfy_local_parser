@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  date_held: 2009-03-07
+  agenda_url: MyString
+  minutes_pdf: MyString
+  minutes_rtf: MyString
+
+two:
+  date_held: 2009-03-07
+  agenda_url: MyString
+  minutes_pdf: MyString
+  minutes_rtf: MyString
