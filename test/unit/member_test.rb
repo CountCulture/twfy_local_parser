@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class MemberTest < ActiveSupport::TestCase
+  should_validate_presence_of :first_name, :last_name, :url
   
   context "A Member instance" do
     setup do
