@@ -1,9 +1,17 @@
 require 'test_helper'
 
 class CommitteeTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "should create new committee" do
-    assert new_committee.save
+  
+  should_validate_presence_of :title, :url
+  
+  context "A Committee instance" do
+    setup do
+      @committee = Committee.new(:title => "Some Committee", :url => "some.url")
+    end
+    
+    # should "return full name" do
+    #   assert_equal "Bob Williams", @member.full_name
+    # end
   end
   
   private

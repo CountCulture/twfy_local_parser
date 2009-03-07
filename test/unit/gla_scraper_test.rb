@@ -132,6 +132,45 @@ class GlaScraperTest < Test::Unit::TestCase
         
   end
   
+  context "A GlaCommitteesScraper" do
+    setup do
+      @committee_scraper = Gla::CommitteesScraper.new(:target_page => "malthousek.jsp")
+      Gla::CommitteesScraper.any_instance.stubs(:_http_get).returns(dummy_response(:committees_list))
+    end
+
+    should "inherit from Gla scraper" do
+      assert_equal Gla::Scraper, @committee_scraper.class.superclass
+    end
+    
+    should "return array from response" do
+      assert_kind_of Array, @committee_scraper.response
+    end
+    
+    should "return array with same number of elements as number of committees" do
+      assert_equal 16, @committee_scraper.response.size
+    end
+    
+    context "response" do
+      setup do
+        @response_element = @committee_scraper.response.first
+      end
+          
+      should "be a Committee" do
+        assert_kind_of Committee, @response_element
+      end
+      
+      should "have parsed title" do
+        assert_equal "Audit Panel", @response_element.title
+      end
+      
+      should "have parsed url" do
+        assert_equal "audit_panel_mtgs/index.jsp", @response_element.url
+      end
+      
+    end
+        
+  end
+  
   
   private
   def dummy_response(response_name)
