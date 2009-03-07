@@ -12,12 +12,15 @@ class GlaScraperTest < Test::Unit::TestCase
       assert_equal "http://www.london.gov.uk/assembly/", @scraper.base_url
     end
     
-    should "have a target url" do
+    should "use target page given" do
       assert_equal "lams_facts_cont.jsp", @scraper.target_page
     end
     
+    should "return nil_for target page if none given and TARGET_PAGE not defined" do
+      assert_nil Gla::Scraper.new.target_page
+    end
+    
     should "get response to using base_url and target page" do
-      
       @scraper.expects(:_http_get).with("http://www.london.gov.uk/assembly/lams_facts_cont.jsp").returns("some response")
       @scraper.response
     end
@@ -30,10 +33,14 @@ class GlaScraperTest < Test::Unit::TestCase
   
   context "A GlaMembersScraper" do
     setup do
-      @members_scraper = Gla::MembersScraper.new(:target_page => "/assembly/lams_facts_cont.jsp")
+      @members_scraper = Gla::MembersScraper.new
       Gla::MembersScraper.any_instance.stubs(:_http_get).returns(dummy_response(:members_list))
     end
-
+    
+    should "use target page defined as constant" do
+      assert_equal Gla::MembersScraper::TARGET_PAGE, Gla::MembersScraper.new.target_page
+    end
+    
     should "inherit from Gla scraper" do
       assert_equal Gla::Scraper, @members_scraper.class.superclass
     end
@@ -51,25 +58,44 @@ class GlaScraperTest < Test::Unit::TestCase
         @response_element = @members_scraper.response.first
       end
 
-      should "be a Member" do
-        assert_kind_of Member, @response_element
+      should "be a Hash" do
+        assert_kind_of Hash, @response_element
       end
       
       should "have parsed members name" do
-        assert_equal "Brian Coleman", @response_element.full_name
+        assert_equal "Brian Coleman", @response_element[:full_name]
       end
       
       should "have parsed members constituency" do
-        assert_equal "Barnet & Camden", @response_element.constituency
+        assert_equal "Barnet & Camden", @response_element[:constituency]
       end
       
       should "have parsed members party" do
-        assert_equal "Conservative", @response_element.party
+        assert_equal "Conservative", @response_element[:party]
       end
       
       should "have parsed members url" do
-        assert_equal "members/colemanb.jsp", @response_element.url
+        assert_equal "members/colemanb.jsp", @response_element[:url]
       end
+      # should "be a Member" do
+      #   assert_kind_of Member, @response_element
+      # end
+      # 
+      # should "have parsed members name" do
+      #   assert_equal "Brian Coleman", @response_element.full_name
+      # end
+      # 
+      # should "have parsed members constituency" do
+      #   assert_equal "Barnet & Camden", @response_element.constituency
+      # end
+      # 
+      # should "have parsed members party" do
+      #   assert_equal "Conservative", @response_element.party
+      # end
+      # 
+      # should "have parsed members url" do
+      #   assert_equal "members/colemanb.jsp", @response_element.url
+      # end
       
     end
     
@@ -79,23 +105,23 @@ class GlaScraperTest < Test::Unit::TestCase
       end
 
       should "be a Member" do
-        assert_kind_of Member, @response_element
+        assert_kind_of Hash, @response_element
       end
       
       should "have parsed members name" do
-        assert_equal "Mike Tuffrey", @response_element.full_name
+        assert_equal "Mike Tuffrey", @response_element[:full_name]
       end
       
       should "have parsed members constituency" do
-        assert_nil @response_element.constituency
+        assert_nil @response_element[:constituency]
       end
       
       should "have parsed members party" do
-        assert_equal "Liberal Democrat", @response_element.party
+        assert_equal "Liberal Democrat", @response_element[:party]
       end
       
       should "have parsed members url" do
-        assert_equal "members/tuffreym.jsp", @response_element.url
+        assert_equal "members/tuffreym.jsp", @response_element[:url]
       end
       
     end

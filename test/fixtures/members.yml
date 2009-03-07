@@ -1,13 +1,18 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-# one:
-#   first_name: MyString
-#   last_name: MyString
-#   party: MyString
-#   constituency: MyString
-# 
-# two:
-#   first_name: MyString
-#   last_name: MyString
-#   party: MyString
-#   constituency: MyString
+current_member:
+  first_name: Bob
+  last_name: Flowerdew
+  party: Green
+  constituency: Epping
+  url: http://www.london.gov.uk/assembly/flowerdew
+  date_elected: 6.months.ago.to_s(:db)
+
+old_member:
+  first_name: Ken
+  last_name: Gibson
+  party: Labour
+  constituency: Fulham
+  url: http://www.london.gov.uk/assembly/gibson
+  date_elected: 2.years.ago.to_s(:db)
+  date_left: 4.months.ago.to_s(:db)

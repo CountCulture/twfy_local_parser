@@ -1,7 +1,6 @@
 module Gla
   class Scraper
     BASE_URL = "http://www.london.gov.uk/assembly/"
-    attr_reader :target_page
     
     def initialize(params={})
       @target_page = params[:target_page]
@@ -12,7 +11,11 @@ module Gla
     end
     
     def response
-      @base_response = Hpricot(_http_get(base_url + target_page))
+      @base_response = Hpricot(_http_get(base_url + target_page.to_s))
+    end
+    
+    def target_page
+      @target_page || (self.class.const_defined?(:TARGET_PAGE) ? self.class::TARGET_PAGE : nil)
     end
     
     protected
@@ -22,6 +25,7 @@ module Gla
   end
   
   class MembersScraper < Scraper
+    TARGET_PAGE = "lams_facts_cont.jsp"
     
     def response
       super
@@ -29,13 +33,13 @@ module Gla
       member_tables = @base_response.search("table table")
       constituency_members = member_tables.first.search("tr")[1..-1]
       london_wide_members = member_tables.last.search("tr")[1..-1]
-      members += constituency_members.collect{ |m| Member.new( :full_name => m.at("td[2]").inner_text.strip, 
-                                                               :constituency => m.at("td[1]").inner_text.strip, 
-                                                               :party => m.at("td[3]").inner_text.strip,
-                                                               :url => m.at("a")[:href] ) }
-      members += london_wide_members.collect{ |m| Member.new( :full_name => m.at("td[1]").inner_text.strip, 
-                                                              :party => m.at("td[2]").inner_text.strip,
-                                                               :url => m.at("a")[:href] ) }
+      members += constituency_members.collect{ |m| { :full_name => m.at("td[2]").inner_text.strip, 
+                                                     :constituency => m.at("td[1]").inner_text.strip, 
+                                                     :party => m.at("td[3]").inner_text.strip,
+                                                     :url => m.at("a")[:href] } }
+      members += london_wide_members.collect{ |m| { :full_name => m.at("td[1]").inner_text.strip, 
+                                                    :party => m.at("td[2]").inner_text.strip,
+                                                    :url => m.at("a")[:href] } }
     end
   end
   
