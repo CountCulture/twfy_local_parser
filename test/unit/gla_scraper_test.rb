@@ -171,6 +171,36 @@ class GlaScraperTest < Test::Unit::TestCase
         
   end
   
+  context "A GlaCommitteeScraper" do
+    setup do
+      @committee_scraper = Gla::CommitteeScraper.new(:target_page => "malthousek.jsp")
+      Gla::CommitteeScraper.any_instance.stubs(:_http_get).returns(dummy_response(:committee_details))
+    end
+
+    should "inherit from Gla scraper" do
+      assert_equal Gla::Scraper, @committee_scraper.class.superclass
+    end
+    
+    context "response" do
+      setup do
+        @response = @committee_scraper.response
+      end
+
+      should "be a Committee" do
+        assert_kind_of Committee, @response
+      end
+      
+      # should "have parsed description" do
+      #   expected_description = "Agendas, minutes and other papers for meetings of this committee may be accessed below. This committee - formerly the Budget Committee - was renamed the Budget and Performance Committee in July 2008. (Note: Budget Monitoring Sub-Committee meetings are listed separately.) "
+      #   assert_equal expected_description, @response.description
+      # end
+      
+      # should "have parsed telephone" do
+      #   assert_equal "020 7983 4099", @response.telephone
+      # end
+    end
+        
+  end
   
   private
   def dummy_response(response_name)

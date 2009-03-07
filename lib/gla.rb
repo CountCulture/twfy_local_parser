@@ -57,10 +57,14 @@ module Gla
       current_committees = @base_response.search('table ul li')
       current_committees.collect{ |c| Committee.new( :title => c.at("a").inner_text,
                                                      :url => c.at("a")[:href] ) }
-      # email_node = @base_response.at("table a[@href^=mailto]")
-      # email = email_node[:href].sub('mailto:','')
-      # telephone = email_node.parent.children.first.inner_text.scan(/[\d\s]+/).first
-      # member = Member.new(:email => email, :telephone  =>  telephone.strip)
+    end
+  end
+  
+  class CommitteeScraper < Scraper
+
+    def response
+      super
+      committee = Committee.new
     end
   end
 end
