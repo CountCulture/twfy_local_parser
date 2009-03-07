@@ -102,6 +102,36 @@ class GlaScraperTest < Test::Unit::TestCase
     
   end
   
+  context "A GlaMemberScraper" do
+    setup do
+      @member_scraper = Gla::MemberScraper.new(:target_page => "malthousek.jsp")
+      Gla::MemberScraper.any_instance.stubs(:_http_get).returns(dummy_response(:member_details))
+    end
+
+    should "inherit from Gla scraper" do
+      assert_equal Gla::Scraper, @member_scraper.class.superclass
+    end
+    
+    context "response" do
+      setup do
+        @response = @member_scraper.response
+      end
+
+      should "be a Member" do
+        assert_kind_of Member, @response
+      end
+      
+      should "have parsed email address" do
+        assert_equal "kit.malthouse@london.gov.uk", @response.email
+      end
+      
+      should "have parsed telephone" do
+        assert_equal "020 7983 4099", @response.telephone
+      end
+    end
+        
+  end
+  
   
   private
   def dummy_response(response_name)
