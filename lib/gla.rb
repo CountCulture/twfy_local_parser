@@ -1,6 +1,6 @@
 module Gla
   class Scraper
-    BASE_URL = "http://www.london.gov.uk"
+    BASE_URL = "http://www.london.gov.uk/assembly/"
     attr_reader :target_page
     
     def initialize(params={})
@@ -31,9 +31,11 @@ module Gla
       london_wide_members = member_tables.last.search("tr")[1..-1]
       members += constituency_members.collect{ |m| Member.new( :full_name => m.at("td[2]").inner_text.strip, 
                                                                :constituency => m.at("td[1]").inner_text.strip, 
-                                                               :party => m.at("td[3]").inner_text.strip ) }
+                                                               :party => m.at("td[3]").inner_text.strip,
+                                                               :url => m.at("a")[:href] ) }
       members += london_wide_members.collect{ |m| Member.new( :full_name => m.at("td[1]").inner_text.strip, 
-                                                              :party => m.at("td[2]").inner_text.strip ) }
+                                                              :party => m.at("td[2]").inner_text.strip,
+                                                               :url => m.at("a")[:href] ) }
     end
   end
 end

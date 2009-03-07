@@ -5,15 +5,15 @@ class GlaScraperTest < Test::Unit::TestCase
   context "A Gla scraper" do
     
     setup do
-      @scraper = Gla::Scraper.new(:target_page => "/assembly/lams_facts_cont.jsp")
+      @scraper = Gla::Scraper.new(:target_page => "lams_facts_cont.jsp")
     end
 
     should "have a base url" do
-      assert_equal "http://www.london.gov.uk", @scraper.base_url
+      assert_equal "http://www.london.gov.uk/assembly/", @scraper.base_url
     end
     
     should "have a target url" do
-      assert_equal "/assembly/lams_facts_cont.jsp", @scraper.target_page
+      assert_equal "lams_facts_cont.jsp", @scraper.target_page
     end
     
     should "get response to using base_url and target page" do
@@ -66,28 +66,38 @@ class GlaScraperTest < Test::Unit::TestCase
       should "have parsed members party" do
         assert_equal "Conservative", @response_element.party
       end
+      
+      should "have parsed members url" do
+        assert_equal "members/colemanb.jsp", @response_element.url
+      end
+      
     end
     
     context "response array element without constiuency" do
       setup do
-        @response_element_no_c = @members_scraper.response.last
+        @response_element = @members_scraper.response.last
       end
 
       should "be a Member" do
-        assert_kind_of Member, @response_element_no_c
+        assert_kind_of Member, @response_element
       end
       
       should "have parsed members name" do
-        assert_equal "Mike Tuffrey", @response_element_no_c.full_name
+        assert_equal "Mike Tuffrey", @response_element.full_name
       end
       
       should "have parsed members constituency" do
-        assert_nil @response_element_no_c.constituency
+        assert_nil @response_element.constituency
       end
       
       should "have parsed members party" do
-        assert_equal "Liberal Democrat", @response_element_no_c.party
+        assert_equal "Liberal Democrat", @response_element.party
       end
+      
+      should "have parsed members url" do
+        assert_equal "members/tuffreym.jsp", @response_element.url
+      end
+      
     end
     
   end
