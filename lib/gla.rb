@@ -17,7 +17,7 @@ module Gla
     
     protected
     def _http_get(url)
-      
+      open(url)
     end
   end
   
