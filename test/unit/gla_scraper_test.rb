@@ -42,6 +42,10 @@ class GlaScraperTest < Test::Unit::TestCase
       assert_kind_of Array, @members_scraper.response
     end
     
+    should "return array with same number of elements as number of members" do
+      assert_equal 25, @members_scraper.response.size
+    end
+    
     context "response array element" do
       setup do
         @response_element = @members_scraper.response.first
@@ -51,8 +55,38 @@ class GlaScraperTest < Test::Unit::TestCase
         assert_kind_of Member, @response_element
       end
       
-      should "have members name" do
+      should "have parsed members name" do
         assert_equal "Brian Coleman", @response_element.full_name
+      end
+      
+      should "have parsed members constituency" do
+        assert_equal "Barnet & Camden", @response_element.constituency
+      end
+      
+      should "have parsed members party" do
+        assert_equal "Conservative", @response_element.party
+      end
+    end
+    
+    context "response array element without constiuency" do
+      setup do
+        @response_element_no_c = @members_scraper.response.last
+      end
+
+      should "be a Member" do
+        assert_kind_of Member, @response_element_no_c
+      end
+      
+      should "have parsed members name" do
+        assert_equal "Mike Tuffrey", @response_element_no_c.full_name
+      end
+      
+      should "have parsed members constituency" do
+        assert_nil @response_element_no_c.constituency
+      end
+      
+      should "have parsed members party" do
+        assert_equal "Liberal Democrat", @response_element_no_c.party
       end
     end
     
