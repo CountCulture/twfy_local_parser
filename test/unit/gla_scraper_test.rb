@@ -99,7 +99,7 @@ class GlaScraperTest < Test::Unit::TestCase
       
     end
     
-    context "response array element without constiuency" do
+    context "response array element without constituency" do
       setup do
         @response_element = @members_scraper.response.last
       end

@@ -9,13 +9,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090307205221) do
+ActiveRecord::Schema.define(:version => 20090327192647) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "url"
+    t.integer  "council_id"
+  end
+
+  create_table "councils", :force => true do |t|
+    t.string   "name"
+    t.string   "url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "meetings", :force => true do |t|
@@ -40,6 +48,7 @@ ActiveRecord::Schema.define(:version => 20090307205221) do
     t.string   "telephone"
     t.date     "date_elected"
     t.date     "date_left"
+    t.integer  "council_id"
   end
 
   create_table "memberships", :force => true do |t|
@@ -47,6 +56,21 @@ ActiveRecord::Schema.define(:version => 20090307205221) do
     t.integer  "committee_id"
     t.date     "date_joined"
     t.date     "date_left"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "parsers", :force => true do |t|
+    t.string   "title"
+    t.text     "parsing_code"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "scrapers", :force => true do |t|
+    t.string   "url"
+    t.integer  "parser_id"
+    t.integer  "council_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
