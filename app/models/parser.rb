@@ -5,4 +5,7 @@ class Parser < ActiveRecord::Base
   validates_presence_of :title, :parsing_code
   # has_many :committee_scrapers
   
+  def process(hpricot_doc)
+    
+  end
 end
