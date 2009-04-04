@@ -1,0 +1,20 @@
+<h1>Scraper details</h1>
+<div id="scraper">
+  
+  <div id="core_info">
+    <p><strong>For</strong> <%= @scraper.council.name %>Council</p>
+    <p><strong>at</strong> <%= @scraper.url %></p>
+    <p><strong>Looking for</strong> <%= @scraper.result_model %></p>
+    <p><strong>Using parsing code</strong> <div class="code"><%= @scraper.parsing_code %></div></p>
+    <p><strong>Last updated</strong> <%= @scraper.updated_at %></p>
+  </div>
+  <p><%= link_to "edit", edit_scraper_path(@scraper) %> <%= link_to "perform test scrape", scraper_path(:id => @scraper, :dry_run => true) %></p>
+</div>
+<%- if @results -%>
+  <%= error_messages_for :scraper %>
+  
+  <div id="results">
+    
+  </div> 
+  
+<%- end -%>

@@ -1,0 +1,43 @@
+<% form_for @scraper do |f| -%>
+    <p>
+      <%= f.label :council, "Council" %>
+      <%= f.collection_select :council_id, Council.find(:all), :id, :name %>
+    </p>
+    <p>
+      <%= f.label :result_model, "Result Model" %>
+      <%= f.text_field :result_model %>
+    </p>
+    <p>
+      <%= f.label :url, "Url to be scraped" %>
+      <%= f.text_field :url, :size => 60 %>
+    </p>
+    <fieldset id="parser_details" class="">
+      <legend>Parser details</legend>
+      <% f.fields_for :parser do |pf| %>
+      <p>
+        <%= pf.label :title, "Parser Title" %>
+        <%= pf.text_field :title %>
+      </p>
+      <p>
+        <%= pf.label :parsing_code, "Parsing Code" %>
+        <%= pf.text_area :parsing_code, :rows => 6 %>
+      </p>
+      <% end %>
+  </fieldset>
+  <fieldset id="expected_results" class="">
+    <legend>Expected results</legend>
+    <p>
+      <%= f.label :expected_result_class, "Expected Result Class" %>
+      <%= f.text_field :expected_result_class %>
+    </p>
+    <p>
+      <%= f.label :expected_result_size, "Expected Result Size" %>
+      <%= f.text_field :expected_result_size, :size => 4 %>
+    </p>
+    <p>
+      <%= f.label :expected_result_size, "Expected Result Attributes" %>
+      <%= f.text_area :expected_result_size, :rows => 4 %>
+    </p>
+  </fieldset>
+  <%= f.submit "Submit" %>
+<% end -%>

@@ -1,7 +1,10 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-# first:
-#   name: Merton
+# one:
+#   id: 1
+#   url: http://my.council.com/councillors
+#   council: first
+#   parser: one
 #
 # two:
 #   column: value

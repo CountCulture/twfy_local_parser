@@ -4,6 +4,12 @@ class Scraper < ActiveRecord::Base
   belongs_to :parser
   belongs_to :council
   validates_presence_of :url
+  validates_presence_of :council_id
+  validates_presence_of :result_model
+  delegate :parsing_code, :to => :parser
+  accepts_nested_attributes_for :parser
+  attr_accessor :results
+  
   
   # tries to get model this scraper is associated with
   # e.g. MemberScraper is associated with Member. Can be
@@ -16,9 +22,13 @@ class Scraper < ActiveRecord::Base
     read_attribute(:expected_result_attributes) ? Hash.new.instance_eval("merge(#{read_attribute(:expected_result_attributes)})") : {}
   end
   
-  def update(item)
-    results = parser.process(_data)
-    item.update_with(results)
+  # def update(item)
+  #   results = parser.process(_data)
+  #   item.update_with(results)
+  # end
+  
+  def title
+    "#{result_model} scraper for #{council.name} council"
   end
   
   def test
@@ -49,8 +59,8 @@ class Scraper < ActiveRecord::Base
     Hpricot(_http_get(url))
   end
   
-  def _http_get
-  
+  def _http_get(url)
+    # open(url)
   end
   
   def match_attribute(result, key, value)

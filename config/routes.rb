@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :scrapers
+
   map.resources :councils
 
   map.resources :meetings

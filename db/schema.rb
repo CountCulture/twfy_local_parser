@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090329144101) do
+ActiveRecord::Schema.define(:version => 20090403093122) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -76,6 +76,7 @@ ActiveRecord::Schema.define(:version => 20090329144101) do
     t.string   "expected_result_class"
     t.integer  "expected_result_size"
     t.text     "expected_result_attributes"
+    t.string   "result_model"
   end
 
 end
