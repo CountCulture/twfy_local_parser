@@ -1,23 +1,21 @@
 #attributes: uri
 
 class Scraper < ActiveRecord::Base
+  class ScraperError < StandardError; end
+  class RequestError < ScraperError; end
+  class ParsingError < ScraperError; end
+  ALLOWED_RESULT_CLASSES = %w(Member Members Committee Committees)
   belongs_to :parser
   belongs_to :council
   validates_presence_of :url
   validates_presence_of :council_id
   validates_presence_of :result_model
+  validates_inclusion_of :result_model, :in => ALLOWED_RESULT_CLASSES, :message => "is invalid"
   delegate :parsing_code, :to => :parser
   accepts_nested_attributes_for :parser
   attr_accessor :results
-  
-  
-  # tries to get model this scraper is associated with
-  # e.g. MemberScraper is associated with Member. Can be
-  # overridden by individual scrapers
-  def self.assoc_model
-    Member
-  end
-  
+  attr_protected :results
+    
   def expected_result_attributes
     read_attribute(:expected_result_attributes) ? Hash.new.instance_eval("merge(#{read_attribute(:expected_result_attributes)})") : {}
   end
@@ -32,14 +30,19 @@ class Scraper < ActiveRecord::Base
   end
   
   def test
-    results = parser.process(_data)
-    errors.add(:expected_result_class, "was #{expected_result_class}, but actual result class was #{results.class}") unless expected_result_class.blank? || results.class.to_s == expected_result_class
-    errors.add(:expected_result_size, "was #{expected_result_size}, but actual result size was #{results.size}") unless expected_result_size.blank? || !results.is_a?(Array) || results.size == expected_result_size
+    @results = []
+    parser_results = parser.process(_data)
+    errors.add(:expected_result_class, "was #{expected_result_class}, but actual result class was #{parser_results.class}") unless 
+                                    expected_result_class.blank? || parser_results.class.to_s == expected_result_class
+    errors.add(:expected_result_size, "was #{expected_result_size}, but actual result size was #{parser_results.size}") unless 
+                                    expected_result_size.blank? || !parser_results.is_a?(Array) || parser_results.size == expected_result_size
     expected_result_attributes.each do |key,value|
-      if results.is_a?(Array)
-        results.each { |result|  match_attribute(result, key, value) }
+      if parser_results.is_a?(Array)
+        parser_results.each do |result|
+          match_attribute(result, key, value)
+        end
       else
-        match_attribute(results, key, value)
+        match_attribute(parser_results, key, value)
       end
       # case value 
       # when TrueClass
@@ -51,19 +54,39 @@ class Scraper < ActiveRecord::Base
       # end
       # errors.add(:expected_result_attributes, message) if message
     end
+    # p self
+    # p parser_results
+    @results << result_model.constantize.new(parser_results)
     self
   end
   
   protected
   def _data
-    Hpricot(_http_get(url))
+    Hpricot.parse(_http_get(url))
+  rescue Exception => e
+    logger.error { "Problem parsing data returned from #{url}: #{e}" }
+    raise ParsingError
   end
   
   def _http_get(url)
-    # open(url)
+    return false if RAILS_ENV=="test"  # make sure we don't call make calls to external services in test environment. Mock this method to simulate response instead
+    response = nil 
+    # RAILS_DEFAULT_LOGGER.debug "********IMCDB request = #{url}"
+     url = URI.parse(url)
+     request = Net::HTTP.new(url.host, url.port)
+     request.read_timeout = 5 # set timeout at 5 seconds
+    begin
+      response = request.get(url.request_uri)
+      raise RequestError, "Problem retrieving info from #{url}." unless response.is_a? Net::HTTPSuccess
+    rescue Timeout::Error
+      raise RequestError, "Timeout::Error retrieving info from #{url}."
+    end
+    logger.debug "********Scraper response = #{response.body.inspect}"
+    response.body
   end
   
   def match_attribute(result, key, value)
+    # p result, key, value
     case value 
     when TrueClass
       message = "weren't matched: :#{key} expected but was missing or nil" unless result[key]

@@ -12,13 +12,18 @@ class ParserTest < Test::Unit::TestCase
   context "A Parser instance" do
     
     setup do
-      @parser = Factory.new(:parser)
+      @parser = Factory.create(:parser)
       @dummy_hpricot = stub_everything
     end
     
+    should "save response as instance variable" do
+      @parser.process(@dummy_hpricot)
+      assert_equal @dummy_hpricot, @parser.instance_variable_get(:@response)
+    end
+    
     should "process hpricot doc with parsing code" do
-      # Parser.expects(:instance_eval).with("some dummy code", @dummy_hpricot)
-      # @parser.process(@dummy_hpricot)
+      @parser.expects(:instance_eval).with('puts "hello world"')
+      @parser.process(@dummy_hpricot)
     end
     
     should "provide hpricot as instance variable to parsing code" do

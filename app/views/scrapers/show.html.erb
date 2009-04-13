@@ -2,19 +2,30 @@
 <div id="scraper">
   
   <div id="core_info">
-    <p><strong>For</strong> <%= @scraper.council.name %>Council</p>
-    <p><strong>at</strong> <%= @scraper.url %></p>
-    <p><strong>Looking for</strong> <%= @scraper.result_model %></p>
-    <p><strong>Using parsing code</strong> <div class="code"><%= @scraper.parsing_code %></div></p>
-    <p><strong>Last updated</strong> <%= @scraper.updated_at %></p>
+    <p><strong>For</strong> <%= h @scraper.council.name %>Council</p>
+    <p><strong>at</strong> <%= h @scraper.url %></p>
+    <p><strong>Looking for</strong> <%= h @scraper.result_model %></p>
+    <p><strong>Using parsing code</strong></p> 
+    <code><%= h @scraper.parsing_code %></code>
   </div>
+  <div id="expectations">
+    <p><strong>Expected Result Size</strong> <%= h @scraper.expected_result_size %></p>
+    <p><strong>Expected Result Class</strong> <%= h @scraper.expected_result_class %></p>
+    <p><strong>Expected Result Attributes</strong> <code><%= h @scraper.expected_result_attributes.inspect %></code></p>
+  </div>
+  <p><strong>Last updated</strong> <%= @scraper.updated_at %></p>
   <p><%= link_to "edit", edit_scraper_path(@scraper) %> <%= link_to "perform test scrape", scraper_path(:id => @scraper, :dry_run => true) %></p>
 </div>
 <%- if @results -%>
   <%= error_messages_for :scraper %>
   
   <div id="results">
-    
+    <h3><%= @results.size %> results found</h3>
+    <%- for result in @results -%>
+      <%- div_for result do -%>
+        <%= result.id %>
+      <%- end -%>
+    <%- end -%>
   </div> 
   
 <%- end -%>

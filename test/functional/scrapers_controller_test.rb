@@ -46,8 +46,6 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on GET to :show with :dry_run" do
     setup do
       @scraper = Factory(:scraper)
-    #   # Scraper.any_instance.stubs(:_http_get).returns("<p>some html</p>")
-    #   # get :show, :id => 1, :dry_run => true
     end
       
     should "run test on scraper" do
@@ -59,9 +57,9 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on GET to :show with succesful :dry_run" do
     setup do
       @scraper = Factory(:scraper_with_results)
-      # @scraper.instance_variable_set(:@results, "something")
-      # dummy_scraper = stub(:results => "something")
-      Scraper.any_instance.expects(:test).returns(@scraper)
+      @member = Factory(:member)
+      Scraper.any_instance.stubs(:test).returns(@scraper)
+      @scraper.stubs(:results).returns([@member])
       get :show, :id => @scraper.id, :dry_run => true
     end
   
@@ -69,7 +67,9 @@ class ScrapersControllerTest < ActionController::TestCase
     should_respond_with :success
     
     should "show summary of successful results" do
-      assert_select "#results"
+      assert_select "#results" do
+        assert_select "div.member"
+      end
     end
   
     should "not show summary of problems" do
@@ -79,10 +79,9 @@ class ScrapersControllerTest < ActionController::TestCase
   
   context "on GET to :show with unsuccesful :dry_run" do
     setup do
-      @scraper = Factory(:scraper_with_errors)
-      @scraper.instance_variable_set(:@results, "something")
+      @scraper = Factory(:scraper_with_errors, :results => "something")
       @scraper.errors.add_to_base("problems ahoy")
-      # dummy_scraper = stub(:results => "something", :errors => {:base => "problems ahoy", :expected_result_size => "was 3, but actual result size was 2"})
+      @scraper.errors.add(:expected_result_size, "was 3, but actual result size was 2")
       Scraper.expects(:find).returns(@scraper)
       Scraper.any_instance.expects(:test).returns(@scraper)
       get :show, :id => @scraper.id, :dry_run => true
@@ -90,14 +89,13 @@ class ScrapersControllerTest < ActionController::TestCase
     
     should_assign_to :scraper, :results
     should_respond_with :success
-    # 
-    # should "show summary of problems" do
-    #   assert_select "div.errorExplanation" do
-    #     # assert_select
-    #   end
-    #   # assert_equal 1, assigns(:user).id
-    #   # flunk("Failure message.")
-    # end
+    
+    should "show summary of problems" do
+      assert_select "div.errorExplanation" do
+        assert_select "li", "problems ahoy"
+        assert_select "li", /Expected result size was 3/
+      end
+    end
   end
   
   # new test

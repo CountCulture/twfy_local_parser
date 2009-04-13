@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+  
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title><%= @title || "TWFY Local" %></title>
+    <link rel="stylesheet" href="/stylesheets/blueprint/screen.css" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="/stylesheets/blueprint/print.css" type="text/css" media="print"> 
+    <!--[if IE]>
+      <link rel="stylesheet" href="/stylesheets/blueprint/ie.css" type="text/css" media="screen, projection">
+    <![endif]-->
+    <link rel="stylesheet" href="/stylesheets/twfy_local.css" type="text/css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>

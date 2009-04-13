@@ -27,7 +27,7 @@
   <fieldset id="expected_results" class="">
     <legend>Expected results</legend>
     <p>
-      <%= f.label :expected_result_class, "Expected Result Class" %>
+      <%= f.label :expected_result_class, "Expected Result Class <em>e.g. Array</em>" %>
       <%= f.text_field :expected_result_class %>
     </p>
     <p>
@@ -36,7 +36,7 @@
     </p>
     <p>
       <%= f.label :expected_result_size, "Expected Result Attributes" %>
-      <%= f.text_area :expected_result_size, :rows => 4 %>
+      <%= f.text_area :expected_result_attributes, :rows => 4 %>
     </p>
   </fieldset>
   <%= f.submit "Submit" %>
