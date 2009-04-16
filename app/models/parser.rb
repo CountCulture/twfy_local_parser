@@ -5,7 +5,13 @@ class Parser < ActiveRecord::Base
   validates_presence_of :title, :parsing_code
   
   def process(hpricot_doc)
-    @response = hpricot_doc
-    self.instance_eval(parsing_code)
+    @raw_response = hpricot_doc
+    @results = self.instance_eval(parsing_code)
+    self
+  rescue Exception => e
+    message = "Exception raised (#{e.message}) by parsing code(#{parsing_code})"
+    errors.add_to_base(message)
+    self
   end
+  
 end

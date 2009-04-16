@@ -13,7 +13,7 @@ class Scraper < ActiveRecord::Base
   validates_inclusion_of :result_model, :in => ALLOWED_RESULT_CLASSES, :message => "is invalid"
   delegate :parsing_code, :to => :parser
   accepts_nested_attributes_for :parser
-  attr_accessor :results
+  attr_accessor :results, :parsing_results
   attr_protected :results
     
   def expected_result_attributes
@@ -29,34 +29,57 @@ class Scraper < ActiveRecord::Base
     "#{result_model} scraper for #{council.name} council"
   end
   
+  def parsing_errors
+    parser.errors
+  end
+  
+  def process
+    @parsing_results = parser.process(_data).results
+  end
+  
   def test
     @results = []
-    parser_results = parser.process(_data)
-    errors.add(:expected_result_class, "was #{expected_result_class}, but actual result class was #{parser_results.class}") unless 
-                                    expected_result_class.blank? || parser_results.class.to_s == expected_result_class
-    errors.add(:expected_result_size, "was #{expected_result_size}, but actual result size was #{parser_results.size}") unless 
-                                    expected_result_size.blank? || !parser_results.is_a?(Array) || parser_results.size == expected_result_size
-    expected_result_attributes.each do |key,value|
-      if parser_results.is_a?(Array)
-        parser_results.each do |result|
-          match_attribute(result, key, value)
-        end
-      else
-        match_attribute(parser_results, key, value)
-      end
-      # case value 
-      # when TrueClass
-      #   message = "weren't matched: :#{key} expected but was missing or nil" unless results[key]
-      # when Class
-      #   message = "weren't matched: :#{key} expected to be #{value} but was #{results[key].class}" unless results[key].class.to_s == value
-      # when Regexp
-      #   message = "weren't matched: :#{key} expected to match /#{value.source}/ but was '#{results[key]}'" unless results[key].class.to_s == value
-      # end
-      # errors.add(:expected_result_attributes, message) if message
-    end
+    self.process
+    # parser_results = parser.process(_data)
+    # errors.add(:expected_result_class, "was #{expected_result_class}, but actual result class was #{parser_results.class}") unless 
+    #                                 expected_result_class.blank? || parser_results.class.to_s == expected_result_class
+    # errors.add(:expected_result_size, "was #{expected_result_size}, but actual result size was #{parser_results.size}") unless 
+    #                                 expected_result_size.blank? || !parser_results.is_a?(Array) || parser_results.size == expected_result_size
+    # expected_result_attributes.each do |key,value|
+    #   if parser_results.is_a?(Array)
+    #     parser_results.each do |result|
+    #       match_attribute(result, key, value)
+    #     end
+    #   else
+    #     match_attribute(parser_results, key, value)
+    #   end
+    #   # case value 
+    #   # when TrueClass
+    #   #   message = "weren't matched: :#{key} expected but was missing or nil" unless results[key]
+    #   # when Class
+    #   #   message = "weren't matched: :#{key} expected to be #{value} but was #{results[key].class}" unless results[key].class.to_s == value
+    #   # when Regexp
+    #   #   message = "weren't matched: :#{key} expected to match /#{value.source}/ but was '#{results[key]}'" unless results[key].class.to_s == value
+    #   # end
+    #   # errors.add(:expected_result_attributes, message) if message
+    # end
     # p self
     # p parser_results
-    @results << result_model.constantize.new(parser_results)
+    parsing_results.each do |result|
+      item = result_model.constantize.build_or_update(result.merge(:council_id => council.id))
+      item.valid? # check if valid and add errors to item
+      @results << item
+    end
+    self
+  end
+  
+  def update_from_url
+    @results = []
+    self.process
+    parsing_results.each do |result|
+      item = result_model.constantize.create_or_update_and_save(result.merge(:council_id => council.id))
+      @results << item
+    end
     self
   end
   

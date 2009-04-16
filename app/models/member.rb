@@ -30,10 +30,22 @@ class Member < ActiveRecord::Base
     end
   end
   
+  def self.build_or_update(params)
+    first_name, last_name = names_from_fullname(params[:full_name])
+    existing_member = find_by_council_id_and_first_name_and_last_name(params[:council_id], first_name, last_name)
+    existing_member.attributes = params if existing_member
+    existing_member || Member.new(params)
+  end
+  
+  def self.create_or_update_and_save(params)
+    first_name, last_name = names_from_fullname(params[:full_name])
+    existing_member = find_by_council_id_and_first_name_and_last_name(params[:council_id], first_name, last_name)
+    existing_member.update_attributes!(params) if existing_member
+    existing_member || Member.create!(params)
+  end
+  
   def full_name=(full_name)
-    names = full_name.split(" ")
-    self.first_name = names[0..-2].join(" ")
-    self.last_name = names.last
+    self.first_name, self.last_name = names_from_fullname(full_name)
   end
   
   def full_name
@@ -42,5 +54,17 @@ class Member < ActiveRecord::Base
   
   def ex_member?
     date_left
+  end
+  
+  private
+  def self.names_from_fullname(fn)
+    names = fn.split(" ")
+    first_name = names[0..-2].join(" ")
+    last_name = names.last
+    [first_name, last_name]
+  end
+  
+  def names_from_fullname(fn)
+    self.class.names_from_fullname(fn)
   end
 end

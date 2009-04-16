@@ -20,6 +20,111 @@ class MemberTest < ActiveSupport::TestCase
       Member.update_members
     end
     
+    context "when building_or_updating from params" do
+      setup do
+        @existing_member = Factory.create(:member)
+      end
+      
+      should "should update existing record when member found for council" do
+        member = Member.build_or_update(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
+        assert !member.new_record?
+        assert_equal @existing_member, member
+      end
+      
+      should "should build new record when member not found for council" do
+        member = Member.build_or_update(:full_name => "Fred Wilson", :council_id => @existing_member.council.id)
+        assert member.new_record?
+      end
+      
+      should "should update attributes for existing member" do
+        member = Member.build_or_update(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
+        assert_equal "Independent", member.party
+      end
+      
+      should "should build with attributes for new member" do
+        member =  Member.build_or_update(:full_name => "Fred Wilson", :council_id => @existing_member.council.id, :party => "Independent")
+        assert_equal "Fred Wilson", member.full_name
+        assert_equal @existing_member.council, member.council
+        assert_equal "Independent", member.party
+      end
+      
+    end
+    
+    context "when creating_or_update_and_saving from params" do
+      setup do
+        @existing_member = Factory.create(:member)
+      end
+      
+      context "with existing record" do
+        setup do
+          @coru_exist_member = Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
+        end
+        
+        should_not_change "Member.count"
+        should_change "@existing_member.reload.party", :to => "Independent"
+        
+        should "return member" do
+          assert_equal @existing_member, @coru_exist_member
+        end
+      end
+      
+      context "with invalid attributes for existing record" do
+
+        should "raise Exception" do
+          assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :url => nil) } 
+        end
+      end
+      
+      context "with new member" do
+        setup do
+          @coru_new_member = Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id, :url => "http://www.anytown.gov.uk/members/new_fred")
+        end
+
+        should_change "Member.count", :by => 1
+        
+        should "return member" do
+          assert_kind_of Member, @coru_new_member
+        end
+        
+        should "save member" do
+          assert !@coru_new_member.new_record?
+        end
+      end
+      
+      context "with invalid new member" do
+
+        should "raise Exception" do
+          assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id) } 
+        end
+      end
+      
+      
+      # should "should update existing record when member found for council" do
+      #   
+      #   member = Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
+      #   assert !member.new_record?
+      #   assert_equal @existing_member, member
+      # end
+      # 
+      # should "should build new record when member not found for council" do
+      #   member = Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id)
+      #   assert member.new_record?
+      # end
+      # 
+      # should "should update attributes for existing member" do
+      #   member = Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
+      #   assert_equal "Independent", member.party
+      # end
+      # 
+      # should "should build with attributes for new member" do
+      #   member =  Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id, :party => "Independent")
+      #   assert_equal "Fred Wilson", member.full_name
+      #   assert_equal @existing_member.council, member.council
+      #   assert_equal "Independent", member.party
+      # end
+      
+    end
+    
     # should "save new members when updating members" do
     #   old_count = Member.count
     #   Member.update_members
