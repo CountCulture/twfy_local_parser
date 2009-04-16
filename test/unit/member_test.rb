@@ -2,7 +2,6 @@ require 'test_helper'
 
 class MemberTest < ActiveSupport::TestCase
   should_validate_presence_of :first_name, :last_name, :url
-  should_validate_uniqueness_of :first_name, :scoped_to => :last_name
   should_belong_to :council
   should_have_many :memberships
   should_have_many :committees, :through => :memberships
@@ -10,9 +9,21 @@ class MemberTest < ActiveSupport::TestCase
   
   context "The Member class" do
     setup do
-      @old_member = Member.create(:full_name => "Member 3", :url => "some.url/3", :party => 'Labour')
-      scraped_members = (1..4).collect{ |i| {:full_name => "Member #{i}", :url => "some.url/#{i}", :party => 'Independent' }}
-      Gla::MembersScraper.any_instance.stubs(:response).returns(scraped_members)
+      @existing_member = Factory.create(:member)
+      # scraped_members = (1..4).collect{ |i| {:full_name => "Member #{i}", :url => "some.url/#{i}", :party => 'Independent', :member_id => i }}
+      # Gla::MembersScraper.any_instance.stubs(:response).returns(scraped_members)
+    end
+    
+    should_validate_uniqueness_of :first_name, :scoped_to => [:last_name, :council_id]
+    
+    should "validate uniqueness of member_id scoped to council_id" do
+      dup_member = Member.create(:council_id => @existing_member.council_id, :member_id => @existing_member.member_id)
+      assert_equal "has already been taken", dup_member.errors[:member_id]
+    end
+    
+    should "allow member_id to be nil" do
+      dup_member = Member.create(:council_id => @existing_member.council_id)
+      assert_nil dup_member.errors[:member_id]
     end
     
     should "scrape website when updating members" do
@@ -21,9 +32,6 @@ class MemberTest < ActiveSupport::TestCase
     end
     
     context "when building_or_updating from params" do
-      setup do
-        @existing_member = Factory.create(:member)
-      end
       
       should "should update existing record when member found for council" do
         member = Member.build_or_update(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
@@ -47,13 +55,9 @@ class MemberTest < ActiveSupport::TestCase
         assert_equal @existing_member.council, member.council
         assert_equal "Independent", member.party
       end
-      
     end
     
     context "when creating_or_update_and_saving from params" do
-      setup do
-        @existing_member = Factory.create(:member)
-      end
       
       context "with existing record" do
         setup do

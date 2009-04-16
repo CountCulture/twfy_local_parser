@@ -39,6 +39,7 @@ end
 
 Factory.define :member do |f|
   f.full_name "Bob Wilson"
+  f.member_id 99
   f.url "http://www.anytown.gov.uk/members/bob"
   f.association :council
 end

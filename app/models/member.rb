@@ -2,7 +2,8 @@
 
 class Member < ActiveRecord::Base
   validates_presence_of :first_name, :last_name, :url
-  validates_uniqueness_of :first_name, :scope => :last_name # assume all names will be unique for now. Scope later to party (no unique ids on GLA website)
+  validates_uniqueness_of :first_name, :scope => [:last_name, :council_id ]# assume all names will be unique to council for now. Scope later to party (no unique ids on GLA website)
+  validates_uniqueness_of :member_id, :scope => :council_id, :allow_nil => true # Member id is unique id number assigned by council, but some councils may not assign them
   has_many :memberships
   has_many :committees, :through => :memberships
   belongs_to :council
