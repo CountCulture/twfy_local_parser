@@ -18,7 +18,8 @@ end
 
 Factory.define :parser do |f|
   f.title 'dummy parser'
-  f.parsing_code  'foo="bar"'
+  f.item_parser  'foo="bar"'
+  f.attribute_parser({:foo => "\"bar\"", :foo1 => "\"bar1\""})
 end
 Factory.define :another_parser, :parent => :parser do |f|
   f.title 'another dummy parser'

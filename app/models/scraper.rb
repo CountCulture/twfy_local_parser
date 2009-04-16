@@ -11,7 +11,7 @@ class Scraper < ActiveRecord::Base
   validates_presence_of :council_id
   validates_presence_of :result_model
   validates_inclusion_of :result_model, :in => ALLOWED_RESULT_CLASSES, :message => "is invalid"
-  delegate :parsing_code, :to => :parser
+  # delegate :parsing_code, :to => :parser
   accepts_nested_attributes_for :parser
   attr_accessor :results, :parsing_results
   attr_protected :results
