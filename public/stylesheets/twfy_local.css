@@ -1,14 +1,38 @@
-label { float: left; width: 12em; }
-label em { color: #9e9e9e; }
-div.item_attribute {clear:left;}
-div.item_attribute p {
-	float:left;}
+/*Global formats*/
+/*See also blueprint styles*/
+label { 
+	float: left; width: 12em; }
+h1 em, h2 em, h3 em, h4 em, label em { 
+	color: #9e9e9e;
+	font-style: normal; }
 input, textarea {
 	border:1px solid #515151;
 	margin-bottom:0.5em;
-	margin-right:0.5em;
-	}
-	
+	margin-right:0.5em; }
 .clear-left {
-	clear:left;
-}
+	clear:left; }
+div.title {
+	font-weight: bold; }
+
+/*Parser-specific formatting*/
+div.item_attribute {
+	clear:left; }
+div.item_attribute p {
+	float:left; }
+div.parser {
+	border: 1px solid #ddd;
+	background-color: #f3f3f3;
+	padding: 1.48em;
+	margin-bottom: 1.5em; }
+div.parser h4 {
+	margin-bottom: 0; }
+div.parser_attribute {
+	clear:left; }
+div.parser_attribute div {
+	float:left; }
+div.parser_attribute .title {
+	width: 8em;
+	text-align: right;
+	margin-right: 1em; }
+div.parser code.item_parser {
+	margin-left: 9em; }

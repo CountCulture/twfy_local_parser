@@ -32,12 +32,7 @@ class ScraperTest < ActiveSupport::TestCase
     setup do
       @scraper = Factory.create(:scraper)
       @council = @scraper.council
-      # @scraper.stubs(:_http_get).returns(@dummy_response)
       @parser = @scraper.parser
-      # # @parser.stubs(:process).returns(:foo => "bar", :foo1 => 42)
-      # # @scraper.stubs(:parser).returns(@parser)
-      # @dummy_member = stub_everything
-      # Member.stubs(:new).returns(@dummy_member)
     end
        
     # should "convert expected_result_attributes to hash" do
@@ -179,7 +174,21 @@ class ScraperTest < ActiveSupport::TestCase
         Member.stubs(:build_or_update).returns(dummy_member)
         assert_equal [dummy_member], @scraper.test.results
       end
+    end
+    
+    context "when testing and problem parsing" do
+      setup do
+        @scraper.stubs(:process)
+        @scraper.stubs(:parsing_results) # => nil
+      end
+
+      should "not build new of update existing instance of result_class if no results" do
+        Member.expects(:build_or_update).never
+        @scraper.test
+      end
       
+    end
+     
     #   context "processed result" do
     #     setup do
     #       Scraper.any_instance.stubs(:parser).returns(stub(:process => {:full_name => "Fred Wilson", :party => "Independent"}))
@@ -260,7 +269,6 @@ class ScraperTest < ActiveSupport::TestCase
     #     # end
     #   end
     #   
-    end
   end
   
   private

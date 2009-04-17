@@ -5,27 +5,28 @@
     <p><strong>For</strong> <%= h @scraper.council.name %>Council</p>
     <p><strong>at</strong> <%= h @scraper.url %></p>
     <p><strong>Looking for</strong> <%= h @scraper.result_model %></p>
-    <p><strong>Using parsing code</strong></p> 
     <%= render :partial => 'parser', :object => @scraper.parser %>
     
   </div>
-  <div id="expectations">
+  <!-- <div id="expectations">
     <p><strong>Expected Result Size</strong> <%= h @scraper.expected_result_size %></p>
     <p><strong>Expected Result Class</strong> <%= h @scraper.expected_result_class %></p>
     <p><strong>Expected Result Attributes</strong> <code><%= h @scraper.expected_result_attributes.inspect %></code></p>
-  </div>
+  </div> -->
   <p><strong>Last updated</strong> <%= @scraper.updated_at %></p>
   <p><%= link_to "edit", edit_scraper_path(@scraper) %> <%= link_to "perform test scrape", scraper_path(:id => @scraper, :dry_run => true) %></p>
 </div>
 <%- if @results -%>
   <%= error_messages_for :scraper %>
+  <%= error_messages_for :parser, :header_message => "Problem parsing scraped page", :message => "The following problems occurred:" %>
   
   <div id="results">
     <h3><%= @results.size %> results found</h3>
     <%- for result in @results -%>
-      <%- div_for result do -%>
-        <%#= result.id %>
-      <%- end -%>
+      <%#- div_for result do -%>
+        <%= render :partial => result %>
+        
+      <%#- end -%>
     <%- end -%>
   </div> 
   

@@ -8,6 +8,7 @@ class ScrapersController < ApplicationController
     @scraper = Scraper.find(params[:id])
     if params[:dry_run]
       @results = @scraper.test.results
+      @parser = @scraper.parser
     end
   end
   

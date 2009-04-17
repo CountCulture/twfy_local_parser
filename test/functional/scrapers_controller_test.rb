@@ -68,7 +68,9 @@ class ScrapersControllerTest < ActionController::TestCase
     
     should "show summary of successful results" do
       assert_select "#results" do
-        assert_select "div.member"
+        assert_select "div.member" do
+          assert_select "h4", @member.full_name
+        end
       end
     end
   
@@ -79,11 +81,12 @@ class ScrapersControllerTest < ActionController::TestCase
   
   context "on GET to :show with unsuccesful :dry_run" do
     setup do
-      @scraper = Factory(:scraper_with_errors, :results => "something")
-      @scraper.errors.add_to_base("problems ahoy")
-      @scraper.errors.add(:expected_result_size, "was 3, but actual result size was 2")
+      @scraper = Factory(:scraper_with_errors)
+      @scraper.stubs(:_data).returns(stub_everything)
+      @parser = @scraper.parser
+      @parser.stubs(:results) # pretend there are no results
+      @parser.errors.add_to_base("problems ahoy")
       Scraper.expects(:find).returns(@scraper)
-      Scraper.any_instance.expects(:test).returns(@scraper)
       get :show, :id => @scraper.id, :dry_run => true
     end
     
@@ -93,7 +96,6 @@ class ScrapersControllerTest < ActionController::TestCase
     should "show summary of problems" do
       assert_select "div.errorExplanation" do
         assert_select "li", "problems ahoy"
-        assert_select "li", /Expected result size was 3/
       end
     end
   end
@@ -117,9 +119,8 @@ class ScrapersControllerTest < ActionController::TestCase
     
     should "show nested form for parser" do
       assert_select "textarea#scraper_parser_attributes_item_parser"
-
-      assert_select "input#scraper_parser_attributes_attributes_parser_object__attrib_name"
-      assert_select "input#scraper_parser_attributes_attributes_parser_object__parsing_code"
+      assert_select "input#scraper_parser_attributes_attribute_parser_object__attrib_name"
+      assert_select "input#scraper_parser_attributes_attribute_parser_object__parsing_code"
     end
   end
   

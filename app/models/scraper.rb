@@ -40,6 +40,7 @@ class Scraper < ActiveRecord::Base
   def test
     @results = []
     self.process
+    # logger.debug { "Parser results = #{parser.results.inspect}" }
     # parser_results = parser.process(_data)
     # errors.add(:expected_result_class, "was #{expected_result_class}, but actual result class was #{parser_results.class}") unless 
     #                                 expected_result_class.blank? || parser_results.class.to_s == expected_result_class
@@ -63,12 +64,12 @@ class Scraper < ActiveRecord::Base
     #   # end
     #   # errors.add(:expected_result_attributes, message) if message
     # end
-    # p self
-    # p parser_results
-    parsing_results.each do |result|
-      item = result_model.constantize.build_or_update(result.merge(:council_id => council.id))
-      item.valid? # check if valid and add errors to item
-      @results << item
+    unless parsing_results.blank?
+      parsing_results.each do |result|
+        item = result_model.constantize.build_or_update(result.merge(:council_id => council.id))
+        item.valid? # check if valid and add errors to item
+        @results << item
+      end
     end
     self
   end
@@ -94,7 +95,6 @@ class Scraper < ActiveRecord::Base
   def _http_get(url)
     return false if RAILS_ENV=="test"  # make sure we don't call make calls to external services in test environment. Mock this method to simulate response instead
     response = nil 
-    # RAILS_DEFAULT_LOGGER.debug "********IMCDB request = #{url}"
      url = URI.parse(url)
      request = Net::HTTP.new(url.host, url.port)
      request.read_timeout = 5 # set timeout at 5 seconds
@@ -109,7 +109,6 @@ class Scraper < ActiveRecord::Base
   end
   
   def match_attribute(result, key, value)
-    # p result, key, value
     case value 
     when TrueClass
       message = "weren't matched: :#{key} expected but was missing or nil" unless result[key]

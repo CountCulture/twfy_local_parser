@@ -146,7 +146,7 @@ class ParserTest < Test::Unit::TestCase
         end
       end
             
-      context "and problems occur" do
+      context "and problems occur when parsing items" do
         setup do
           @dummy_hpricot_for_problem_parser = Hpricot("some text")
           @problem_parser = Parser.new(:item_parser => "foo + bar")
@@ -161,7 +161,35 @@ class ParserTest < Test::Unit::TestCase
         end
         
         should "store errors in parser" do
-          assert_match /Exception raised/, @problem_parser.process(@dummy_hpricot_for_problem_parser).errors[:base]
+          errors = @problem_parser.process(@dummy_hpricot_for_problem_parser).errors[:base]
+          assert_match /Exception raised.+parsing items/, errors
+          assert_match /Problem .+parsing code .+foo \+ bar/, errors
+          assert_match /Hpricot.+#{@dummy_hpricot_for_problem_parser.inspect}/, errors
+        end
+        
+      end
+      
+      context "and problems occur when parsing attributes" do
+        setup do
+          @dummy_item_1, @dummy_item_2 = "String_1", "String_2"
+          @dummy_hpricot_for_attrib_prob = stub(:instance_eval => [@dummy_item_1, @dummy_item_2])
+
+          @problem_parser = Parser.new(:item_parser => "#nothing here", :attribute_parser => {:full_name => "foobar"}) # => unknown local variable
+        end
+      
+        should "not raise exception" do
+          assert_nothing_raised() { @problem_parser.process(@dummy_hpricot_for_attrib_prob) }
+        end
+        
+        should "return self" do
+          assert_equal @problem_parser, @problem_parser.process(@dummy_hpricot_for_attrib_prob)
+        end
+        
+        should "store errors in parser" do
+          errors = @problem_parser.process(@dummy_hpricot_for_attrib_prob).errors[:base]
+          assert_match /Exception raised.+parsing attributes/, errors
+          assert_match /Problem .+parsing code .+foobar/, errors
+          assert_match /Hpricot.+#{@dummy_item_1.inspect}/, errors
         end
         
       end

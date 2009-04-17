@@ -29,20 +29,31 @@ class Parser < ActiveRecord::Base
     self.attribute_parser = result_hash
   end
   
-  def process(hpricot_doc)
-    @raw_response = hpricot_doc
-    items = hpricot_doc.instance_eval(item_parser)
+  def process(doc)
+    @raw_response = doc
+    now_parsing = "items"
+    parsing_code = item_parser
+    object_to_be_parsed = doc
+    
+    items = doc.instance_eval(item_parser)
+    
+    now_parsing = "attributes"
     items = [items] unless items.is_a?(Array)
     @results = items.collect do |item|
       result_hash = {}
       attribute_parser.each do |key, value|
+        parsing_code = value
+        object_to_be_parsed = item
         result_hash[key] = item.instance_eval(value)
       end
       result_hash
     end
+    logger.debug { "*********results from processing parser = #{@results.inspect}" }
     self
   rescue Exception => e
-    message = "Exception raised (#{e.message}) by parsing code(#{item_parser})"
+    message = "Exception raised (#{e.message}) parsing #{now_parsing}.\n" +
+                "Problem occurred using parsing code <code>#{parsing_code}</code> on following Hpricot object: #{object_to_be_parsed.inspect}"
+    logger.debug { message }
     errors.add_to_base(message)
     self
   end
