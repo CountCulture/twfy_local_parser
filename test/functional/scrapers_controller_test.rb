@@ -69,7 +69,7 @@ class ScrapersControllerTest < ActionController::TestCase
     should "show summary of successful results" do
       assert_select "#results" do
         assert_select "div.member" do
-          assert_select "h4", @member.full_name
+          assert_select "h4", /#{@member.full_name}/
         end
       end
     end

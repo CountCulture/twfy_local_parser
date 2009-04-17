@@ -1,4 +1,5 @@
 <%- div_for member do -%>
-  <h4><%= member.full_name %></h4>
-
+  <h4><%= member.full_name %> <em><%= link_to "Council page", member.url, :class => "external" %></em></h4>
+  <p><strong>Party</strong> <%= member.party %></p>
+  <p><strong>Email</strong> <%= member.email %></p>
 <%- end -%>

@@ -36,3 +36,6 @@ div.parser_attribute .title {
 	margin-right: 1em; }
 div.parser code.item_parser {
 	margin-left: 9em; }
+	
+#results div {
+	border-bottom: 1px solid #ddd; }
