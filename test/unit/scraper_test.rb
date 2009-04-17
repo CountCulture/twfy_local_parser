@@ -53,8 +53,8 @@ class ScraperTest < ActiveSupport::TestCase
     #  end
      
     # should "delegate parsing code to parser" do
-    #   @parser.expects(:parsing_code).returns("some code")
-    #   assert_equal "some code", @scraper.parsing_code
+    #   @parser.expects(:item_parser).returns("some code")
+    #   assert_equal "some code", @scraper.item_parser
     # end
     
     should "have results accessor" do

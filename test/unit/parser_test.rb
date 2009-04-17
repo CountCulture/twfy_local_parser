@@ -11,7 +11,6 @@ class ParserTest < Test::Unit::TestCase
       parser = Parser.create!(:title => "test parser", :item_parser => "foo", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"})
       assert_equal({:foo => "\"bar\"", :foo2 => "nil"}, parser.reload.attribute_parser)
     end
-    
   end
   
   context "A Parser instance" do
@@ -23,12 +22,74 @@ class ParserTest < Test::Unit::TestCase
       @parser.instance_variable_set(:@results, "foo")
       assert_equal "foo", @parser.results
     end
-    # should "save raw response as instance variable" do
-    #   @dummy_hpricot = stub_everything
-    #   @parser.process(@dummy_hpricot)
-    #   assert_equal @dummy_hpricot, @parser.instance_variable_get(:@raw_response)
-    # end
     
+    context "with attribute_parser has attribute_parser_object which" do
+      setup do
+        @attribute_parser_object = @parser.attribute_parser_object
+      end
+      
+      should "be an Array" do
+        assert_kind_of Array, @attribute_parser_object
+      end
+      
+      should "be same size as attribute_parser" do
+        assert_equal @parser.attribute_parser.keys.size, @attribute_parser_object.size
+      end
+      
+      context "has elements which" do
+        setup do
+          @first_attrib = @attribute_parser_object.first
+        end
+
+        should "are Structs" do
+          assert_kind_of Struct, @first_attrib
+        end
+        
+        should "make attribute_parser_key accessible as attrib_name" do
+          assert_equal "foo", @first_attrib.attrib_name
+        end
+
+        should "make attribute_parser_value accessible as parsing_code" do
+          assert_equal "\"bar\"", @first_attrib.parsing_code
+        end
+      end
+      
+      context "when attribute_parser is blank" do
+        setup do
+          @empty_attribute_parser_object = Parser.new.attribute_parser_object
+        end
+
+        should "be an Array" do
+          assert_kind_of Array, @empty_attribute_parser_object
+        end
+
+        should "with one element" do
+          assert_equal 1, @empty_attribute_parser_object.size
+        end
+        
+        should "is an empty Struct" do
+          assert_equal Parser::AttribObject.new, @empty_attribute_parser_object.first
+        end
+      end
+      
+    end
+    
+    context "when given attribute_parser info from form params" do
+      
+      should "convert to attribute_parser hash" do
+        @parser.attribute_parser_object = [{ "attrib_name" => "title",
+                                             "parsing_code" => "parsing code for title"},
+                                           { "attrib_name" => "description",
+                                             "parsing_code" => "parsing code for description"}]
+        assert_equal({ :title => "parsing code for title", :description => "parsing code for description" }, @parser.attribute_parser)
+      end
+      
+      should "set attribute_parser to empty hash if no form_params" do
+        @parser.attribute_parser_object = []
+        assert_equal({}, @parser.attribute_parser)
+      end
+    end
+ 
     context "when processing" do
       
       context "in general" do

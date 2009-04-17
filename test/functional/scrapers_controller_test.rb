@@ -116,7 +116,10 @@ class ScrapersControllerTest < ActionController::TestCase
     end
     
     should "show nested form for parser" do
-      assert_select "textarea#scraper_parser_attributes_parsing_code"
+      assert_select "textarea#scraper_parser_attributes_item_parser"
+
+      assert_select "input#scraper_parser_attributes_attributes_parser_object__attrib_name"
+      assert_select "input#scraper_parser_attributes_attributes_parser_object__parsing_code"
     end
   end
   
@@ -127,7 +130,9 @@ class ScrapersControllerTest < ActionController::TestCase
       post :create, { :scraper => { :council_id => @council.id, 
                                     :result_model => "Committee", 
                                     :url => "http://anytown.com/committees", 
-                                    :parser_attributes => {:title => "new parser", :parsing_code => "some code"}}}
+                                    :parser_attributes => { :title => "new parser", 
+                                                            :item_parser => "some code",
+                                                            :attribute_parser_object => [{:attrib_name => "foo", :parsing_code => "bar"}] }}}
     end
     
     should_change "Scraper.count", :by => 1
@@ -135,8 +140,15 @@ class ScrapersControllerTest < ActionController::TestCase
     should_redirect_to( "the show page for scraper") { scraper_path(assigns(:scraper)) }
     should_set_the_flash_to "Successfully created scraper"
     
-    should "description" do
-      
+    should_change "Parser.count", :by => 1
+    should "save parser title" do
+      assert_equal "new parser", assigns(:scraper).parser.title
+    end
+    should "save parser item_parser" do
+      assert_equal "some code", assigns(:scraper).parser.item_parser
+    end
+    should "save parser attribute_parser" do
+      assert_equal({:foo => "bar"}, assigns(:scraper).parser.attribute_parser)
     end
   end
   
@@ -167,7 +179,7 @@ class ScrapersControllerTest < ActionController::TestCase
                      :scraper => { :council_id => @scraper.council_id, 
                                    :result_model => "Committee", 
                                    :url => "http://anytown.com/new_committees", 
-                                   :parser_attributes => { :id => @scraper.parser.id, :title => "new parsing title", :parsing_code => "some code" }}}
+                                   :parser_attributes => { :id => @scraper.parser.id, :title => "new parsing title", :item_parser => "some code" }}}
     end
   
     should_assign_to :scraper

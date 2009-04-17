@@ -6,7 +6,8 @@
     <p><strong>at</strong> <%= h @scraper.url %></p>
     <p><strong>Looking for</strong> <%= h @scraper.result_model %></p>
     <p><strong>Using parsing code</strong></p> 
-    <code><%= h @scraper.parsing_code %></code>
+    <%= render :partial => 'parser', :object => @scraper.parser %>
+    
   </div>
   <div id="expectations">
     <p><strong>Expected Result Size</strong> <%= h @scraper.expected_result_size %></p>
@@ -23,7 +24,7 @@
     <h3><%= @results.size %> results found</h3>
     <%- for result in @results -%>
       <%- div_for result do -%>
-        <%= result.id %>
+        <%#= result.id %>
       <%- end -%>
     <%- end -%>
   </div> 
