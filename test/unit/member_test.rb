@@ -74,8 +74,8 @@ class MemberTest < ActiveSupport::TestCase
       
       context "with invalid attributes for existing record" do
 
-        should "raise Exception" do
-          assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :url => nil) } 
+        should "not raise Exception" do
+          assert_nothing_raised() { Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :url => nil) } 
         end
       end
       
@@ -97,53 +97,29 @@ class MemberTest < ActiveSupport::TestCase
       
       context "with invalid new member" do
 
-        should "raise Exception" do
-          assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id) } 
+        should "not raise Exception" do
+          assert_nothing_raised() { Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id) } 
         end
       end
-      
-      
-      # should "should update existing record when member found for council" do
-      #   
-      #   member = Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
-      #   assert !member.new_record?
-      #   assert_equal @existing_member, member
-      # end
-      # 
-      # should "should build new record when member not found for council" do
-      #   member = Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id)
-      #   assert member.new_record?
-      # end
-      # 
-      # should "should update attributes for existing member" do
-      #   member = Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
-      #   assert_equal "Independent", member.party
-      # end
-      # 
-      # should "should build with attributes for new member" do
-      #   member =  Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id, :party => "Independent")
-      #   assert_equal "Fred Wilson", member.full_name
-      #   assert_equal @existing_member.council, member.council
-      #   assert_equal "Independent", member.party
-      # end
-      
+            
     end
     
-    # should "save new members when updating members" do
-    #   old_count = Member.count
-    #   Member.update_members
-    #   assert_equal old_count+3, Member.count
-    # end
-    # 
-    # should "update member details when updating members" do 
-    #   Member.update_members
-    #   assert_equal 'Independent', @old_member.party
-    # end
-    # 
-    # should "mark not found members as left when updating members" do
-    #   Member.update_members
-    #   assert members(:current_member).ex_member?
-    # end
+    context "when creating_or_update_and_saving! from params" do
+      
+      should "call create_or_update_and_save" do
+        Member.expects(:build_or_update).with(:foo => "bar").returns(stub_everything)
+        Member.create_or_update_and_save!(:foo => "bar")
+      end
+      
+      should "raise exception when attributes for existing record are invalid" do
+        assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save!(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :url => nil) }
+      end
+      
+      should "raise exception when new record is invalid" do
+        assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save!(:full_name => "Fred Wilson", :council_id => @existing_member.council.id) }
+      end
+    end
+    
   end
   
   context "A Member instance" do

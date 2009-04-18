@@ -41,8 +41,20 @@ class Member < ActiveRecord::Base
   def self.create_or_update_and_save(params)
     first_name, last_name = names_from_fullname(params[:full_name])
     existing_member = find_by_council_id_and_first_name_and_last_name(params[:council_id], first_name, last_name)
-    existing_member.update_attributes!(params) if existing_member
-    existing_member || Member.create!(params)
+    existing_member.update_attributes(params) if existing_member
+    existing_member || Member.create(params)
+  end
+  
+  # def self.create_or_update_and_save!(params)
+  #   first_name, last_name = names_from_fullname(params[:full_name])
+  #   existing_member = find_by_council_id_and_first_name_and_last_name(params[:council_id], first_name, last_name)
+  #   existing_member.update_attributes!(params) if existing_member
+  #   existing_member || Member.create!(params)
+  # end
+  
+  def self.create_or_update_and_save!(params)
+    member = self.build_or_update(params)
+    member.save!
   end
   
   def full_name=(full_name)

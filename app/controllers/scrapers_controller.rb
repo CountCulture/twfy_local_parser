@@ -8,8 +8,10 @@ class ScrapersController < ApplicationController
     @scraper = Scraper.find(params[:id])
     if params[:dry_run]
       @results = @scraper.test.results
-      @parser = @scraper.parser
+    elsif params[:process]
+      @results = @scraper.update_from_url.results
     end
+    @parser = @scraper.parser
   end
   
   def new
@@ -29,8 +31,6 @@ class ScrapersController < ApplicationController
   
   def update
     @scraper = Scraper.find(params[:id])
-    # @parser = @scraper.parser
-    # p params[:scraper]
     @scraper.update_attributes!(params[:scraper])
     flash[:notice] = "Successfully updated scraper"
     redirect_to scraper_url(@scraper)

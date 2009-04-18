@@ -100,6 +100,61 @@ class ScrapersControllerTest < ActionController::TestCase
     end
   end
   
+  context "on GET to :show with :process" do
+    setup do
+      @scraper = Factory(:scraper)
+    end
+      
+    should "run test on scraper" do
+      Scraper.any_instance.expects(:update_from_url).returns(stub_everything)
+      get :show, :id => @scraper.id, :process => true
+    end
+  end
+  
+  context "on GET to :show with succesful :process" do
+    setup do
+      @scraper = Factory(:scraper_with_results)
+      Scraper.any_instance.stubs(:process).returns(@scraper)
+      Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" }] )
+      get :show, :id => @scraper.id, :process => true
+    end
+  
+    should_assign_to :scraper, :results
+    should_respond_with :success
+    should_change "Member.count", :by => 1
+    
+    should "show summary of successful results" do
+      assert_select "#results" do
+        assert_select "div.member" do
+          assert_select "h4", /Fred Flintstone/
+        end
+      end
+    end
+  
+    should "not show summary of problems" do
+      assert_select "div.errorExplanation", false
+    end
+  end
+  
+  context "on GET to :show with unsuccesful :process due to failed validation" do
+    setup do
+      @scraper = Factory(:scraper_with_results)
+      Scraper.any_instance.stubs(:process).returns(@scraper)
+      Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" },
+                                                            { :full_name => "Bob Nourl"}] )
+      get :show, :id => @scraper.id, :process => true
+    end
+    
+    should_assign_to :scraper, :results
+    should_change "Member.count", :by => 1 # => Not two
+    should_respond_with :success
+    should "show summary of problems" do
+      assert_select "div.member div.errorExplanation" do
+        assert_select "li", "Url can't be blank"
+      end
+    end
+  end
+
   # new test
   context "on GET to :new" do
     setup do

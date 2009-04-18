@@ -144,6 +144,39 @@ class ScraperTest < ActiveSupport::TestCase
       end
     end
     
+    context "when updating from url and problem parsing" do
+      setup do
+        @scraper.stubs(:process)
+        @scraper.stubs(:parsing_results) # => nil
+      end
+
+      should "not create or update and save existing instance of result_class if no results" do
+        Member.expects(:create_or_update_and_save).never
+        @scraper.test
+      end
+    end
+    
+    context "when updating from url and problem creating new records" do
+      setup do
+        @scraper.stubs(:process)
+        @scraper.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" },
+                                                  { :full_name => "Bob Nourl"}] )
+      end
+
+      should "not raise exception" do
+        assert_nothing_raised() { @scraper.update_from_url }
+      end
+      
+      should "store validation errors in instances" do
+        
+      end
+      
+      should "add errors to scraper" do
+        
+      end
+      
+    end
+    
     context "when testing" do
       setup do
         @scraper.stubs(:process)
