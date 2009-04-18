@@ -10,25 +10,35 @@ class MemberTest < ActiveSupport::TestCase
   context "The Member class" do
     setup do
       @existing_member = Factory.create(:member)
-      # scraped_members = (1..4).collect{ |i| {:full_name => "Member #{i}", :url => "some.url/#{i}", :party => 'Independent', :member_id => i }}
+      # scraped_members = (1..4).collect{ |i| {:full_name => "Member #{i}", :url => "some.url/#{i}", :party => 'Independent', :uid => i }}
       # Gla::MembersScraper.any_instance.stubs(:response).returns(scraped_members)
     end
     
     should_validate_uniqueness_of :first_name, :scoped_to => [:last_name, :council_id]
     
-    should "validate uniqueness of member_id scoped to council_id" do
-      dup_member = Member.create(:council_id => @existing_member.council_id, :member_id => @existing_member.member_id)
-      assert_equal "has already been taken", dup_member.errors[:member_id]
+    should "validate uniqueness of uid scoped to council_id" do
+      dup_member = Member.create(:council_id => @existing_member.council_id, :uid => @existing_member.uid)
+      assert_equal "has already been taken", dup_member.errors[:uid]
     end
     
-    should "allow member_id to be nil" do
+    should "allow uid to be nil" do
       dup_member = Member.create(:council_id => @existing_member.council_id)
-      assert_nil dup_member.errors[:member_id]
+      assert_nil dup_member.errors[:uid]
     end
     
     should "scrape website when updating members" do
       Gla::MembersScraper.expects(:new).returns(stub(:response => []))
       Member.update_members
+    end
+    
+    context "when finding existing member" do
+      # setup do
+      #   
+      # end
+
+      should "should return member which has same uid and council" do
+        
+      end
     end
     
     context "when building_or_updating from params" do

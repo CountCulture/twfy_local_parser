@@ -1,14 +1,22 @@
 require 'test_helper'
 
 class MeetingTest < ActiveSupport::TestCase
-  should_belong_to :committee
-  should_validate_presence_of :date_held
-  should_validate_uniqueness_of :date_held, :scoped_to => :committee_id
+  context "The Meeting Class" do
+    setup do
+      @committee = Committee.create!(:title => "Audit Group", :url => "some.url")
+      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee)
+    end
+
+    should_belong_to :committee
+    should_validate_presence_of :date_held
+    should_validate_uniqueness_of :date_held, :scoped_to => :committee_id
+  end
+  
 
   context "A Meeting instance" do
     setup do
-      @committee = Committee.new(:title => "Audit Group", :url => "some.url")
-      @meeting = Meeting.new(:date_held => "6 November 2008", :committee => @committee)
+      @committee = Committee.create!(:title => "Audit Group", :url => "some.url")
+      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee)
     end
 
     should "convert date string to date" do
