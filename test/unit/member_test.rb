@@ -10,59 +10,55 @@ class MemberTest < ActiveSupport::TestCase
   context "The Member class" do
     setup do
       @existing_member = Factory.create(:member)
-      # scraped_members = (1..4).collect{ |i| {:full_name => "Member #{i}", :url => "some.url/#{i}", :party => 'Independent', :uid => i }}
-      # Gla::MembersScraper.any_instance.stubs(:response).returns(scraped_members)
+      @params = {:full_name => "Fred Wilson", :uid => 2, :council_id => 2, :party => "Independent", :url => "http:/some.url"} # uid and council_id can be anything as we stub finding of existing member
     end
     
-    should_validate_uniqueness_of :first_name, :scoped_to => [:last_name, :council_id]
-    
-    should "validate uniqueness of uid scoped to council_id" do
-      dup_member = Member.create(:council_id => @existing_member.council_id, :uid => @existing_member.uid)
-      assert_equal "has already been taken", dup_member.errors[:uid]
-    end
-    
-    should "allow uid to be nil" do
-      dup_member = Member.create(:council_id => @existing_member.council_id)
-      assert_nil dup_member.errors[:uid]
-    end
-    
-    should "scrape website when updating members" do
-      Gla::MembersScraper.expects(:new).returns(stub(:response => []))
-      Member.update_members
-    end
-    
-    context "when finding existing member" do
-      # setup do
-      #   
-      # end
-
-      should "should return member which has same uid and council" do
+    should_validate_uniqueness_of :uid, :scoped_to => :council_id
+    should_validate_presence_of :uid
         
+    context "when finding existing member from params" do
+
+      should "should return member which has given uid and council" do
+        assert_equal @existing_member, Member.find_existing(:uid => @existing_member.uid, :council_id => @existing_member.council_id)
+      end
+      
+      should "should return nil when no record with given uid and council" do
+        assert_nil Member.find_existing(:uid => @existing_member.uid, :council_id => 42)
       end
     end
     
     context "when building_or_updating from params" do
       
       should "should update existing record when member found for council" do
-        member = Member.build_or_update(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
+        Member.stubs(:find_existing).returns(@existing_member)
+        member = Member.build_or_update(@params)
         assert !member.new_record?
         assert_equal @existing_member, member
       end
       
+      should "overwrite only attributes passed in params" do
+        Member.stubs(:find_existing).returns(@existing_member)
+        member = Member.build_or_update(@params.except(:full_name))
+        assert_equal "Bob Wilson", member.full_name
+      end
+      
       should "should build new record when member not found for council" do
-        member = Member.build_or_update(:full_name => "Fred Wilson", :council_id => @existing_member.council.id)
+        Member.stubs(:find_existing) # => returns nil
+        member = Member.build_or_update(@params)
         assert member.new_record?
       end
       
       should "should update attributes for existing member" do
-        member = Member.build_or_update(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
+        Member.stubs(:find_existing).returns(@existing_member)
+        member = Member.build_or_update(@params)
         assert_equal "Independent", member.party
       end
       
       should "should build with attributes for new member" do
-        member =  Member.build_or_update(:full_name => "Fred Wilson", :council_id => @existing_member.council.id, :party => "Independent")
+        Member.stubs(:find_existing) # => returns nil
+        member =  Member.build_or_update(@params)
         assert_equal "Fred Wilson", member.full_name
-        assert_equal @existing_member.council, member.council
+        assert_equal 2, member.council_id
         assert_equal "Independent", member.party
       end
     end
@@ -71,7 +67,8 @@ class MemberTest < ActiveSupport::TestCase
       
       context "with existing record" do
         setup do
-          @coru_exist_member = Member.create_or_update_and_save(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :party => "Independent")
+          Member.expects(:find_existing).returns(@existing_member)
+          @coru_exist_member = Member.create_or_update_and_save(@params) # uid and council_id can be anything as we stub finding of existing memeber
         end
         
         should_not_change "Member.count"
@@ -79,6 +76,10 @@ class MemberTest < ActiveSupport::TestCase
         
         should "return member" do
           assert_equal @existing_member, @coru_exist_member
+        end
+        
+        should "overwrite only attributes passed in params" do
+          assert_equal "Fred Wilson", @coru_exist_member.full_name
         end
       end
       
@@ -91,7 +92,8 @@ class MemberTest < ActiveSupport::TestCase
       
       context "with new member" do
         setup do
-          @coru_new_member = Member.create_or_update_and_save(:full_name => "Fred Wilson", :council_id => @existing_member.council.id, :url => "http://www.anytown.gov.uk/members/new_fred")
+          Member.expects(:find_existing) # => returns nil
+          @coru_new_member = Member.create_or_update_and_save(@params)
         end
 
         should_change "Member.count", :by => 1
@@ -121,12 +123,18 @@ class MemberTest < ActiveSupport::TestCase
         Member.create_or_update_and_save!(:foo => "bar")
       end
       
+      should "return member" do
+        Member.expects(:find_existing).returns(@existing_member)
+        assert_kind_of Member, Member.create_or_update_and_save!(@params)
+      end
+      
       should "raise exception when attributes for existing record are invalid" do
-        assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save!(:full_name => @existing_member.full_name, :council_id => @existing_member.council.id, :url => nil) }
+        Member.expects(:find_existing).returns(@existing_member)
+        assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save!(:url => nil) }
       end
       
       should "raise exception when new record is invalid" do
-        assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save!(:full_name => "Fred Wilson", :council_id => @existing_member.council.id) }
+        assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save!(:full_name => "Fred Wilson", :council_id => @existing_member.council.id) } # missing uid and url
       end
     end
     
