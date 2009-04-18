@@ -153,6 +153,13 @@ class ScrapersControllerTest < ActionController::TestCase
         assert_select "li", "Url can't be blank"
       end
     end
+    should "highlight member with error" do
+      assert_select "div.member", :count => 2 do
+        assert_select "div.error", :count => 1 do # only one of which hs error class
+          assert_select "div.member div.errorExplanation" #...and that has error explanation in it
+        end
+     end
+   end
   end
 
   # new test

@@ -1,4 +1,4 @@
-<%- div_for member do -%>
+<%- div_for member, :class => (!member.errors.empty?&&'error') do -%>
 <%= error_messages_for :member, :object => member %>
   <h4><%= member.full_name %> <em><%= link_to "Council page", member.url, :class => "external" %></em></h4>
   <p><strong>Party</strong> <%= member.party %></p>
