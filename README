@@ -1,3 +1,5 @@
 == twfy_local_parser is a scraper/parser for local authorities.
 
-At the moment it's a proof-of-concept, scraping/parsing the Greater London Authority
+At the moment it’s in the early stages, concentrating on developing a scraper/parser system where the scraper/parsers are stored in the db (via a web interface).
+
+Anyone wishing to help on this project, please email me at countculture at googlemail dot com
