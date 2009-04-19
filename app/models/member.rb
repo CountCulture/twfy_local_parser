@@ -31,7 +31,6 @@ class Member < ActiveRecord::Base
   # end
   
   def self.build_or_update(params)
-    first_name, last_name = names_from_fullname(params[:full_name]) if params[:full_name]
     existing_member = find_existing(params)
     existing_member.attributes = params if existing_member
     existing_member || Member.new(params)
@@ -54,7 +53,9 @@ class Member < ActiveRecord::Base
   end
   
   def full_name=(full_name)
-    self.first_name, self.last_name = names_from_fullname(full_name)
+    names_hash = NameParser.parse(full_name)
+    self.first_name = names_hash[:first_name]
+    self.last_name = names_hash[:last_name]
   end
   
   def full_name
@@ -65,15 +66,4 @@ class Member < ActiveRecord::Base
     date_left
   end
   
-  private
-  def self.names_from_fullname(fn)
-    names = fn.split(" ")
-    first_name = names[0..-2].join(" ")
-    last_name = names.last
-    [first_name, last_name]
-  end
-  
-  def names_from_fullname(fn)
-    self.class.names_from_fullname(fn)
-  end
 end
