@@ -37,5 +37,27 @@ div.parser_attribute .title {
 div.parser code.item_parser {
 	margin-left: 9em; }
 	
-/*#results div {
-	border-bottom: 1px solid #ddd; }*/
+.new, .changed {
+	border:2px solid #DDDDDD;
+	margin-bottom:1em;
+	padding:0.8em;
+	}
+.changed {
+	background:#FFF6BF;
+	border-color:#FFD324;
+	}
+.new {
+	background:#E6EFC2;
+	border-color:#C6D880;
+	}
+	
+span.flash {
+	border:none;
+	color:#fff;
+	padding: 3px 6px; }	
+span.new {
+	background-color:#264409; }	
+span.changed {
+	background-color:#514721; }	
+span.error {
+	background-color:#8a1f11; }	

@@ -24,7 +24,7 @@
     <h3><%= @results.size %> results found</h3>
     <%- for result in @results -%>
       <%#- div_for result do -%>
-        <%= render :partial => result %>
+        <%= render :partial => result.class.to_s.downcase, :object => result %>
         
       <%#- end -%>
     <%- end -%>

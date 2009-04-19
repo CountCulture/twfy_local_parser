@@ -115,7 +115,7 @@ class ScrapersControllerTest < ActionController::TestCase
     setup do
       @scraper = Factory(:scraper_with_results)
       Scraper.any_instance.stubs(:process).returns(@scraper)
-      Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" }] )
+      Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :uid => 1, :url => "http://www.anytown.gov.uk/members/fred" }] )
       get :show, :id => @scraper.id, :process => true
     end
   
@@ -140,7 +140,7 @@ class ScrapersControllerTest < ActionController::TestCase
     setup do
       @scraper = Factory(:scraper_with_results)
       Scraper.any_instance.stubs(:process).returns(@scraper)
-      Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" },
+      Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :uid => 1, :url => "http://www.anytown.gov.uk/members/fred" },
                                                             { :full_name => "Bob Nourl"}] )
       get :show, :id => @scraper.id, :process => true
     end
