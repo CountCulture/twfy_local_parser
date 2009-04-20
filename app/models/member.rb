@@ -54,8 +54,9 @@ class Member < ActiveRecord::Base
   
   def full_name=(full_name)
     names_hash = NameParser.parse(full_name)
-    self.first_name = names_hash[:first_name]
-    self.last_name = names_hash[:last_name]
+    %w(first_name last_name title qualifications).each do |a|
+      self.send("#{a}=", names_hash[a.to_sym])
+    end
   end
   
   def full_name

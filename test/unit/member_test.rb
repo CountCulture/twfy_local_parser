@@ -142,19 +142,28 @@ class MemberTest < ActiveSupport::TestCase
   
   context "A Member instance" do
     setup do
-      @member = Member.new(:first_name => "Bob", :last_name => "Williams")
+      NameParser.stubs(:parse).returns(:first_name => "Fred", :last_name => "Scuttle", :title => "Prof", :qualifications => "PhD")
+      @member = new_member(:full_name => "Fred Scuttle")
     end
     
     should "return full name" do
-      assert_equal "Bob Williams", @member.full_name
+      assert_equal "Fred Scuttle", @member.full_name
     end
 
     should "should extract first name from full name" do
-      assert_equal "Fred", new_member(:full_name => "Fred Scuttle").first_name
+      assert_equal "Fred", @member.first_name
     end
     
     should "extract last name from full name" do
-      assert_equal "Scuttle", new_member(:full_name => "Fred Scuttle").last_name
+      assert_equal "Scuttle", @member.last_name
+    end
+    
+    should "extract title from full name" do
+      assert_equal "Prof", @member.title
+    end
+    
+    should "extract qualifications from full name" do
+      assert_equal "PhD", @member.qualifications
     end
     
     should "be ex_member if has left office" do
@@ -166,8 +175,9 @@ class MemberTest < ActiveSupport::TestCase
     end
     
     should "provide access to new_record_before_save instance variable" do
-      @member.instance_variable_set(:@new_record_before_save, true)
-      assert @member.new_record_before_save?
+      member = new_member
+      member.instance_variable_set(:@new_record_before_save, true)
+      assert member.new_record_before_save?
     end
     
     should "update details using MemberScraper" do
