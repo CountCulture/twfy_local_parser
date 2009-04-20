@@ -54,12 +54,13 @@ class ScrapersControllerTest < ActionController::TestCase
     end
   end
   
-  context "on GET to :show with succesful :dry_run" do
+  context "on GET to :show with successful :dry_run" do
     setup do
       @scraper = Factory(:scraper_with_results)
       @member = Factory(:member)
+      @new_member = Member.new(:full_name => "Fred Flintstone", :uid => 55)
       Scraper.any_instance.stubs(:test).returns(@scraper)
-      @scraper.stubs(:results).returns([@member])
+      @scraper.stubs(:results).returns([@member, @new_member])
       get :show, :id => @scraper.id, :dry_run => true
     end
   
@@ -68,8 +69,11 @@ class ScrapersControllerTest < ActionController::TestCase
     
     should "show summary of successful results" do
       assert_select "#results" do
-        assert_select "div.member" do
+        assert_select "div.member", 2 do
           assert_select "h4", /#{@member.full_name}/
+          assert_select "div.new", 1 do
+            assert_select "h4", /Fred Flintstone/
+          end
         end
       end
     end
@@ -79,7 +83,7 @@ class ScrapersControllerTest < ActionController::TestCase
     end
   end
   
-  context "on GET to :show with unsuccesful :dry_run" do
+  context "on GET to :show with :dry_run with parsing problems" do
     setup do
       @scraper = Factory(:scraper_with_errors)
       @scraper.stubs(:_data).returns(stub_everything)
@@ -111,7 +115,7 @@ class ScrapersControllerTest < ActionController::TestCase
     end
   end
   
-  context "on GET to :show with succesful :process" do
+  context "on GET to :show with successful :process" do
     setup do
       @scraper = Factory(:scraper_with_results)
       Scraper.any_instance.stubs(:process).returns(@scraper)

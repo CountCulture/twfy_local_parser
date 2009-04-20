@@ -1,7 +1,6 @@
 <%- div_for member, :class => class_for_result(member) do -%>
-<p><%= flash_for_result(member) %></p>
+<div><%= flash_for_result(member) %></div>
 <%= error_messages_for :member, :object => member %>
   <h4><%= member.full_name %> <em><%= link_to "Council page", member.url, :class => "external" %></em></h4>
-  <p><strong>Party</strong> <%= member.party %></p>
-  <p><strong>Email</strong> <%= member.email %></p>
+  <%= changed_attributes_list(member) %>
 <%- end -%>
