@@ -1,2 +1,7 @@
 <h1>Councils list</h1>
-<p></p>
+
+<ul>
+  <% for council in @councils %>
+    <li><%= link_to council.name, council %></li>
+  <% end %>
+</ul>
