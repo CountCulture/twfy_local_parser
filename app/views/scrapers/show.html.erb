@@ -26,7 +26,7 @@
   <%= error_messages_for :parser, :header_message => "Problem parsing scraped page", :message => "The following problems occurred:" %>
   
   <div id="results">
-    <h3><%= @results.size %> results found</h3>
+    <h3>Completed <%= params[:process] ? "Processing" : "Test Scrape" %>: <%= @results.size %> records found</h3>
     <%- for result in @results -%>
       <%#- div_for result do -%>
         <%= render :partial => result.class.to_s.downcase, :object => result %>

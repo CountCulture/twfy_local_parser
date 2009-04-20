@@ -4,6 +4,7 @@ label {
 	float: left; width: 12em; }
 h1 em, h2 em, h3 em, h4 em, label em { 
 	color: #9e9e9e;
+	font-size: .8em;
 	font-style: normal; }
 input, textarea {
 	border:1px solid #515151;
@@ -37,7 +38,7 @@ div.parser_attribute .title {
 div.parser code.item_parser {
 	margin-left: 9em; }
 	
-.new, .changed, .unchanged {
+.new, .changed {
 	border:2px solid #DDDDDD;
 	margin-bottom:1em;
 	padding:0.8em;
@@ -50,11 +51,13 @@ div.parser code.item_parser {
 	background:#E6EFC2;
 	border-color:#C6D880;
 	}
-.unchanged {
-	background:#f3f3f3;
-	border-color:#9e9e9e;
-	color: #515151;
-	}
+div.unchanged {
+	margin-bottom: .5em; }
+.unchanged, .unchanged a {
+	color: #515151; }
+.unchanged h4 { 
+	color: #282828;
+	margin-bottom: 0; }
 span.flash {
 	border:none;
 	color:#fff;

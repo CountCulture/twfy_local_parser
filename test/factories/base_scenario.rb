@@ -44,3 +44,11 @@ Factory.define :member do |f|
   f.url "http://www.anytown.gov.uk/members/bob"
   f.association :council
 end
+
+Factory.define :old_member, :class => :member do |f|
+  f.full_name "Old Yeller"
+  f.uid 88
+  f.url "http://www.anytown.gov.uk/members/yeller"
+  f.date_left 6.months.ago
+  f.association :council
+end

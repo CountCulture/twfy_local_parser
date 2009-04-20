@@ -1,0 +1,10 @@
+<h1><%= @council.name %></h1>
+
+<p>website <strong><%= link_to @council.url, @council.url, :class => :external %></strong></p>
+
+<h3>Current council members</h3>
+<ul id="members">
+  <% for member in @members %>
+    <li><%= link_to member.full_name, member %></li>
+  <% end %>
+</ul>
