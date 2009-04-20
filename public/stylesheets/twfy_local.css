@@ -58,7 +58,8 @@ div.parser code.item_parser {
 span.flash {
 	border:none;
 	color:#fff;
-	padding: 3px 6px; }	
+	padding: 3px 6px;
+	float:right; }	
 span.new {
 	background-color:#264409; }	
 span.changed {

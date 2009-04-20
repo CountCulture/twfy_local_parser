@@ -15,7 +15,11 @@
     <p><strong>Expected Result Attributes</strong> <code><%= h @scraper.expected_result_attributes.inspect %></code></p>
   </div> -->
   <p><strong>Last updated</strong> <%= @scraper.updated_at %></p>
-  <p><%= link_to "edit", edit_scraper_path(@scraper) %> <%= link_to "perform test scrape", scraper_path(:id => @scraper, :dry_run => true) %></p>
+  <p>
+    <%= link_to "edit", edit_scraper_path(@scraper) %> 
+    <%= link_to "perform test scrape", scraper_path(:id => @scraper, :dry_run => true) %>
+    <%= link_to "process now", scraper_path(:id => @scraper, :process => true) %>
+  </p>
 </div>
 <%- if @results -%>
   <%= error_messages_for :scraper %>

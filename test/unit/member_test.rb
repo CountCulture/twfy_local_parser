@@ -165,6 +165,11 @@ class MemberTest < ActiveSupport::TestCase
       assert !new_member.ex_member?
     end
     
+    should "provide access to new_record_before_save instance variable" do
+      @member.instance_variable_set(:@new_record_before_save, true)
+      assert @member.new_record_before_save?
+    end
+    
     should "update details using MemberScraper" do
       # MemberScraper.any_instance.expects(:update).with(@old_member)
       # @old_member.update

@@ -66,4 +66,7 @@ class Member < ActiveRecord::Base
     date_left
   end
   
+  def new_record_before_save?
+    instance_variable_get(:@new_record_before_save)
+  end
 end

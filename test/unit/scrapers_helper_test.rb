@@ -14,6 +14,10 @@ class ScrapersHelperTest < ActionView::TestCase
       assert_equal "new", class_for_result(stub_everything(:new_record? => true, :errors => []))
     end
     
+    should "return new when record was new before saving" do
+      assert_equal "new", class_for_result(stub_everything(:new_record_before_save? => true, :errors => []))
+    end
+    
     should "return error when record has errors" do
       assert_equal "unchanged error", class_for_result(stub_everything(:errors => ["foo"]))
     end
@@ -41,6 +45,10 @@ class ScrapersHelperTest < ActionView::TestCase
       assert_dom_equal "<span class='new flash'>new</span>", flash_for_result(stub_everything(:new_record? => true, :errors => []))
     end
     
+    should "return new when record was new before saving" do
+      assert_dom_equal "<span class='new flash'>new</span>", flash_for_result(stub_everything(:new_record_before_save? => true, :errors => []))
+    end
+    
     should "return error when record has errors" do
       assert_dom_equal "<span class='unchanged error flash'>unchanged error</span>", flash_for_result(stub_everything(:errors => ["foo"]))
     end
@@ -61,15 +69,24 @@ class ScrapersHelperTest < ActionView::TestCase
   context "changed_attributes helper method" do
     setup do
       @member = Factory.create(:member)
+      @member.save # save again so record is not newly created
     end
+    
     should "show message if no changed attributes" do
       assert_dom_equal content_tag(:div, "Record is unchanged"), changed_attributes_list(@member)      
     end
+    
     should "list only attributes that have changed" do
       @member.first_name = "Pete"
       @member.telephone = "0123 456 789"
       assert_dom_equal content_tag(:div, content_tag(:ul, content_tag(:li, "first_name <strong>Pete</strong> (was Bob)") + 
                                                           content_tag(:li, "telephone <strong>0123 456 789</strong> (was empty)")), 
+                                         :class => "changed_attributes"), changed_attributes_list(@member)
+    end
+    
+    should "list all attributes if record was newly saved" do
+      @member.instance_variable_set(:@new_record_before_save, true)
+      assert_dom_equal content_tag(:div, content_tag(:ul, @member.attributes.collect{ |attr_name, value| content_tag(:li, "#{attr_name} <strong>#{value}</strong>") }), 
                                          :class => "changed_attributes"), changed_attributes_list(@member)
     end
   end
