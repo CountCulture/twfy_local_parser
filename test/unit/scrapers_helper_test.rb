@@ -73,22 +73,17 @@ class ScrapersHelperTest < ActionView::TestCase
     end
     
     should "show message if no changed attributes" do
-      assert_dom_equal content_tag(:div, "Record is unchanged"), changed_attributes_list(@member)      
-    end
-    
-    should "list only attributes that have changed" do
-      @member.first_name = "Pete"
-      @member.telephone = "0123 456 789"
-      assert_dom_equal content_tag(:div, content_tag(:ul, content_tag(:li, "first_name <strong>Pete</strong> (was Bob)") + 
-                                                          content_tag(:li, "telephone <strong>0123 456 789</strong> (was empty)")), 
-                                         :class => "changed_attributes"), changed_attributes_list(@member)
-    end
-    
-    should "list all attributes if record was newly saved" do
-      @member.instance_variable_set(:@new_record_before_save, true)
-      assert_dom_equal content_tag(:div, content_tag(:ul, @member.attributes.collect{ |attr_name, value| content_tag(:li, "#{attr_name} <strong>#{value}</strong>") }), 
-                                         :class => "changed_attributes"), changed_attributes_list(@member)
-    end
+       assert_dom_equal content_tag(:div, "Record is unchanged"), changed_attributes_list(@member)      
+     end
+     
+     should "list only attributes that have changed" do
+       @member.first_name = "Pete"
+       @member.telephone = "0123 456 789"
+       assert_dom_equal content_tag(:div, content_tag(:ul, content_tag(:li, "first_name <strong>Pete</strong> (was Bob)") + 
+                                                           content_tag(:li, "telephone <strong>0123 456 789</strong> (was empty)")), 
+                                          :class => "changed_attributes"), changed_attributes_list(@member)
+     end
+     
   end
   
 end

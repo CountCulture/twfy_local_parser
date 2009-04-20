@@ -38,13 +38,17 @@ class Member < ActiveRecord::Base
   
   def self.create_or_update_and_save(params)
     member = self.build_or_update(params)
-    member.save
+    changed_attributes = member.send(:changed_attributes).clone
+    member.save # this clears changed attributes
+    member.send(:changed_attributes).update(changed_attributes) # so merge them back in
     member
   end
   
   def self.create_or_update_and_save!(params)
     member = self.build_or_update(params)
-    member.save!
+    changed_attributes = member.send(:changed_attributes).clone
+    member.save!# this clears changed attributes
+    member.send(:changed_attributes).update(changed_attributes) # so merge them back in
     member
   end
   

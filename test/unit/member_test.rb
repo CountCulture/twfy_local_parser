@@ -81,6 +81,10 @@ class MemberTest < ActiveSupport::TestCase
         should "overwrite only attributes passed in params" do
           assert_equal "Fred Wilson", @coru_exist_member.full_name
         end
+        
+        should "mark changed attributes as changed_attributes" do
+          assert_equal [nil, 'Independent'], @coru_exist_member.party_change
+        end
       end
       
       context "with invalid attributes for existing record" do
@@ -105,6 +109,11 @@ class MemberTest < ActiveSupport::TestCase
         should "save member" do
           assert !@coru_new_member.new_record?
         end
+        
+        should "mark attributes as changed_attributes" do
+          assert_equal ['council_id', 'first_name', 'last_name', 'party', 'uid', 'url'].sort, @coru_new_member.changed.sort
+          assert_equal [nil, 'Independent'], @coru_new_member.party_change
+        end
       end
       
       context "with invalid new member" do
@@ -119,7 +128,7 @@ class MemberTest < ActiveSupport::TestCase
     context "when creating_or_update_and_saving! from params" do
       
       should "call create_or_update_and_save" do
-        Member.expects(:build_or_update).with(:foo => "bar").returns(stub_everything)
+        Member.expects(:build_or_update).with(:foo => "bar").returns(Member.new(@params))
         Member.create_or_update_and_save!(:foo => "bar")
       end
       
@@ -133,6 +142,12 @@ class MemberTest < ActiveSupport::TestCase
         assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save!(:url => nil) }
       end
       
+      should "mark attributes as changed_attributes" do
+        member = Member.create_or_update_and_save!(@params)
+        assert_equal ['council_id', 'first_name', 'last_name', 'party', 'uid', 'url'].sort, member.changed.sort
+        assert_equal [nil, 'Independent'], member.party_change
+      end
+
       should "raise exception when new record is invalid" do
         assert_raise(ActiveRecord::RecordInvalid) { Member.create_or_update_and_save!(:full_name => "Fred Wilson", :council_id => @existing_member.council.id) } # missing uid and url
       end

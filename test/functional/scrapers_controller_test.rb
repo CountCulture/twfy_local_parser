@@ -57,7 +57,8 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on GET to :show with successful :dry_run" do
     setup do
       @scraper = Factory(:scraper_with_results)
-      @member = Factory(:member)
+      @member = Factory.create(:member)
+      @member.save # otherwise looks like new_before_save
       @new_member = Member.new(:full_name => "Fred Flintstone", :uid => 55)
       Scraper.any_instance.stubs(:test).returns(@scraper)
       @scraper.stubs(:results).returns([@member, @new_member])

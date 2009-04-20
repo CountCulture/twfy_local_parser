@@ -15,9 +15,7 @@ module ScrapersHelper
   
   def changed_attributes_list(record)
     return content_tag(:div, "Record is unchanged") unless record.changed? || record.new_record_before_save?
-    attrib_list = 
-    record.new_record_before_save? ? record.attributes.collect{ |attrib_name, value| content_tag(:li, "#{attrib_name} <strong>#{value}</strong>") } :
-                                     record.changes.collect{ |attrib_name, changes| content_tag(:li, "#{attrib_name} <strong>#{changes.last}</strong> (was #{changes.first || 'empty'})") }
+    attrib_list = record.changes.collect{ |attrib_name, changes| content_tag(:li, "#{attrib_name} <strong>#{changes.last}</strong> (was #{changes.first || 'empty'})") }
     content_tag(:div, content_tag(:ul, attrib_list), :class => "changed_attributes")
   end
   
