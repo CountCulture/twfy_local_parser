@@ -15,12 +15,14 @@ class ScrapersController < ApplicationController
   end
   
   def new
-    @scraper = Scraper.new
+    raise ArgumentError unless Scraper::SCRAPER_TYPES.include?(params[:type])
+    @scraper = params[:type].constantize.new
     @scraper.build_parser
   end
   
   def create
-    @scraper = Scraper.create!(params[:scraper])
+    raise ArgumentError unless Scraper::SCRAPER_TYPES.include?(params[:type])
+    @scraper = params[:type].constantize.create!(params[:scraper])
     flash[:notice] = "Successfully created scraper"
     redirect_to scraper_url(@scraper)
   end

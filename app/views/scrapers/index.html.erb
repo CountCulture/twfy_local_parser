@@ -2,7 +2,7 @@
 <p><%= link_to "Add new scraper", new_scraper_path %></p>
 <ul id="scrapers">
     <% for scraper in @scrapers %>
-      <li><%= link_to scraper.title, scraper %></li>
+      <li><%= link_to scraper.title, scraper_path(scraper) %></li>
     <% end %>
   
 </ul>

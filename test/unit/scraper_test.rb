@@ -3,7 +3,6 @@ require 'test_helper'
 
 class ScraperTest < ActiveSupport::TestCase
   
-  should_validate_presence_of :url
   should_belong_to :parser
   should_belong_to :council
   should_validate_presence_of :council_id
@@ -62,13 +61,18 @@ class ScraperTest < ActiveSupport::TestCase
       assert_equal "foo", @scraper.parsing_results
     end
     
+    should "have info_object accessor" do
+      @scraper.instance_variable_set(:@info_object, "foo")
+      assert_equal "foo", @scraper.info_object
+    end
+    
     should_not_allow_mass_assignment_of :results
     
     should "build title from council name and result class" do
       assert_equal "Member scraper for Anytown council", @scraper.title
     end
     
-    should "return erros in parser as parsing errors" do
+    should "return errors in parser as parsing errors" do
       @parser.errors.add_to_base("some error")
       assert_equal "some error", @scraper.parsing_errors[:base]
     end
@@ -141,6 +145,11 @@ class ScraperTest < ActiveSupport::TestCase
         dummy_member = Member.new
         Member.stubs(:create_or_update_and_save).returns(dummy_member)
         assert_equal [dummy_member], @scraper.update_from_url.results
+      end
+      
+      should "not set info_object even if given" do
+        @scraper.update_from_url("foo")
+        assert_nil @scraper.info_object
       end
     end
     

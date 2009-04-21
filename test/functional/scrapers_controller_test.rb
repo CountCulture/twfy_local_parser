@@ -6,7 +6,7 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on GET to :index" do
     setup do
       @scraper1 = Factory(:scraper)
-      @scraper2 = Factory(:scraper_with_results)
+      @scraper2 = Factory(:info_scraper)
       get :index
     end
 
@@ -56,8 +56,8 @@ class ScrapersControllerTest < ActionController::TestCase
   
   context "on GET to :show with successful :dry_run" do
     setup do
-      @scraper = Factory(:scraper_with_results)
-      @member = Factory.create(:member)
+      @scraper = Factory(:scraper)
+      @member = Factory(:member, :council => @scraper.council)
       @member.save # otherwise looks like new_before_save
       @new_member = Member.new(:full_name => "Fred Flintstone", :uid => 55)
       Scraper.any_instance.stubs(:test).returns(@scraper)
@@ -118,7 +118,7 @@ class ScrapersControllerTest < ActionController::TestCase
   
   context "on GET to :show with successful :process" do
     setup do
-      @scraper = Factory(:scraper_with_results)
+      @scraper = Factory(:scraper)
       Scraper.any_instance.stubs(:process).returns(@scraper)
       Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :uid => 1, :url => "http://www.anytown.gov.uk/members/fred" }] )
       get :show, :id => @scraper.id, :process => true
@@ -143,7 +143,7 @@ class ScrapersControllerTest < ActionController::TestCase
   
   context "on GET to :show with unsuccesful :process due to failed validation" do
     setup do
-      @scraper = Factory(:scraper_with_results)
+      @scraper = Factory(:scraper)
       Scraper.any_instance.stubs(:process).returns(@scraper)
       Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :uid => 1, :url => "http://www.anytown.gov.uk/members/fred" },
                                                             { :full_name => "Bob Nourl"}] )
@@ -168,10 +168,22 @@ class ScrapersControllerTest < ActionController::TestCase
   end
 
   # new test
+  context "on GET to :new with no scraper type given" do
+    should "raise exception" do
+      assert_raise(ArgumentError) { get :new }
+    end
+  end
+  
+  context "on GET to :new with bad scraper type" do
+    should "raise exception" do
+      assert_raise(ArgumentError) { get :new, :type  => "Member" }
+    end
+  end
+  
   context "on GET to :new" do
     setup do
       @council = Factory(:council)
-      get :new
+      get :new, :type  => "InfoScraper"
     end
   
     should_assign_to :scraper
@@ -179,7 +191,11 @@ class ScrapersControllerTest < ActionController::TestCase
     should_render_template :new
     should_not_set_the_flash
     should_render_a_form
-      
+    
+    should "create given type of scraper" do
+      assert_kind_of InfoScraper, assigns(:scraper)
+    end
+    
     should "show select box for councils" do
       assert_select "select[name=?]", "scraper[council_id]"
     end
@@ -195,29 +211,54 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on POST to :create" do
     setup do
       @council = Factory(:council)
-      post :create, { :scraper => { :council_id => @council.id, 
-                                    :result_model => "Committee", 
-                                    :url => "http://anytown.com/committees", 
-                                    :parser_attributes => { :title => "new parser", 
-                                                            :item_parser => "some code",
-                                                            :attribute_parser_object => [{:attrib_name => "foo", :parsing_code => "bar"}] }}}
+      @scraper_params = { :council_id => @council.id, 
+                          :result_model => "Committee", 
+                          :url => "http://anytown.com/committees", 
+                          :parser_attributes => { :title => "new parser", 
+                                                  :item_parser => "some code",
+                                                  :attribute_parser_object => [{:attrib_name => "foo", :parsing_code => "bar"}] }}
     end
     
-    should_change "Scraper.count", :by => 1
-    should_assign_to :scraper
-    should_redirect_to( "the show page for scraper") { scraper_path(assigns(:scraper)) }
-    should_set_the_flash_to "Successfully created scraper"
+    context "with no scraper type given" do
+      should "raise exception" do
+        assert_raise(ArgumentError) { post :create, { :scraper => @scraper_params } }
+      end
+    end
     
-    should_change "Parser.count", :by => 1
-    should "save parser title" do
-      assert_equal "new parser", assigns(:scraper).parser.title
+    context "with bad scraper type" do
+      should "raise exception" do
+        assert_raise(ArgumentError) { get :create, { :type  => "Member", :scraper => @scraper_params } }
+      end
     end
-    should "save parser item_parser" do
-      assert_equal "some code", assigns(:scraper).parser.item_parser
+    context "with scraper type" do
+      setup do
+        post :create, { :type => "InfoScraper", :scraper => @scraper_params }
+      end
+      
+      should_change "Scraper.count", :by => 1
+      should_assign_to :scraper
+      should_redirect_to( "the show page for scraper") { scraper_path(assigns(:scraper)) }
+      should_set_the_flash_to "Successfully created scraper"
+
+      should "save as given scraper type" do
+        assert_kind_of InfoScraper, assigns(:scraper)
+      end
+
+      should_change "Parser.count", :by => 1
+      
+      should "save parser title" do
+        assert_equal "new parser", assigns(:scraper).parser.title
+      end
+      
+      should "save parser item_parser" do
+        assert_equal "some code", assigns(:scraper).parser.item_parser
+      end
+      
+      should "save parser attribute_parser" do
+        assert_equal({:foo => "bar"}, assigns(:scraper).parser.attribute_parser)
+      end
     end
-    should "save parser attribute_parser" do
-      assert_equal({:foo => "bar"}, assigns(:scraper).parser.attribute_parser)
-    end
+    
   end
   
   # edit tests
