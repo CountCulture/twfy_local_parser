@@ -56,17 +56,26 @@ class ScraperTest < ActiveSupport::TestCase
       assert_equal "foo", @scraper.results
     end
     
+    should "return empty array as results if not set" do
+      assert_equal [], @scraper.results
+    end
+    
+    should "set empty array as results if not set" do
+      @scraper.results
+      assert_equal [], @scraper.instance_variable_get(:@results)
+    end
+    
+    should_not_allow_mass_assignment_of :results
+
     should "have parsing_results accessor" do
       @scraper.instance_variable_set(:@parsing_results, "foo")
       assert_equal "foo", @scraper.parsing_results
     end
     
-    should "have info_object accessor" do
-      @scraper.instance_variable_set(:@info_object, "foo")
-      assert_equal "foo", @scraper.info_object
+    should "have related_objects accessor" do
+      @scraper.instance_variable_set(:@related_objects, "foo")
+      assert_equal "foo", @scraper.related_objects
     end
-    
-    should_not_allow_mass_assignment_of :results
     
     should "build title from council name and result class" do
       assert_equal "Member scraper for Anytown council", @scraper.title
@@ -79,13 +88,13 @@ class ScraperTest < ActiveSupport::TestCase
     
     context "when getting data" do
     
-      should "get url page" do
-        @scraper.expects(:_http_get).with('http://www.anytown.gov.uk/members/bob').returns("something")
-        @scraper.send(:_data)
+      should "get given url" do
+        @scraper.expects(:_http_get).with('http://another.url').returns("something")
+        @scraper.send(:_data, 'http://another.url')
       end
       
       should "return data as Hpricot Doc" do
-        @scraper.stubs(:_http_get).with('http://www.anytown.gov.uk/members/bob').returns("something")
+        @scraper.stubs(:_http_get).returns("something")
         assert_kind_of Hpricot::Doc, @scraper.send(:_data)
       end
       
@@ -94,223 +103,82 @@ class ScraperTest < ActiveSupport::TestCase
         assert_raise(Scraper::ParsingError) {@scraper.send(:_data)}
       end
     end
-    
+        
     context "when processing" do
       setup do
-        @parser.stubs(:process).returns(@parser)
-        @parser.stubs(:results).returns({:foo => "bar", :foo1 => 42})            
-        @dummy_hpricot_object = Hpricot("some dummy response")
-        @scraper.stubs(:_data).returns(@dummy_hpricot_object)
+        @parser = @scraper.parser
+        @parser.stubs(:results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" }] )
+        @scraper.stubs(:_data).returns("something")
       end
-
-      should "get data" do
-        @scraper.expects(:_data)
+      
+      should "get data from url" do
+        @scraper.expects(:_data).with("http://www.anytown.gov.uk/members/bob")#.returns(Hpricot("some dummy response"))
         @scraper.process
       end
       
       should "pass data to associated parser" do
-        @parser.expects(:process).with(@dummy_hpricot_object).returns(stub_everything)
+        @parser.expects(:process).with("something").returns(stub_everything)
         @scraper.process
       end
-      
-      
-      should "make results from parser available through parsing_results accessor" do
-        @scraper.process
-        assert_equal ({:foo => "bar", :foo1 => 42}), @scraper.parsing_results
-      end
-      
-    end
-    
-    context "when updating from url" do
-      setup do
-        @scraper.stubs(:process)
-        @scraper.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" }] )
-      end
-      
-      should "process url" do
-        @scraper.expects(:process)
-        @scraper.update_from_url
-      end
-      
-      should "return self" do
-        assert_equal @scraper, @scraper.update_from_url
-      end
-      
-      should "create new or update and save existing instance of result_class with parser results and scraper council" do
-        Member.expects(:create_or_update_and_save).with(:full_name => "Fred Flintstone", :council_id => @council.id, :url => "http://www.anytown.gov.uk/members/fred").returns(Member.new)
-        @scraper.update_from_url
-      end
-      
-      should "store instances of result class in results" do
-        dummy_member = Member.new
-        Member.stubs(:create_or_update_and_save).returns(dummy_member)
-        assert_equal [dummy_member], @scraper.update_from_url.results
-      end
-      
-      should "not set info_object even if given" do
-        @scraper.update_from_url("foo")
-        assert_nil @scraper.info_object
-      end
-    end
-    
-    context "when updating from url and problem parsing" do
-      setup do
-        @scraper.stubs(:process)
-        @scraper.stubs(:parsing_results) # => nil
-      end
 
-      should "not create or update and save existing instance of result_class if no results" do
-        Member.expects(:create_or_update_and_save).never
-        @scraper.test
-      end
-    end
-    
-    context "when updating from url and problem creating new records" do
-      setup do
-        @scraper.stubs(:process)
-        @scraper.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" },
-                                                  { :full_name => "Bob Nourl"}] )
-      end
-
-      should "not raise exception" do
-        assert_nothing_raised() { @scraper.update_from_url }
-      end
-      
-      should "store validation errors in instances" do
-        
-      end
-      
-      should "add errors to scraper" do
-        
-      end
-      
-    end
-    
-    context "when testing" do
-      setup do
-        @scraper.stubs(:process)
-        @scraper.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :url => "http://www.anytown.gov.uk/members/fred" }] )
-      end
-      
-      should "process url" do
-        @scraper.expects(:process)
-        @scraper.test
-      end
-      
       should "return self" do
-        assert_equal @scraper, @scraper.test
+        assert_equal @scraper, @scraper.process
       end
       
       should "build new or update existing instance of result_class with parser results and scraper council" do
-        Member.expects(:build_or_update).with(:full_name => "Fred Flintstone", :council_id => @council.id, :url => "http://www.anytown.gov.uk/members/fred").returns(Member.new)
-        @scraper.test
+        dummy_new_member = Member.new
+        Member.expects(:build_or_update).with(:full_name => "Fred Flintstone", :council_id => @council.id, :url => "http://www.anytown.gov.uk/members/fred").returns(dummy_new_member)
+        dummy_new_member.expects(:save).never
+        @scraper.process
       end
       
       should "validate instances of result_class" do
         Member.any_instance.expects(:valid?)
-        @scraper.test
+        @scraper.process
       end
       
       should "store instances of result class in results" do
         dummy_member = Member.new
         Member.stubs(:build_or_update).returns(dummy_member)
-        assert_equal [dummy_member], @scraper.test.results
-      end
-    end
-    
-    context "when testing and problem parsing" do
-      setup do
-        @scraper.stubs(:process)
-        @scraper.stubs(:parsing_results) # => nil
-      end
-
-      should "not build new of update existing instance of result_class if no results" do
-        Member.expects(:build_or_update).never
-        @scraper.test
+        assert_equal [dummy_member], @scraper.process.results
       end
       
+      context "and problem parsing" do
+
+        should "not build or update instance of result_class if no results" do
+          @parser.stubs(:results) # => returns nil
+          Member.expects(:build_or_update).never
+          @scraper.process
+        end
+      end
+      
+      context "and saving results" do
+
+        should "return self" do
+          assert_equal @scraper, @scraper.process(:save_results => true)
+        end
+
+        should "create new or update and save existing instance of result_class with parser results and scraper council" do
+          dummy_new_member = Member.new
+          Member.expects(:build_or_update).with(:full_name => "Fred Flintstone", :council_id => @council.id, :url => "http://www.anytown.gov.uk/members/fred").returns(dummy_new_member)
+          dummy_new_member.expects(:save)
+          @scraper.process(:save_results => true)
+        end
+
+        should "store instances of result class in results" do
+          dummy_member = Member.new
+          Member.stubs(:build_or_update).returns(dummy_member)
+          assert_equal [dummy_member], @scraper.process(:save_results => true).results
+        end
+
+        # should "not set related_objects even if given" do
+        #   @scraper.process(:save_results => true)("foo")
+        #   assert_nil @scraper.related_objects
+        # end
+      end
+
     end
-     
-    #   context "processed result" do
-    #     setup do
-    #       Scraper.any_instance.stubs(:parser).returns(stub(:process => {:full_name => "Fred Wilson", :party => "Independent"}))
-    #       Scraper.any_instance.stubs(:result_model).returns("Member")
-    #     end
-    #     
-    #     should "initialize instance of result_model from result" do
-    #       Member.expects(:new).with({:foo => "bar", :foo1 => 42}) # NB @scraper parser returns this, takes preference over general sttubbing above
-    #       assert @scraper.test
-    #     end
-    #     
-    #     should "stores instance of result model in scraper results attribute as array element" do
-    #       assert_equal 1, @scraper.test.results.size
-    #       assert_equal @dummy_member, @scraper.test.results.first
-    #     end
-    #     
-    #     should "not have errors if no expected results to match against" do
-    #       assert @scraper.test.errors.empty?
-    #     end
-    #            
-    #     should "have errors if result class does not match expected_result_class" do
-    #       scraper = new_scraper(:expected_result_class => "Array")
-    #       assert_equal "was Array, but actual result class was Hash", scraper.test.errors[:expected_result_class]
-    #     end
-    #     
-    #     should "have not have errors if result size does not match expected_result_size but expected_result_size is nil" do
-    #       assert_nil new_scraper.test.errors[:expected_result_size]
-    #     end
-    #     
-    #     should "have not have errors if result size does not match expected_result_size but result is not an array" do
-    #       assert_nil new_scraper(:expected_result_size => 3).test.errors[:expected_result_size]
-    #     end
-    #     
-    #     context "against expected_result_attributes" do
-    #       should "have errors if it is missing required attribute" do
-    #         assert_equal "weren't matched: :foobar expected but was missing or nil", 
-    #                       new_scraper(:expected_result_attributes => ":foobar => true").test.errors[:expected_result_attributes]
-    #       end
-    #       
-    #       should "not have errors if attribute requirements are met" do
-    #         assert_nil new_scraper(:expected_result_attributes => ":full_name => /Wils/, :party => String").test.errors[:expected_result_attributes]
-    #       end
-    #       
-    #       should "have errors if attribute is wrong class" do
-    #         assert_equal "weren't matched: :full_name expected to be Integer but was String", 
-    #                      new_scraper(:expected_result_attributes => ":full_name => Integer").test.errors[:expected_result_attributes]
-    #       end
-    #       
-    #       should "have errors if attribute does not match regexp" do
-    #         assert_equal "weren't matched: :full_name expected to match /baz/ but was 'Fred Wilson'", 
-    #                       new_scraper(:expected_result_attributes => ":full_name => /baz/").test.errors[:expected_result_attributes]
-    #       end
-    #       
-    #       should "have errors if attribute does not match multiple conditions" do
-    #         expected_errors = ["weren't matched: :full_name expected to match /baz/ but was 'Fred Wilson'", "weren't matched: :party expected to be Integer but was String"]
-    #         errors = new_scraper(:expected_result_attributes => ":full_name => /baz/, :party => Integer").test.errors[:expected_result_attributes]
-    #         assert_equal expected_errors.sort, errors.sort # so any problems with ordering is ignored
-    #       end
-    #       
-    #       # decide what to do when attribute is missing -- i.e. should we say that if there's a k-v pair the key must exist, or should we say if it does exist it needs to match
-    #     end
-    #   end
-    #   
-    #   context "processed result array" do
-    #     setup do
-    #       Scraper.any_instance.stubs(:result_model).returns("Member")
-    #       Scraper.any_instance.stubs(:parser).returns(stub(:process => [{:foo => "foobar", :foo1 => 42, :foo2 => [1,2,3]}, {:foo => "bar", :foo1 => nil}]))          
-    #     end
-    # 
-    #     should "have errors if result size does not match expected_result_size" do
-    #       assert_equal "was 3, but actual result size was 2", new_scraper(:expected_result_size => 3).test.errors[:expected_result_size]
-    #     end
-    # 
-    #     # should "have errors for each element that fails to match attributes" do
-    #     #   expected_errors = ["weren't matched: :foo expected to match /foo/ but was 'bar' in one element: {:foo=>\"bar\", :foo1=>nil}", 
-    #     #                      "weren't matched: :foo3 expected but was missing or nil in two elements: {:foo=>\"bar\", :foo1=>nil}, {:foo => \"foobar\", :foo1 => 42, :foo2 => [1,2,3]}"]
-    #     #   assert_equal expected_errors, new_scraper(:expected_result_attributes => ":foo => /foo/, :foo3 => true").test.errors[:expected_result_attributes]
-    #     # end
-    #   end
-    #   
+    
   end
   
   private

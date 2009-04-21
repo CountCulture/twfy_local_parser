@@ -1,35 +1,24 @@
 class InfoScraper < Scraper
-  
-  # partially overrides test method defined in Scraper class to set info object
-  # instance variable
-  def test(info_object)
-    @info_object = info_object
-    super
+    
+  def process(options={})
+    @related_objects = [options[:objects]].flatten if options[:objects]
+    related_objects.each do |obj|
+      raw_results = parser.process(_data(obj.url)).results
+      update_with_results(raw_results, obj, options)
+    end
+    self
   end
   
-  # partially overrides test method defined in Scraper class to set info object
-  # instance variable
-  def update_from_url(info_object)
-    @info_object = info_object
-    super
-  end
-  
-  # overrides url accessor/attribute and uses url from info_object instead
-  def url
-    @info_object&&@info_object.url 
+  def related_objects
+    @related_objects ||= result_model.constantize.find(:all, :conditions => { :council_id => council_id })
   end
   
   protected
   # overrides method in standard scraper
-  def update_with_test_results
-    @info_object.attributes = parsing_results.first
-    @info_object.valid?
-    @results = [@info_object]
+  def update_with_results(res, obj=nil, options={})
+    obj.attributes = res.first
+    options[:save_results] ? obj.save : obj.valid?
+    results << obj
   end
-  
-  # overrides standard scraper method
-  def update_with_update_results
-    @info_object.update_attributes(parsing_results.first)
-    @results = [@info_object]
-  end
+
 end

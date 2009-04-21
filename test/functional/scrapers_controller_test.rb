@@ -48,8 +48,8 @@ class ScrapersControllerTest < ActionController::TestCase
       @scraper = Factory(:scraper)
     end
       
-    should "run test on scraper" do
-      Scraper.any_instance.expects(:test).returns(stub_everything)
+    should "run process scraper" do
+      Scraper.any_instance.expects(:process).returns(stub_everything)
       get :show, :id => @scraper.id, :dry_run => true
     end
   end
@@ -60,7 +60,7 @@ class ScrapersControllerTest < ActionController::TestCase
       @member = Factory(:member, :council => @scraper.council)
       @member.save # otherwise looks like new_before_save
       @new_member = Member.new(:full_name => "Fred Flintstone", :uid => 55)
-      Scraper.any_instance.stubs(:test).returns(@scraper)
+      Scraper.any_instance.stubs(:process).returns(@scraper)
       @scraper.stubs(:results).returns([@member, @new_member])
       get :show, :id => @scraper.id, :dry_run => true
     end
@@ -111,7 +111,7 @@ class ScrapersControllerTest < ActionController::TestCase
     end
       
     should "run test on scraper" do
-      Scraper.any_instance.expects(:update_from_url).returns(stub_everything)
+      Scraper.any_instance.expects(:process).with(:save_results => true).returns(stub_everything)
       get :show, :id => @scraper.id, :process => true
     end
   end
@@ -119,7 +119,7 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on GET to :show with successful :process" do
     setup do
       @scraper = Factory(:scraper)
-      Scraper.any_instance.stubs(:process).returns(@scraper)
+      Scraper.any_instance.stubs(:_data).returns(stub_everything)
       Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :uid => 1, :url => "http://www.anytown.gov.uk/members/fred" }] )
       get :show, :id => @scraper.id, :process => true
     end
@@ -144,7 +144,7 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on GET to :show with unsuccesful :process due to failed validation" do
     setup do
       @scraper = Factory(:scraper)
-      Scraper.any_instance.stubs(:process).returns(@scraper)
+      Scraper.any_instance.stubs(:_data).returns(stub_everything)
       Scraper.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :uid => 1, :url => "http://www.anytown.gov.uk/members/fred" },
                                                             { :full_name => "Bob Nourl"}] )
       get :show, :id => @scraper.id, :process => true

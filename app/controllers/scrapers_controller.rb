@@ -7,9 +7,9 @@ class ScrapersController < ApplicationController
   def show
     @scraper = Scraper.find(params[:id])
     if params[:dry_run]
-      @results = @scraper.test.results
+      @results = @scraper.process.results
     elsif params[:process]
-      @results = @scraper.update_from_url.results
+      @results = @scraper.process(:save_results => true).results
     end
     @parser = @scraper.parser
   end
