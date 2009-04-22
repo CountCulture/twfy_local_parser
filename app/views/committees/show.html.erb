@@ -1,0 +1,5 @@
+<h1><%= @committee.title %> <em><%= link_to "council page", @committee.url %></em></h1>
+<p>Council <strong><%= link_to h(@committee.council.name), @committee.council %></strong></p>
+
+
+<p class="attribution">Last updated <%= @committee.updated_at.to_s(:short) %> (<%= time_ago_in_words(@committee.updated_at) %> ago)</p>
