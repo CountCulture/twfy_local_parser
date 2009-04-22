@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class MemberTest < ActiveSupport::TestCase
-  should_validate_presence_of :first_name, :last_name, :url
+  should_validate_presence_of :first_name, :last_name, :url, :council_id
   should_belong_to :council
   should_have_many :memberships
   should_have_many :committees, :through => :memberships
@@ -15,6 +15,9 @@ class MemberTest < ActiveSupport::TestCase
     
     should_validate_uniqueness_of :uid, :scoped_to => :council_id
     should_validate_presence_of :uid
+    should "include ScraperModel mixin" do
+      assert Member.respond_to?(:find_existing)
+    end
                 
   end
   

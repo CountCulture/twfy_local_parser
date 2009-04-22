@@ -55,3 +55,9 @@ Factory.define :old_member, :class => :member do |f|
   f.date_left 6.months.ago
   f.association :council
 end
+
+Factory.define :committee do |f|
+  f.uid 77
+  f.title 'Ways and Means'
+  f.url "http://www.anytown.gov.uk/committee/77"
+end

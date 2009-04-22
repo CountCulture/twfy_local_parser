@@ -3,7 +3,7 @@ require 'test_helper'
 class MeetingTest < ActiveSupport::TestCase
   context "The Meeting Class" do
     setup do
-      @committee = Committee.create!(:title => "Audit Group", :url => "some.url")
+      @committee = Committee.create!(:title => "Audit Group", :url => "some.url", :uid => 33, :council_id => 1)
       @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee)
     end
 
@@ -15,7 +15,7 @@ class MeetingTest < ActiveSupport::TestCase
 
   context "A Meeting instance" do
     setup do
-      @committee = Committee.create!(:title => "Audit Group", :url => "some.url")
+      @committee = Committee.create!(:title => "Audit Group", :url => "some.url", :uid => 33, :council_id => 1)
       @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee)
     end
 
