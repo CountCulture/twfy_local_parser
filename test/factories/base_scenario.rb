@@ -5,6 +5,7 @@ Factory.define :scraper, :class => :item_scraper do |s|
   s.association :parser
   s.association :council
 end
+
 Factory.define :item_scraper, :class => :item_scraper do |s|
   s.url 'http://www.anytown.gov.uk/members'
   s.result_model 'Member' 
@@ -33,7 +34,7 @@ Factory.define :council do |f|
 end
 Factory.define :another_council, :class => :council do |f|
   f.name 'Anothertown'
-  f.url 'http://www.anytown.gov.uk'
+  f.url 'http://www.anothertown.gov.uk'
 end
 Factory.define :tricky_council, :class => :council do |f|
   f.name 'Tricky Town'

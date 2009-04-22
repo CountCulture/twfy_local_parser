@@ -166,7 +166,7 @@ class ScrapersControllerTest < ActionController::TestCase
      end
    end
   end
-
+  
   # new test
   context "on GET to :new with no scraper type given" do
     should "raise exception" do
@@ -239,11 +239,11 @@ class ScrapersControllerTest < ActionController::TestCase
       should_assign_to :scraper
       should_redirect_to( "the show page for scraper") { scraper_path(assigns(:scraper)) }
       should_set_the_flash_to "Successfully created scraper"
-
+  
       should "save as given scraper type" do
         assert_kind_of InfoScraper, assigns(:scraper)
       end
-
+  
       should_change "Parser.count", :by => 1
       
       should "save parser title" do
