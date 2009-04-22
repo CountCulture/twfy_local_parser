@@ -1,0 +1,6 @@
+<%- div_for scraped_object, :class => class_for_result(scraped_object) do -%>
+<div><%= flash_for_result(scraped_object) %></div>
+<%= error_messages_for :scraped_object, :object => scraped_object %>
+  <h4><%= scraped_object.title %> <em><%= link_to "Council page", scraped_object.url, :class => "external" %></em></h4>
+  <%= changed_attributes_list(scraped_object) %>
+<%- end -%>

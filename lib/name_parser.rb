@@ -11,7 +11,7 @@ module NameParser
     names.delete_if{ |n| Titles.include?(n) ? titles << n : (Qualifications.include?(n) ? qualifications << n : false)}
     result_hash[:first_name] = names[0..-2].join(" ")
     result_hash[:last_name] = names.last
-    result_hash[:title] = titles.join(" ") unless titles.empty?
+    result_hash[:name_title] = titles.join(" ") unless titles.empty?
     result_hash[:qualifications] = qualifications.join(" ") unless qualifications.empty?
     result_hash
   end

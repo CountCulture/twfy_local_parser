@@ -23,14 +23,14 @@ class MemberTest < ActiveSupport::TestCase
   
   context "A Member instance" do
     setup do
-      NameParser.stubs(:parse).returns(:first_name => "Fred", :last_name => "Scuttle", :title => "Prof", :qualifications => "PhD")
+      NameParser.stubs(:parse).returns(:first_name => "Fred", :last_name => "Scuttle", :name_title => "Prof", :qualifications => "PhD")
       @member = new_member(:full_name => "Fred Scuttle")
     end
     
     should "return full name" do
       assert_equal "Fred Scuttle", @member.full_name
     end
-
+    
     should "should extract first name from full name" do
       assert_equal "Fred", @member.first_name
     end
@@ -39,12 +39,16 @@ class MemberTest < ActiveSupport::TestCase
       assert_equal "Scuttle", @member.last_name
     end
     
-    should "extract title from full name" do
-      assert_equal "Prof", @member.title
+    should "extract name_title from full name" do
+      assert_equal "Prof", @member.name_title
     end
     
     should "extract qualifications from full name" do
       assert_equal "PhD", @member.qualifications
+    end
+    
+    should "alias full_name as title" do
+      assert_equal @member.full_name, @member.title
     end
     
     should "be ex_member if has left office" do

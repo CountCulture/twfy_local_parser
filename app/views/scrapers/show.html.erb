@@ -31,7 +31,8 @@
     <h3>Completed <%= params[:process] ? "Processing" : "Test Scrape" %>: <%= @results.size %> records found</h3>
     <%- for result in @results -%>
       <%#- div_for result do -%>
-        <%= render :partial => result.class.to_s.downcase, :object => result %>
+      <%#= render :partial => result.class.to_s.downcase, :object => result %>
+      <%= render :partial => 'scraped_object', :object => result %>
         
       <%#- end -%>
     <%- end -%>

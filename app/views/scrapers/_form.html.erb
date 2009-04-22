@@ -3,6 +3,7 @@
       <%= f.label :council, "Council" %>
       <%= f.collection_select :council_id, Council.find(:all), :id, :name, { :include_blank => true } %>
     </p>
+    <%= hidden_field_tag :type, @scraper.class.to_s %>
     <p>
       <%= f.label :result_model, "Result Model" %>
       <%= f.select("result_model", Scraper::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>

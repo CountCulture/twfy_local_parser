@@ -205,6 +205,10 @@ class ScrapersControllerTest < ActionController::TestCase
       assert_select "input#scraper_parser_attributes_attribute_parser_object__attrib_name"
       assert_select "input#scraper_parser_attributes_attribute_parser_object__parsing_code"
     end
+    
+    should "include scraper type in hidden field" do
+      assert_select "input#type[type=hidden][value=InfoScraper]"
+    end
   end
   
   # create tests

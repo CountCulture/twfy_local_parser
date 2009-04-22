@@ -8,11 +8,12 @@ class Member < ActiveRecord::Base
   has_many :committees, :through => :memberships
   belongs_to :council
   named_scope :current, :conditions => "date_left IS NULL"
+  alias_attribute :title, :full_name
       
   
   def full_name=(full_name)
     names_hash = NameParser.parse(full_name)
-    %w(first_name last_name title qualifications).each do |a|
+    %w(first_name last_name name_title qualifications).each do |a|
       self.send("#{a}=", names_hash[a.to_sym])
     end
   end
