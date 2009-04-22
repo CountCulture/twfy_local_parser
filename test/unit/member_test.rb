@@ -195,6 +195,22 @@ class MemberTest < ActiveSupport::TestCase
       assert member.new_record_before_save?
     end
     
+    context "when saving_without_losing_dirty" do
+      setup do
+        @fresh_member = Factory.build(:member)
+        @fresh_member.save_without_losing_dirty
+      end
+      
+      should_change "Member.count", :by => 1
+      should "save record" do
+        assert !@fresh_member.new_record?
+      end
+      
+      should "keep record of new attributes" do
+        assert_equal [nil, @fresh_member.first_name], @fresh_member.changes['first_name']
+      end
+    end
+    
     should "update details using MemberScraper" do
       # MemberScraper.any_instance.expects(:update).with(@old_member)
       # @old_member.update

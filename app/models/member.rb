@@ -7,29 +7,7 @@ class Member < ActiveRecord::Base
   has_many :committees, :through => :memberships
   belongs_to :council
   named_scope :current, :conditions => "date_left IS NULL"
-  
-  # Gets list of members from GLA website and updates members. Ones no 
-  # longer on website are marked as inactive
-  # def self.update_members
-  #   existing_members = self.current
-  #   scraped_members = Gla::MembersScraper.new.response
-  #   existing_members.each do |member|
-  #     new_attribs = scraped_members.detect{ |sm| sm[:full_name] == member.full_name }
-  #     if new_attribs
-  #       scraped_members - [new_attribs]
-  #       # m.update_attributes(new_attribs)
-  #     else
-  #       member.update_attribute(:date_left, Date.today) 
-  #     end
-  #   end
-  #   scraped_members.each do |s_hash|
-  #     m = Member.create(s_hash)
-  #     if m.new_record? # then we didn't save
-  #       find_by_first_name_and_last_name(m.first_name, m.last_name).update_attributes(s_hash)
-  #     end
-  #   end
-  # end
-  
+    
   def self.build_or_update(params)
     existing_member = find_existing(params)
     existing_member.attributes = params if existing_member
@@ -38,9 +16,9 @@ class Member < ActiveRecord::Base
   
   def self.create_or_update_and_save(params)
     member = self.build_or_update(params)
-    changed_attributes = member.send(:changed_attributes).clone
-    member.save # this clears changed attributes
-    member.send(:changed_attributes).update(changed_attributes) # so merge them back in
+    # changed_attributes = member.send(:changed_attributes).clone
+    member.save_without_losing_dirty
+    # member.send(:changed_attributes).update(changed_attributes) # so merge them back in
     member
   end
   
@@ -73,5 +51,11 @@ class Member < ActiveRecord::Base
   
   def new_record_before_save?
     instance_variable_get(:@new_record_before_save)
+  end
+  
+  def save_without_losing_dirty
+    ch_attributes = changed_attributes.clone
+    save # this clears changed attributes
+    changed_attributes.update(ch_attributes) # so merge them back in
   end
 end

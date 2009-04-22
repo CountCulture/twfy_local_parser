@@ -161,7 +161,14 @@ class ScraperTest < ActiveSupport::TestCase
         should "create new or update and save existing instance of result_class with parser results and scraper council" do
           dummy_new_member = Member.new
           Member.expects(:build_or_update).with(:full_name => "Fred Flintstone", :council_id => @council.id, :url => "http://www.anytown.gov.uk/members/fred").returns(dummy_new_member)
-          dummy_new_member.expects(:save)
+          @scraper.process(:save_results => true)
+        end
+
+        should "save record using save_without_losing_dirty" do
+          dummy_new_member = Member.new
+          Member.stubs(:build_or_update).returns(dummy_new_member)
+          dummy_new_member.expects(:save_without_losing_dirty)
+          
           @scraper.process(:save_results => true)
         end
 
@@ -171,10 +178,6 @@ class ScraperTest < ActiveSupport::TestCase
           assert_equal [dummy_member], @scraper.process(:save_results => true).results
         end
 
-        # should "not set related_objects even if given" do
-        #   @scraper.process(:save_results => true)("foo")
-        #   assert_nil @scraper.related_objects
-        # end
       end
 
     end
