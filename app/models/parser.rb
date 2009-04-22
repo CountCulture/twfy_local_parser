@@ -3,7 +3,7 @@
 class Parser < ActiveRecord::Base
   AttribObject = Struct.new(:attrib_name, :parsing_code, :to_param)
   has_many :scrapers
-  validates_presence_of :title, :item_parser
+  validates_presence_of :title#, :item_parser
   serialize :attribute_parser
   attr_reader :results
   
@@ -35,7 +35,7 @@ class Parser < ActiveRecord::Base
     parsing_code = item_parser
     object_to_be_parsed = doc
     
-    items = doc.instance_eval(item_parser)
+    items = item_parser.blank? ? doc : doc.instance_eval(item_parser)
     
     now_parsing = "attributes"
     items = [items] unless items.is_a?(Array)
@@ -51,9 +51,10 @@ class Parser < ActiveRecord::Base
     logger.debug { "*********results from processing parser = #{@results.inspect}" }
     self
   rescue Exception => e
-    message = "Exception raised (#{e.message}) parsing #{now_parsing}.\n" +
+    message = "Exception raised parsing #{now_parsing}: #{e.message}\n" +
                 "Problem occurred using parsing code <code>#{parsing_code}</code> on following Hpricot object: #{object_to_be_parsed.inspect}"
     logger.debug { message }
+    logger.debug { "Backtrace:\n#{e.backtrace}" }
     errors.add_to_base(message)
     self
   end

@@ -3,7 +3,6 @@ require 'test_helper'
 class ParserTest < Test::Unit::TestCase
   
   context "The Parser class" do
-    should_validate_presence_of :item_parser
     should_validate_presence_of :title
     should_have_many :scrapers
 
@@ -11,11 +10,12 @@ class ParserTest < Test::Unit::TestCase
       parser = Parser.create!(:title => "test parser", :item_parser => "foo", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"})
       assert_equal({:foo => "\"bar\"", :foo2 => "nil"}, parser.reload.attribute_parser)
     end
+    
   end
   
   context "A Parser instance" do
     setup do
-      @parser = Factory.create(:parser)
+      @parser = Factory(:parser)
     end
     
     should "have results accessor" do
@@ -106,6 +106,12 @@ class ParserTest < Test::Unit::TestCase
           @parser.process(@dummy_hpricot)
         end
         
+        should "pass hpricot doc directly to attribute_parser if not item_parser" do
+          @no_item_parser_parser = Factory.build(:parser, :item_parser => nil)
+          @dummy_hpricot = mock
+          @dummy_hpricot.expects(:instance_eval).with(){ |value| value =~ /bar/ }
+          @no_item_parser_parser.process(@dummy_hpricot).errors
+        end
       end
       
       

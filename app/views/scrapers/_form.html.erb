@@ -1,4 +1,4 @@
-<% form_for :scraper, @scraper, :url => (@scraper.new_record? ? scrapers_path : scraper_path(@scraper)) do |f| -%>
+<% form_for :scraper, @scraper, :url => (@scraper.new_record? ? scrapers_path : scraper_path(@scraper)), :html => { :method => (@scraper.new_record? ? :post : :put)} do |f| -%>
     <p>
       <%= f.label :council, "Council" %>
       <%= f.collection_select :council_id, Council.find(:all), :id, :name, { :include_blank => true } %>

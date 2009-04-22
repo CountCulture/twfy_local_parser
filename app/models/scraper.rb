@@ -39,7 +39,7 @@ class Scraper < ActiveRecord::Base
   def _data(target_url=nil)
     Hpricot.parse(_http_get(target_url), :fixup_tags => true)
   rescue Exception => e
-    logger.error { "Problem parsing data returned from #{target_url}: #{e}" }
+    logger.error { "Problem with data returned from #{target_url}: #{e}" }
     raise ParsingError
   end
   

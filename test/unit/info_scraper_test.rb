@@ -92,6 +92,15 @@ class InfoScraperTest < ActiveSupport::TestCase
         should "store updated existing instance in results" do
           assert_equal [@dummy_related_object], @scraper.process(:objects => @dummy_related_object).results
         end
+        
+        context "and problem parsing" do
+
+          should "not build or update instance of result_class if no results" do
+            @parser.stubs(:results) # => returns nil
+            Member.expects(:attributes=).never
+            @scraper.process(:objects => @dummy_related_object)
+          end
+        end
       end
       
       context "with collection of given objects" do

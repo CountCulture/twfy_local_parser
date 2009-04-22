@@ -112,7 +112,7 @@ class ScraperTest < ActiveSupport::TestCase
       end
       
       should "get data from url" do
-        @scraper.expects(:_data).with("http://www.anytown.gov.uk/members/bob")#.returns(Hpricot("some dummy response"))
+        @scraper.expects(:_data).with("http://www.anytown.gov.uk/members/bob")
         @scraper.process
       end
       

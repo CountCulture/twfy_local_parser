@@ -16,9 +16,11 @@ class InfoScraper < Scraper
   protected
   # overrides method in standard scraper
   def update_with_results(res, obj=nil, options={})
-    obj.attributes = res.first
-    options[:save_results] ? obj.save : obj.valid?
-    results << obj
+    unless res.blank?
+      obj.attributes = res.first
+      options[:save_results] ? obj.save : obj.valid?
+      results << obj
+    end
   end
 
 end
