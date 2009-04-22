@@ -2,6 +2,8 @@
 
 <p>website <strong><%= link_to @council.url, @council.url, :class => :external %></strong></p>
 
+<p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
+
 <h3>Current council members</h3>
 <ul id="members">
   <% for member in @members %>

@@ -5,7 +5,7 @@
   <div id="core_info">
     <h3><%= @scraper.class %></h3>
     <p>
-      <strong>for</strong> <%= h @scraper.council.name %>Council<br />
+      <strong>for</strong> <%= link_to "#{@scraper.council.name} Council", council_path(@scraper.council) %><br />
       <strong>scraping for</strong> <%= @scraper.scraping_for %>
     </p>
     <%= render :partial => 'parser', :object => @scraper.parser %>

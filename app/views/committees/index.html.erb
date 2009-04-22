@@ -1,0 +1,7 @@
+<h1>Committee list for <%= @council.name %> Council</h1>
+
+<ul>
+  <% for committee in @committees %>
+    <li><%= link_to committee.title, committee %></li>
+  <% end %>
+</ul>
