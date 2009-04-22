@@ -10,6 +10,7 @@ class MembersControllerTest < ActionController::TestCase
      end
 
      should_assign_to :member
+     should_assign_to :committees
      should_respond_with :success
      should_render_template :show
 

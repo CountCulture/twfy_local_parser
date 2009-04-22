@@ -5,13 +5,18 @@ class CommitteesControllerTest < ActionController::TestCase
    context "on GET to :show for first record" do
      setup do
        @committee = Factory(:committee)
+       @member = Factory(:member, :council => @committee.council)
+       @committee.members << @member
        get :show, :id => @committee.id
      end
 
-     should_assign_to :committee
+     should_assign_to :committee, :members
      should_respond_with :success
      should_render_template :show
-
+     
+     should "list members" do
+       assert_select "ul#members li a", @member.title
+     end
    end  
 
    # index test

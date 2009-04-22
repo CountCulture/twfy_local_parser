@@ -4,4 +4,11 @@
   <em>(<%= link_to "see all #{h(@committee.council.name)} Council committees", committees_path(:council_id => @council.id) %> )</em>
 </p>
 
+<%- unless @members.blank? -%>
+  <ul id="members">
+    <% for member in @members %>
+      <li><%= link_for member %></li>
+    <% end %>
+  </ul>
+<%- end -%>
 <p class="attribution">Last updated <%= @committee.updated_at.to_s(:short) %> (<%= time_ago_in_words(@committee.updated_at) %> ago)</p>

@@ -77,8 +77,12 @@ class ScraperTest < ActiveSupport::TestCase
       assert_equal "foo", @scraper.related_objects
     end
     
-    should "build title from council name and result class" do
-      assert_equal "Member scraper for Anytown council", @scraper.title
+    should "build title from council name result class and scraper type when ItemScraper" do
+      assert_equal "Member Items scraper for Anytown council", @scraper.title
+    end
+    
+    should "build title from council name result class and scraper type when InfoScraper" do
+      assert_equal "Member Info scraper for Anothertown council", Factory.build(:info_scraper).title
     end
     
     should "return errors in parser as parsing errors" do

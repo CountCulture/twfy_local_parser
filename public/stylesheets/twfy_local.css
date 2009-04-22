@@ -14,7 +14,8 @@ input, textarea {
 	clear:left; }
 div.title {
 	font-weight: bold; }
-
+p.attribution {
+	text-align: right; }
 /*Parser-specific formatting*/
 div.item_attribute {
 	clear:left; }
