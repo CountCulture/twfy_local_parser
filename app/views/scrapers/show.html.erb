@@ -3,9 +3,11 @@
 <div id="scraper">
   
   <div id="core_info">
-    <p><strong>For</strong> <%= h @scraper.council.name %>Council</p>
-    <p><strong>at</strong> <%= h @scraper.url %></p>
-    <p><strong>Looking for</strong> <%= h @scraper.result_model %></p>
+    <h3><%= @scraper.class %></h3>
+    <p>
+      <strong>for</strong> <%= h @scraper.council.name %>Council<br />
+      <strong>scraping for</strong> <%= @scraper.scraping_for %>
+    </p>
     <%= render :partial => 'parser', :object => @scraper.parser %>
     
   </div>

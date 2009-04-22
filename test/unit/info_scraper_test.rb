@@ -23,6 +23,10 @@ class InfoScraperTest < ActiveSupport::TestCase
       @scraper = Factory.create(:info_scraper)
     end
     
+    should "return what it is scraping for" do
+      assert_equal "info on Members", @scraper.scraping_for
+    end
+    
     should "search related model for related_objects when none exist" do
       related_objects = stub
       Member.expects(:find).with(:all, :conditions => {:council_id => @scraper.council_id}).returns("related_objects")
