@@ -5,20 +5,7 @@ class Committee < ActiveRecord::Base
   belongs_to :council
   has_many :meetings
   has_many :memberships, :primary_key => :uid
-  has_many :members, :through => :memberships do
-    def add_or_update(members)
-      
-    end
-    
-    def uids=(uid_array)
-      uid_members = proxy_reflection.source_reflection.klass.find_all_by_uid_and_council_id(uid_array, proxy_owner.council_id)
-      proxy_owner.send("#{proxy_reflection.name}=",uid_members)
-    end
-    
-    def uids
-      collect(&:uid)
-    end
-  end
+  has_many :members, :through => :memberships, :extend => UidAssociationExtension
   delegate :uids, :to => :members, :prefix => true
   delegate :uids=, :to => :members, :prefix => true
 end

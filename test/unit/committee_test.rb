@@ -18,14 +18,36 @@ class CommitteeTest < ActiveSupport::TestCase
       assert Committee.respond_to?(:find_existing)
     end
     
-    should "have many council_members" do
-      
-    end
   end
     
   context "A Committee instance" do
     setup do
-      @committee = Committee.new(:title => "Some Committee", :url => "some.url")
+      @council, @another_council = Factory(:council), Factory(:another_council)
+      @committee = Committee.new(:title => "Some Committee", :url => "some.url", :council_id => @council.id)
+    end
+    
+    context "with members" do
+      setup do
+        @member = Factory(:member, :council => @council)
+        @old_member = Factory(:old_member, :council => @council)
+        @another_council_member = Factory(:member, :council => @another_council)
+        @committee.members << @old_member
+      end
+
+      should "return member uids" do
+        assert_equal [@old_member.uid], @committee.members_uids
+      end
+      
+      should "replace existing members with ones with given uids" do
+        @committee.members_uids = [@member.uid]
+        assert_equal [@member], @committee.members
+      end
+      
+      should "not add members from different councils" do
+        @committee.members_uids = [@another_council_member.uid]
+        assert !@committee.members.include?(@another_council_member)
+      end
+      
     end
     
   end
