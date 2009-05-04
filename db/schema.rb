@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090422151517) do
+ActiveRecord::Schema.define(:version => 20090501161152) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(:version => 20090422151517) do
     t.date     "date_left"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "council_id"
   end
 
   create_table "parsers", :force => true do |t|

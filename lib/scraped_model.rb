@@ -1,7 +1,7 @@
 module ScrapedModel
   module ClassMethods
     
-    # default find_exisitng. Overwrite in models that include this mixin if necessary
+    # default find_existing. Overwrite in models that include this mixin if necessary
     def find_existing(params)
       find_by_council_id_and_uid(params[:council_id], params[:uid])
     end

@@ -3,3 +3,6 @@
 At the moment it’s in the early stages, concentrating on developing a scraper/parser system where the scraper/parsers are stored in the db (via a web interface).
 
 Anyone wishing to help on this project, please email me at countculture at googlemail dot com
+
+BUGS
+When adding join model (e.g. committee memberships), currently added even when test processing. Plus no reporting, as reporting uses Dirty, which doesn't act on associations

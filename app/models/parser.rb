@@ -7,15 +7,6 @@ class Parser < ActiveRecord::Base
   serialize :attribute_parser
   attr_reader :results
   
-  # converts the attributes we get from a new or edit form into the correct item_parser hash
-  # def item_parser_attribs=(attribs)
-  #   result_hash = {}
-  #   attribs.each do |a|
-  #     result_hash[a["name"]] = a["parser"]
-  #   end
-  #   self.item_parser = result_hash
-  # end
-  # 
   def attribute_parser_object
     return [AttribObject.new] if attribute_parser.blank?
     self.attribute_parser.collect { |k,v| AttribObject.new(k.to_s, v) }.sort{ |a,b| a.attrib_name <=> b.attrib_name }
