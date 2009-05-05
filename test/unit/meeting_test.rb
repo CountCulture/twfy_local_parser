@@ -4,11 +4,14 @@ class MeetingTest < ActiveSupport::TestCase
   context "The Meeting Class" do
     setup do
       @committee = Committee.create!(:title => "Audit Group", :url => "some.url", :uid => 33, :council_id => 1)
-      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee)
+      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee, :uid => 22, :council_id => @committee.council_id)
     end
 
     should_belong_to :committee
+    should_belong_to :council # think about meeting should belong to council through committee
     should_validate_presence_of :date_held
+    should_validate_presence_of :committee_id
+    should_validate_presence_of :uid
     should_validate_uniqueness_of :date_held, :scoped_to => :committee_id
 
     should "include ScraperModel mixin" do
@@ -20,7 +23,7 @@ class MeetingTest < ActiveSupport::TestCase
   context "A Meeting instance" do
     setup do
       @committee = Committee.create!(:title => "Audit Group", :url => "some.url", :uid => 33, :council_id => 1)
-      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee)
+      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee, :uid => 22, :council_id => @committee.council_id)
     end
 
     should "convert date string to date" do

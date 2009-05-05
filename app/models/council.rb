@@ -6,6 +6,7 @@ class Council < ActiveRecord::Base
   has_many :members
   has_many :committees
   has_many :scrapers
+  has_many :meetings
   validates_presence_of :name
   validates_uniqueness_of :name
   

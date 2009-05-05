@@ -1,7 +1,8 @@
 class Meeting < ActiveRecord::Base
   include ScrapedModel
   belongs_to :committee
-  validates_presence_of :date_held
+  belongs_to :council
+  validates_presence_of :date_held, :committee_id, :uid, :council_id
   validates_uniqueness_of :date_held, :scope => :committee_id
   
   def title

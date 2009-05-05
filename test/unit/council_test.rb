@@ -11,6 +11,7 @@ class CouncilTest < ActiveSupport::TestCase
     should_have_many :members
     should_have_many :committees
     should_have_many :scrapers
+    should_have_many :meetings
   end
   
   context "A Council instance" do
