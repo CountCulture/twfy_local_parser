@@ -50,7 +50,7 @@ class ItemScraperTest < ActiveSupport::TestCase
         @scraper.stubs(:_data).returns("something")
       end
       
-      context "with item_scraper with url" do
+      context "item_scraper with url" do
       
         should "get data from url" do
           # This behaviour is inherited from parent Scraper class, so this is (poss unnecessary) sanity check
@@ -59,39 +59,63 @@ class ItemScraperTest < ActiveSupport::TestCase
         end
       
       end
-      context "with item_scraper with related_model" do
+      context "item_scraper with related_model and no url" do
         setup do
           @scraper.update_attribute(:related_model, "Committee")
+          
+          # @scraper.update_attributes(:related_model => "Committee", :url => nil)
           @committee_1 = Factory(:committee, :council => @scraper.council)
-          @committee_2 = Factory(:committee, :council => @scraper.council, :title => "Another Committee", :url => "http://www.anytown.gov.uk/committee/78")
+          @committee_2 = Factory(:committee, :council => @scraper.council, :title => "Another Committee", :url => "http://www.anytown.gov.uk/committee/78", :uid => 78)
           dummy_related_objects = [@committee_1, @committee_2]
           @scraper.stubs(:related_objects).returns(dummy_related_objects)
           @scraper.stubs(:_data).returns("something")
         end
-      
-        should "not get data from scraper url" do
-          @scraper.expects(:_data).with("http://www.anytown.gov.uk/members").never
-          @scraper.process
-        end
-      
-        should "get data from each related_object's url" do
-          @scraper.expects(:_data).with("http://www.anytown.gov.uk/committee/77")
-          @scraper.expects(:_data).with("http://www.anytown.gov.uk/committee/78")
-          @scraper.process
-        end
-      
-        should "update result model with each result and related object details" do
-          @scraper.expects(:update_with_results).with([{ :committee_id => @committee_1.id, :uid => 456 }, { :committee_id => @committee_1.id, :uid => 457 }], anything)
-          @scraper.process
+        
+        context "and url" do
+
+          should "get data from scraper url" do
+            @scraper.expects(:_data).with("http://www.anytown.gov.uk/members").twice #once for each related object
+            @scraper.process
+          end
         end
         
-        should "update result model passing on any options" do
-          @scraper.expects(:update_with_results).with(anything, {:foo => "bar"})
-          @scraper.process({:foo => "bar"})
+        context "and url with related object in it" do
+          setup do
+            @scraper.update_attribute(:url, 'http://www.anytown.gov.uk/meetings?ctte_id=#{uid}')
+          end
+
+          should "get data from url interpolated with related object" do
+            @scraper.expects(:_data).with("http://www.anytown.gov.uk/meetings?ctte_id=77")
+            @scraper.expects(:_data).with("http://www.anytown.gov.uk/meetings?ctte_id=78")
+            @scraper.process
+          end
+        end
+        
+        
+        context "and no url" do
+          setup do
+            @scraper.update_attribute(:url, nil)
+          end
+
+          should "get data from each related_object's url" do
+            @scraper.expects(:_data).with("http://www.anytown.gov.uk/committee/77")
+            @scraper.expects(:_data).with("http://www.anytown.gov.uk/committee/78")
+            @scraper.process
+          end
+
+          should "update result model with each result and related object details" do
+            @scraper.expects(:update_with_results).with([{ :committee_id => @committee_1.id, :uid => 456 }, { :committee_id => @committee_1.id, :uid => 457 }], anything)
+            @scraper.process
+          end
+
+          should "update result model passing on any options" do
+            @scraper.expects(:update_with_results).with(anything, {:foo => "bar"})
+            @scraper.process({:foo => "bar"})
+          end
         end
         
       end
-  
+            
     end
   end
 end
