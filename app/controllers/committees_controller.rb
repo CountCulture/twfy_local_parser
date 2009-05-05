@@ -9,6 +9,7 @@ class CommitteesController < ApplicationController
     @committee = Committee.find(params[:id])
     @council = @committee.council
     @members = @committee.members
+    @meetings = @committee.meetings
   end
   
 end

@@ -11,7 +11,7 @@ class MembershipTest < ActiveSupport::TestCase
     should_belong_to :committee
     # should_belong_to :council
     should_belong_to :member
-    should_belong_to :uid_member
+    # should_belong_to :uid_member
     
   end
 end

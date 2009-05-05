@@ -2,7 +2,7 @@ class Scraper < ActiveRecord::Base
   class ScraperError < StandardError; end
   class RequestError < ScraperError; end
   class ParsingError < ScraperError; end
-  ALLOWED_RESULT_CLASSES = %w(Member Committee)
+  ALLOWED_RESULT_CLASSES = %w(Member Committee Meeting)
   SCRAPER_TYPES = %w(InfoScraper ItemScraper)
   belongs_to :parser
   belongs_to :council

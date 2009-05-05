@@ -10,6 +10,10 @@ class MeetingTest < ActiveSupport::TestCase
     should_belong_to :committee
     should_validate_presence_of :date_held
     should_validate_uniqueness_of :date_held, :scoped_to => :committee_id
+
+    should "include ScraperModel mixin" do
+      assert Meeting.respond_to?(:find_existing)
+    end
   end
   
 

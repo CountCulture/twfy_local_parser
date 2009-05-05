@@ -13,6 +13,11 @@
         <%= f.label :url, "Url to be scraped" %>
         <%= f.text_field :url, :size => 60 %>
       </p>
+      <p>
+        <em>or...</em><br />
+        <%= f.label :related_model, "Related model" %>
+        <%= f.select("related_model", Scraper::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+      </p>
     <%- end -%>
     <fieldset id="parser_details">
       <legend>Parser details</legend>

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090501161152) do
+ActiveRecord::Schema.define(:version => 20090505084627) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -35,6 +35,9 @@ ActiveRecord::Schema.define(:version => 20090501161152) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "committee_id"
+    t.integer  "uid"
+    t.integer  "council_id"
+    t.string   "url"
   end
 
   create_table "members", :force => true do |t|
@@ -84,6 +87,7 @@ ActiveRecord::Schema.define(:version => 20090501161152) do
     t.text     "expected_result_attributes"
     t.string   "result_model"
     t.string   "type"
+    t.string   "related_model"
   end
 
 end

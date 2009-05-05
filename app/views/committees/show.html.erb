@@ -11,4 +11,12 @@
     <% end %>
   </ul>
 <%- end -%>
+
+<%- unless @meetings.blank? -%>
+  <ul id="meetings">
+    <% for meeting in @meetings %>
+      <li><%= link_for meeting %></li>
+    <% end %>
+  </ul>
+<%- end -%>
 <p class="attribution">Last updated <%= @committee.updated_at.to_s(:short) %> (<%= time_ago_in_words(@committee.updated_at) %> ago)</p>

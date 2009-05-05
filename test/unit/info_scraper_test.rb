@@ -27,13 +27,12 @@ class InfoScraperTest < ActiveSupport::TestCase
       assert_equal "info on Members", @scraper.scraping_for
     end
     
-    should "search related model for related_objects when none exist" do
-      related_objects = stub
+    should "search result model for related_objects when none exist" do
       Member.expects(:find).with(:all, :conditions => {:council_id => @scraper.council_id}).returns("related_objects")
       assert_equal "related_objects", @scraper.related_objects
     end
     
-    should "not search related model for related_objects when already exist" do
+    should "not search result model for related_objects when already exist" do
       @scraper.instance_variable_set(:@related_objects, "foo")
       Member.expects(:find).never
       assert_equal "foo", @scraper.related_objects

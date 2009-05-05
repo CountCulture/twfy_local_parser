@@ -1,7 +1,7 @@
 Factory.define :scraper, :class => :item_scraper do |s|
   s.url 'http://www.anytown.gov.uk/members/bob'
   s.result_model 'Member' 
-  s.expected_result_attributes ":foo => \"bar\""
+  # s.expected_result_attributes ":foo => \"bar\""
   s.association :parser
   s.association :council
 end
