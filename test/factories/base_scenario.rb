@@ -62,3 +62,11 @@ Factory.define :committee do |f|
   f.title 'Ways and Means'
   f.url "http://www.anytown.gov.uk/committee/77"
 end
+
+Factory.define :meeting do |f|
+  f.uid 123
+  f.association :council
+  f.association :committee
+  f.date_held 2.weeks.ago.to_date
+  f.url "http://www.anytown.gov.uk/meeting/123"
+end

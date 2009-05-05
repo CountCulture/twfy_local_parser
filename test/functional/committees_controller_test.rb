@@ -6,16 +6,21 @@ class CommitteesControllerTest < ActionController::TestCase
      setup do
        @committee = Factory(:committee)
        @member = Factory(:member, :council => @committee.council)
+       @meeting = Factory(:meeting, :council => @committee.council, :committee => @committee)
        @committee.members << @member
        get :show, :id => @committee.id
      end
 
-     should_assign_to :committee, :members
+     should_assign_to :committee, :members, :meetings
      should_respond_with :success
      should_render_template :show
      
      should "list members" do
        assert_select "ul#members li a", @member.title
+     end
+     
+     should "list meetings" do
+       assert_select "ul#meetings li a", @meeting.title
      end
    end  
 

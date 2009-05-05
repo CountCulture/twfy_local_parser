@@ -1,0 +1,36 @@
+<%= error_messages_for :council %>
+
+<% form_for @council do |f| -%>
+
+  <p>
+    <%= f.label :name, "Name" %>
+    <%= f.text_field :name %>
+  </p>
+  
+  <p>
+    <%= f.label :url, "Url" %>
+    <%= f.text_field :url %>
+  </p>
+  
+  <p>
+    <%= f.label :base_url, "CMS base url" %>
+    <%= f.text_field :base_url %>
+  </p>
+  
+  <p>
+    <%= f.label :authority_type, "Authority Type" %>
+    <%= f.text_field :authority_type %>
+  </p>
+  
+  <p>
+    <%= f.label :address, "Address" %>
+    <%= f.text_area :address %>
+  </p>
+  
+  <p>
+    <%= f.label :telephone, "Telephone" %>
+    <%= f.text_field :telephone %>
+  </p>
+  
+  <%= f.submit "Submit" %>
+<% end -%>
