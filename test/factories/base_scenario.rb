@@ -70,3 +70,8 @@ Factory.define :meeting do |f|
   f.date_held 2.weeks.ago.to_date
   f.url "http://www.anytown.gov.uk/meeting/123"
 end
+
+Factory.define :portal_system do |f|
+  f.name 'SuperPortal'
+  f.url "http://www.superportal.com"
+end

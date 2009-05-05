@@ -49,6 +49,10 @@ class CouncilsControllerTest < ActionController::TestCase
     should "show form" do
       assert_select "form#new_council"
     end
+    
+    should "show possible portal_systems in form" do
+      assert_select "select#council_portal_system_id"
+    end
   end  
 
   # create test
@@ -125,7 +129,7 @@ class CouncilsControllerTest < ActionController::TestCase
         end
 
         should_not_change "Council.count"
-        should_not_change "@council.name"
+        should_not_change "@council.reload.name"
         should_assign_to :council
         should_render_template :edit
         should_not_set_the_flash

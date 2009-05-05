@@ -13,7 +13,12 @@
   </p>
   
   <p>
-    <%= f.label :base_url, "CMS base url" %>
+    <%= f.label :portal_system_id, "Portal System Used <em>(if known)</em>" %>
+    <%= f.select :portal_system_id, PortalSystem.find(:all).collect {|p| [ p.name, p.id ] }, { :include_blank => true } %>
+  </p>
+  
+  <p>
+    <%= f.label :base_url, "Portal base url" %>
     <%= f.text_field :base_url %>
   </p>
   

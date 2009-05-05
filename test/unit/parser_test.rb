@@ -5,6 +5,7 @@ class ParserTest < Test::Unit::TestCase
   context "The Parser class" do
     should_validate_presence_of :title
     should_have_many :scrapers
+    should_belong_to :portal_system
 
     should "serialize attribute_parser" do
       parser = Parser.create!(:title => "test parser", :item_parser => "foo", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"})

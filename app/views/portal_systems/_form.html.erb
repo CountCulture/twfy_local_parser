@@ -1,0 +1,19 @@
+<%= error_messages_for :portal_system %>
+
+<% form_for @portal_system do |f| -%>
+  <p>
+    <%= f.label :name, "Name" %>
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :url, "Url" %>
+    <%= f.text_field :url %>
+  </p>
+  <p>
+    <%= f.label :notes, "Notes" %>
+    <%= f.text_area :notes %>
+  </p>
+  <p>
+    <%= f.submit "Submit" %>
+  </p>
+<% end -%>

@@ -32,7 +32,6 @@ class CouncilsController < ApplicationController
     flash[:notice] = "Successfully updated council"
     redirect_to council_path(@council)
   rescue
-    logger.debug { "message" }
     render :action => "edit"
   end
 end

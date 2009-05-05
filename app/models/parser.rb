@@ -3,6 +3,7 @@
 class Parser < ActiveRecord::Base
   AttribObject = Struct.new(:attrib_name, :parsing_code, :to_param)
   has_many :scrapers
+  belongs_to :portal_system
   validates_presence_of :title#, :item_parser
   serialize :attribute_parser
   attr_reader :results
