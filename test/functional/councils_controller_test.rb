@@ -83,7 +83,7 @@ class CouncilsControllerTest < ActionController::TestCase
 
    end  
 
-   # new test
+   # edit test
    context "on GET to :edit with existing record" do
      setup do
        get :edit, :id => @council
@@ -97,5 +97,40 @@ class CouncilsControllerTest < ActionController::TestCase
        assert_select "form#edit_council_#{@council.id}"
      end
    end  
+
+  # update test
+  context "on PUT to :update" do
+    setup do
+      @council_params = { :name => "New Name for SomeCouncil", 
+                          :url => "http://somecouncil.gov.uk/new"}
+     end
+
+      context "with valid params" do
+        setup do
+          put :update, :id => @council.id, :council => @council_params
+        end
+
+        should_not_change "Council.count"
+        should_change "@council.reload.name", :to => "New Name for SomeCouncil"
+        should_change "@council.reload.url", :to => "http://somecouncil.gov.uk/new"
+        should_assign_to :council
+        should_redirect_to( "the show page for council") { council_path(assigns(:council)) }
+        should_set_the_flash_to "Successfully updated council"
+
+      end
+
+      context "with invalid params" do
+        setup do
+          put :update, :id => @council.id, :council => {:name => ""}
+        end
+
+        should_not_change "Council.count"
+        should_not_change "@council.name"
+        should_assign_to :council
+        should_render_template :edit
+        should_not_set_the_flash
+      end
+
+  end  
 
 end

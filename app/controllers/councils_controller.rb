@@ -25,4 +25,14 @@ class CouncilsController < ApplicationController
   def edit
     @council = Council.find(params[:id])
   end
+  
+  def update
+    @council = Council.find(params[:id])
+    @council.update_attributes!(params[:council])
+    flash[:notice] = "Successfully updated council"
+    redirect_to council_path(@council)
+  rescue
+    logger.debug { "message" }
+    render :action => "edit"
+  end
 end
