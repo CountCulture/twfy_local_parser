@@ -1,10 +1,12 @@
 # attributes item_parser, title, attribute_parser
 
 class Parser < ActiveRecord::Base
+  ALLOWED_RESULT_CLASSES = %w(Member Committee Meeting)
   AttribObject = Struct.new(:attrib_name, :parsing_code, :to_param)
+  validates_presence_of :result_model
+  validates_inclusion_of :result_model, :in => ALLOWED_RESULT_CLASSES, :message => "is invalid"
   has_many :scrapers
   belongs_to :portal_system
-  validates_presence_of :title#, :item_parser
   serialize :attribute_parser
   attr_reader :results
   
@@ -49,6 +51,10 @@ class Parser < ActiveRecord::Base
     logger.debug { "Backtrace:\n#{e.backtrace}" }
     errors.add_to_base(message)
     self
+  end
+  
+  def title
+    "#{result_model} parser for #{scrapers.first&&scrapers.first.council.name}"
   end
   
 end

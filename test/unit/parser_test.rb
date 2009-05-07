@@ -3,12 +3,15 @@ require 'test_helper'
 class ParserTest < Test::Unit::TestCase
   
   context "The Parser class" do
-    should_validate_presence_of :title
+    # should_validate_presence_of :title
     should_have_many :scrapers
     should_belong_to :portal_system
+    should_validate_presence_of :result_model
+    should_allow_values_for :result_model, "Member", "Committee", "Meeting"
+    should_not_allow_values_for :result_model, "foo", "User"
 
     should "serialize attribute_parser" do
-      parser = Parser.create!(:title => "test parser", :item_parser => "foo", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"})
+      parser = Parser.create!(:description => "description of parser", :item_parser => "foo", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"}, :result_model => "Member")
       assert_equal({:foo => "\"bar\"", :foo2 => "nil"}, parser.reload.attribute_parser)
     end
     
@@ -22,6 +25,10 @@ class ParserTest < Test::Unit::TestCase
     should "have results accessor" do
       @parser.instance_variable_set(:@results, "foo")
       assert_equal "foo", @parser.results
+    end
+    
+    should "return details as title" do
+      assert_equal "Member parser for ", @parser.title
     end
     
     context "with attribute_parser has attribute_parser_object which" do

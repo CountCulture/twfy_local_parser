@@ -2,16 +2,19 @@ class Scraper < ActiveRecord::Base
   class ScraperError < StandardError; end
   class RequestError < ScraperError; end
   class ParsingError < ScraperError; end
-  ALLOWED_RESULT_CLASSES = %w(Member Committee Meeting)
   SCRAPER_TYPES = %w(InfoScraper ItemScraper)
   belongs_to :parser
   belongs_to :council
   validates_presence_of :council_id
-  validates_presence_of :result_model
-  validates_inclusion_of :result_model, :in => ALLOWED_RESULT_CLASSES, :message => "is invalid"
+  # validates_presence_of :result_model
+  # validates_inclusion_of :result_model, :in => ALLOWED_RESULT_CLASSES, :message => "is invalid"
   accepts_nested_attributes_for :parser
   attr_accessor :related_objects, :parsing_results
   attr_protected :results
+  delegate :result_model, :to => :parser
+  # delegate :result_model=, :to => :parser
+  delegate :related_model, :to => :parser
+  # delegate :related_model=, :to => :parser
     
   def expected_result_attributes
     read_attribute(:expected_result_attributes) ? Hash.new.instance_eval("merge(#{read_attribute(:expected_result_attributes)})") : {}

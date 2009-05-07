@@ -216,9 +216,9 @@ class ScrapersControllerTest < ActionController::TestCase
     setup do
       @council = Factory(:council)
       @scraper_params = { :council_id => @council.id, 
-                          :result_model => "Committee", 
                           :url => "http://anytown.com/committees", 
-                          :parser_attributes => { :title => "new parser", 
+                          :parser_attributes => { :description => "new parser", 
+                                                  :result_model => "Committee", 
                                                   :item_parser => "some code",
                                                   :attribute_parser_object => [{:attrib_name => "foo", :parsing_code => "bar"}] }}
     end
@@ -250,8 +250,8 @@ class ScrapersControllerTest < ActionController::TestCase
   
       should_change "Parser.count", :by => 1
       
-      should "save parser title" do
-        assert_equal "new parser", assigns(:scraper).parser.title
+      should "save parser description" do
+        assert_equal "new parser", assigns(:scraper).parser.description
       end
       
       should "save parser item_parser" do
@@ -292,7 +292,7 @@ class ScrapersControllerTest < ActionController::TestCase
                      :scraper => { :council_id => @scraper.council_id, 
                                    :result_model => "Committee", 
                                    :url => "http://anytown.com/new_committees", 
-                                   :parser_attributes => { :id => @scraper.parser.id, :title => "new parsing title", :item_parser => "some code" }}}
+                                   :parser_attributes => { :id => @scraper.parser.id, :description => "new parsing description", :item_parser => "some code" }}}
     end
   
     should_assign_to :scraper
@@ -304,7 +304,7 @@ class ScrapersControllerTest < ActionController::TestCase
     end
     
     should "update scraper parser" do
-      assert_equal "new parsing title", @scraper.parser.reload.title
+      assert_equal "new parsing description", @scraper.parser.reload.description
     end
   end
   

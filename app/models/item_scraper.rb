@@ -1,5 +1,5 @@
 class ItemScraper < Scraper
-  validates_presence_of :url, :if => Proc.new { |i| i.related_model.blank? }
+  # validates_presence_of :url, :if => Proc.new { |i| i.related_model.blank? }
   
   def process(options={})
     if related_model.blank?

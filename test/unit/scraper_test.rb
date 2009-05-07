@@ -6,10 +6,10 @@ class ScraperTest < ActiveSupport::TestCase
   should_belong_to :parser
   should_belong_to :council
   should_validate_presence_of :council_id
-  should_validate_presence_of :result_model
+  # should_validate_presence_of :result_model
   should_accept_nested_attributes_for :parser
-  should_allow_values_for :result_model, "Member", "Committee"
-  should_not_allow_values_for :result_model, "foo", "User"
+  # should_allow_values_for :result_model, "Member", "Committee"
+  # should_not_allow_values_for :result_model, "foo", "User"
   
   
   context "The Scraper class" do
@@ -46,10 +46,15 @@ class ScraperTest < ActiveSupport::TestCase
     #    assert_equal Hash.new, Scraper.new.expected_result_attributes
     #  end
      
-    # should "delegate parsing code to parser" do
-    #   @parser.expects(:item_parser).returns("some code")
-    #   assert_equal "some code", @scraper.item_parser
-    # end
+    should "delegate result_model to parser" do
+      @parser.expects(:result_model).returns("result_model")
+      assert_equal "result_model", @scraper.result_model
+    end
+    
+    should "delegate related_model to parser" do
+      @parser.expects(:related_model).returns("related_model")
+      assert_equal "related_model", @scraper.related_model
+    end
     
     should "have results accessor" do
       @scraper.instance_variable_set(:@results, "foo")

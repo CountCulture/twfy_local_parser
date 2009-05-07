@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090505143539) do
+ActiveRecord::Schema.define(:version => 20090505163853) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -74,12 +74,14 @@ ActiveRecord::Schema.define(:version => 20090505143539) do
   end
 
   create_table "parsers", :force => true do |t|
-    t.string   "title"
+    t.string   "description"
     t.text     "item_parser"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "attribute_parser"
     t.integer  "portal_system_id"
+    t.string   "result_model"
+    t.string   "related_model"
   end
 
   create_table "portal_systems", :force => true do |t|

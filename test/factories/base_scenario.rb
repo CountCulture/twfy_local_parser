@@ -1,6 +1,6 @@
 Factory.define :scraper, :class => :item_scraper do |s|
   s.url 'http://www.anytown.gov.uk/members/bob'
-  s.result_model 'Member' 
+  # s.result_model 'Member' 
   # s.expected_result_attributes ":foo => \"bar\""
   s.association :parser
   s.association :council
@@ -8,24 +8,26 @@ end
 
 Factory.define :item_scraper, :class => :item_scraper do |s|
   s.url 'http://www.anytown.gov.uk/members'
-  s.result_model 'Member' 
+  # s.result_model 'Member' 
   s.association :parser
   s.association :council, :factory => :tricky_council
 end
 
 Factory.define :info_scraper, :class => :info_scraper do |s|
-  s.result_model 'Member' 
+  # s.result_model 'Member' 
   s.association :parser, :factory => :another_parser
   s.association :council, :factory => :another_council
 end
 
 Factory.define :parser do |f|
-  f.title 'dummy parser'
+  f.description 'description of dummy parser'
   f.item_parser  'foo="bar"'
+  f.result_model 'Member' 
   f.attribute_parser({:foo => "\"bar\"", :foo1 => "\"bar1\""})
 end
+
 Factory.define :another_parser, :parent => :parser do |f|
-  f.title 'another dummy parser'
+  f.description 'another dummy parser'
 end
 
 Factory.define :council do |f|

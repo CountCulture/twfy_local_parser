@@ -4,27 +4,27 @@
       <%= f.collection_select :council_id, Council.find(:all), :id, :name, { :include_blank => true } %>
     </p>
     <%= hidden_field_tag :type, @scraper.class.to_s %>
-    <p>
-      <%= f.label :result_model, "Result Model" %>
-      <%= f.select("result_model", Scraper::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
-    </p>
     <%- unless @scraper.is_a?(InfoScraper) -%>
       <p>
         <%= f.label :url, "Url to be scraped" %>
         <%= f.text_field :url, :size => 60 %>
-      </p>
-      <p>
-        <em>or...</em><br />
-        <%= f.label :related_model, "Related model" %>
-        <%= f.select("related_model", Scraper::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
       </p>
     <%- end -%>
     <fieldset id="parser_details">
       <legend>Parser details</legend>
       <% f.fields_for :parser do |pf| %>
         <p>
-          <%= pf.label :title, "Parser Title" %>
-          <%= pf.text_field :title %>
+          <%= f.label :result_model, "Result Model" %>
+          <%= f.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+        </p>
+        <p>
+          <em>or...</em><br />
+          <%= f.label :related_model, "Related model" %>
+          <%= f.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+        </p>
+        <p>
+          <%= pf.label :description, "Parser Description" %>
+          <%= pf.text_field :description %>
         </p>
         <p>
           <%= pf.label :item_parser %>

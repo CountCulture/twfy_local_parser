@@ -1,5 +1,5 @@
 <h1>Portal System: <%= h @portal_system.name %></h1>
-<p>Website <strong><%= @portal_system.url %></strong></p>
+<p>Website <strong><%= link_to h(@portal_system.url), @portal_system.url, :class => "external" %></strong></p>
 <div class="notes">
   <h5>Notes</h5>
   <%= simple_format @portal_system.notes %>

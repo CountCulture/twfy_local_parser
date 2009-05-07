@@ -4,8 +4,8 @@ class ItemScraperTest < ActiveSupport::TestCase
   
   context "The ItemScraper class" do
     
-    should_validate_presence_of :url
-    should_have_db_column :related_model
+    # should_validate_presence_of :url
+    # should_have_db_column :related_model
     should "be subclass of Scraper class" do
       assert_equal Scraper, ItemScraper.superclass
     end
@@ -13,7 +13,8 @@ class ItemScraperTest < ActiveSupport::TestCase
 
   context "an ItemScraper instance" do
     setup do
-      @scraper = Factory(:item_scraper, :result_model => "Meeting")
+      @scraper = Factory(:item_scraper)
+      @scraper.parser.update_attribute(:result_model, "Meeting")
     end
 
     should "return what it is scraping for" do
@@ -22,23 +23,25 @@ class ItemScraperTest < ActiveSupport::TestCase
     
     context "with related model" do
       setup do
-        @related_model_scraper = ItemScraper.new(:related_model => "Committee", :council_id => 44)
+        @scraper.parser.update_attribute(:related_model, "Committee")
+        # @related_model_scraper = ItemScraper.new(:related_model => "Committee", :council_id => 44)
+        # @scraper.parser.update_attribute(:result_model, "Meeting")
       end
 
       should "return related model" do
-        assert_equal "Committee", @related_model_scraper.related_model
+        assert_equal "Committee", @scraper.related_model
       end
 
       should "get related objects from related model" do
-        Committee.expects(:find).with(:all, :conditions => {:council_id => @related_model_scraper.council_id}).returns("related_objects")
+        Committee.expects(:find).with(:all, :conditions => {:council_id => @scraper.council_id}).returns("related_objects")
 
-        assert_equal "related_objects", @related_model_scraper.related_objects
+        assert_equal "related_objects", @scraper.related_objects
       end
 
       should "not search related model for related_objects when already exist" do
-        @related_model_scraper.instance_variable_set(:@related_objects, "foo")
+        @scraper.instance_variable_set(:@related_objects, "foo")
         Committee.expects(:find).never
-        assert_equal "foo", @related_model_scraper.related_objects
+        assert_equal "foo", @scraper.related_objects
       end
     end
     
@@ -61,9 +64,8 @@ class ItemScraperTest < ActiveSupport::TestCase
       end
       context "item_scraper with related_model and no url" do
         setup do
-          @scraper.update_attribute(:related_model, "Committee")
+          @scraper.parser.update_attribute(:related_model, "Committee")
           
-          # @scraper.update_attributes(:related_model => "Committee", :url => nil)
           @committee_1 = Factory(:committee, :council => @scraper.council)
           @committee_2 = Factory(:committee, :council => @scraper.council, :title => "Another Committee", :url => "http://www.anytown.gov.uk/committee/78", :uid => 78)
           dummy_related_objects = [@committee_1, @committee_2]
