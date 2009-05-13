@@ -1,6 +1,7 @@
 <%- div_for parser do -%>
   <h3>Parser details</h3>
   <p><%= link_to "edit", edit_parser_path(parser) %></p>
+    <p><strong>Portal system</strong> <%= parser.portal_system ? link_for(parser.portal_system) : 'None' %></p>
   <h4>Item parser <em>finds items from scraped page</em></h4>
   <code class="item_parser"><%= h parser.item_parser %></code>
   <h4>Item attribute parser <em>extracts each item's attributes from item</em></h4>

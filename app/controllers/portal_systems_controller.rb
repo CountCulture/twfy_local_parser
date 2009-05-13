@@ -6,6 +6,7 @@ class PortalSystemsController < ApplicationController
   def show
     @portal_system = PortalSystem.find(params[:id])
     @councils = @portal_system.councils
+    @parsers = @portal_system.parsers
   end
   
   def new

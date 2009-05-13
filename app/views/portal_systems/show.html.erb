@@ -1,13 +1,20 @@
 <h1>Portal System: <%= h @portal_system.name %></h1>
 <p>Website <strong><%= link_to h(@portal_system.url), @portal_system.url, :class => "external" %></strong></p>
-<div class="notes">
-  <h5>Notes</h5>
-  <%= simple_format @portal_system.notes %>
-</div>
-<br />
 <h4>Used by</h4>
 <ul id="councils">
   <% for council in @councils %>
     <li><%= link_for council %></li>
   <% end %>
 </ul>
+
+<h4>Parsers</h4>
+<ul id="parsers">
+  <% for parser in @parsers %>
+    <li><%= link_for parser %></li>
+  <% end %>
+</ul>
+
+<div class="notes">
+  <h5>Notes</h5>
+  <%= simple_format @portal_system.notes %>
+</div>

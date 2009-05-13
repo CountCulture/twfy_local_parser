@@ -27,6 +27,7 @@ class PortalSystemsControllerTest < ActionController::TestCase
   context "on GET to :show for first record" do
     setup do
       @council = Factory(:council, :portal_system_id => @portal.id)
+      @parser = Factory(:parser, :portal_system => @portal)
       get :show, :id => @portal.id
     end
   
@@ -38,6 +39,12 @@ class PortalSystemsControllerTest < ActionController::TestCase
     should "list all councils" do
       assert_select "ul#councils li", @portal.councils.size do
         assert_select "a", @council.title
+      end
+    end
+    
+    should "list all parsers" do
+      assert_select "ul#parsers li" do
+        assert_select "a", @parser.title
       end
     end
   end  
