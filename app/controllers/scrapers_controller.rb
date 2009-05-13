@@ -1,7 +1,7 @@
 class ScrapersController < ApplicationController
   
   def index
-    @scrapers = Scraper.find(:all)
+    @councils = Council.find(:all, :include => :scrapers, :order => "name")
   end
   
   def show

@@ -10,16 +10,25 @@ class ScrapersControllerTest < ActionController::TestCase
       get :index
     end
   
-    should_assign_to :scrapers
+    should_assign_to :councils
     should_respond_with :success
     should_render_template :index
     should_not_set_the_flash
     
-    should "list all scrapers" do
-      assert_select "#scrapers" do
-        assert_select "li", 2
+    should "list all councils" do
+      assert_select "#councils" do
+        assert_select ".council", 2 do
+          assert_select "h3 a", @scraper1.council.name
+        end
       end
     end
+    
+    should "list scrapers for each council" do
+      assert_select "#council_#{@scraper1.council.id}" do
+        assert_select "li a", @scraper1.title
+      end
+    end
+    
   end
   
   # show test
