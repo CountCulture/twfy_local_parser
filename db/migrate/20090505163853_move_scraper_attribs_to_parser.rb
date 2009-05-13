@@ -7,9 +7,9 @@ class MoveScraperAttribsToParser < ActiveRecord::Migration
   end
 
   def self.down
-    # Scraper.find(:all).each { |s| s.update_attributes(:result_model => s.parser.result_model, :related_model => s.parser.related_model)  }
-    # remove_column :parsers, :related_model
-    # remove_column :parsers, :result_model
+    Scraper.find(:all).each { |s| s.update_attributes(:result_model => s.parser.result_model, :related_model => s.parser.related_model)  }
+    remove_column :parsers, :related_model
+    remove_column :parsers, :result_model
     rename_column :parsers, :description, :title
   end
 end

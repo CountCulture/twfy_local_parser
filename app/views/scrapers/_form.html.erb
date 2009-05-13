@@ -1,8 +1,8 @@
 <% form_for :scraper, @scraper, :url => (@scraper.new_record? ? scrapers_path : scraper_path(@scraper)), :html => { :method => (@scraper.new_record? ? :post : :put)} do |f| -%>
-    <p>
-      <%= f.label :council, "Council" %>
-      <%= f.collection_select :council_id, Council.find(:all), :id, :name, { :include_blank => true } %>
-    </p>
+    <!-- <p>
+      <%#= f.label :council, "Council" %>
+      <%#= f.collection_select :council_id, Council.find(:all), :id, :name, { :include_blank => true } %>
+    </p> -->
     <%= hidden_field_tag :type, @scraper.class.to_s %>
     <%- unless @scraper.is_a?(InfoScraper) -%>
       <p>
@@ -10,17 +10,24 @@
         <%= f.text_field :url, :size => 60 %>
       </p>
     <%- end -%>
+    <%- if @scraper.portal_system -%>
+      <p>
+        <%= f.label :parser_id, "Choose Parser" %>
+        <%= f.select :parser_id, @scraper.possible_parsers.collect{ |p| [p.title, p.id] }, { :include_blank => true } %>
+      </p>
+      <p>or use dedicated parser:</p>
+    <%- end -%>
     <fieldset id="parser_details">
       <legend>Parser details</legend>
       <% f.fields_for :parser do |pf| %>
         <p>
-          <%= f.label :result_model, "Result Model" %>
-          <%= f.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+          <%= pf.label :result_model, "Result Model" %>
+          <%= pf.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
         </p>
         <p>
           <em>or...</em><br />
-          <%= f.label :related_model, "Related model" %>
-          <%= f.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+          <%= pf.label :related_model, "Related model" %>
+          <%= pf.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
         </p>
         <p>
           <%= pf.label :description, "Parser Description" %>

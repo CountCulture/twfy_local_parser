@@ -15,14 +15,15 @@ class ScrapersController < ApplicationController
   end
   
   def new
-    raise ArgumentError unless Scraper::SCRAPER_TYPES.include?(params[:type])
-    @scraper = params[:type].constantize.new
-    @scraper.build_parser
+    raise ArgumentError unless Scraper::SCRAPER_TYPES.include?(params[:type]) && params[:council_id]
+    @scraper = params[:type].constantize.new(:council_id => params[:council_id])
+    @scraper.build_parser(:result_model => params[:result_model])
   end
   
   def create
     raise ArgumentError unless Scraper::SCRAPER_TYPES.include?(params[:type])
-    @scraper = params[:type].constantize.create!(params[:scraper])
+    @scraper = params[:type].constantize.new(params[:scraper])
+    @scraper.save!
     flash[:notice] = "Successfully created scraper"
     redirect_to scraper_url(@scraper)
   end

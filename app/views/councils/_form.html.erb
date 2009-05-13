@@ -13,7 +13,7 @@
   </p>
   
   <p>
-    <%= f.label :portal_system_id, "Portal System Used <em>(if known)</em>" %>
+    <%= f.label :portal_system_id, "Portal System Used <br /><em>(if known)</em>" %>
     <%= f.select :portal_system_id, PortalSystem.find(:all).collect {|p| [ p.name, p.id ] }, { :include_blank => true } %>
   </p>
   

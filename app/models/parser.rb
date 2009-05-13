@@ -54,7 +54,7 @@ class Parser < ActiveRecord::Base
   end
   
   def title
-    "#{result_model} parser for #{scrapers.first&&scrapers.first.council.name}"
+    "#{result_model} parser for #{portal_system.try(:name) || 'this scraper only'}"
   end
   
 end

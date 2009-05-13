@@ -3,7 +3,6 @@ require 'test_helper'
 class ParserTest < Test::Unit::TestCase
   
   context "The Parser class" do
-    # should_validate_presence_of :title
     should_have_many :scrapers
     should_belong_to :portal_system
     should_validate_presence_of :result_model
@@ -19,18 +18,32 @@ class ParserTest < Test::Unit::TestCase
   
   context "A Parser instance" do
     setup do
+      PortalSystem.delete_all # some reason not getting rid of old records -- poss 2.3.2 bug (see Caboose blog)
       @parser = Factory(:parser)
     end
-    
-    should "have results accessor" do
-      @parser.instance_variable_set(:@results, "foo")
-      assert_equal "foo", @parser.results
+
+    context "in general" do
+      should "have results accessor" do
+        @parser.instance_variable_set(:@results, "foo")
+        assert_equal "foo", @parser.results
+      end
+
+      should "return details as title" do
+        assert_equal "Member parser for this scraper only", @parser.title
+      end
     end
     
-    should "return details as title" do
-      assert_equal "Member parser for ", @parser.title
+    context "that is associated with portal system" do
+      setup do
+        @portal_system_for_parser = Factory(:portal_system, :name => "Portal for Parser")
+        @parser.update_attribute(:portal_system_id, @portal_system_for_parser.id)
+      end
+
+      should "return details of portal_system in title" do
+        assert_equal "Member parser for Portal for Parser", @parser.title
+      end
     end
-    
+        
     context "with attribute_parser has attribute_parser_object which" do
       setup do
         @attribute_parser_object = @parser.attribute_parser_object

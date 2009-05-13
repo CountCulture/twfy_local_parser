@@ -6,7 +6,7 @@ class ScraperTest < ActiveSupport::TestCase
   should_belong_to :parser
   should_belong_to :council
   should_validate_presence_of :council_id
-  # should_validate_presence_of :result_model
+  # should_validate_presence_of :parser_id
   should_accept_nested_attributes_for :parser
   # should_allow_values_for :result_model, "Member", "Committee"
   # should_not_allow_values_for :result_model, "foo", "User"
@@ -33,7 +33,19 @@ class ScraperTest < ActiveSupport::TestCase
       @council = @scraper.council
       @parser = @scraper.parser
     end
-       
+    
+    should "not save unless there is an associated parser" do
+      s = Scraper.new(:council => @council)
+      assert !s.save
+      assert_equal "can't be blank", s.errors[:parser]
+    end
+    
+    should "save if there is an associated parser set via parser_id" do
+      # just checking...
+      s = Scraper.new(:council => @council, :parser_id => @parser.id)
+      assert s.save
+    end
+    
     # should "convert expected_result_attributes to hash" do
     #    assert_kind_of Hash, @scraper.expected_result_attributes
     #  end
@@ -54,6 +66,11 @@ class ScraperTest < ActiveSupport::TestCase
     should "delegate related_model to parser" do
       @parser.expects(:related_model).returns("related_model")
       assert_equal "related_model", @scraper.related_model
+    end
+    
+    should "delegate portal_system to council" do
+      @council.expects(:portal_system).returns("portal_system")
+      assert_equal "portal_system", @scraper.portal_system
     end
     
     should "have results accessor" do
@@ -93,6 +110,22 @@ class ScraperTest < ActiveSupport::TestCase
     should "return errors in parser as parsing errors" do
       @parser.errors.add_to_base("some error")
       assert_equal "some error", @scraper.parsing_errors[:base]
+    end
+    
+    context "that belongs to council with portal system" do
+      setup do
+        @portal_system = Factory(:portal_system, :name => "Big Portal System")
+        @portal_system.parsers << @parser = Factory(:another_parser)
+        @council.portal_system = @portal_system
+      end
+
+      should "return council's portal system" do
+        assert_equal @portal_system, @scraper.portal_system
+      end
+      
+      should "return portal system's parsers as possible parsers" do
+        assert_equal [@parser], @scraper.possible_parsers
+      end
     end
     
     context "when getting data" do

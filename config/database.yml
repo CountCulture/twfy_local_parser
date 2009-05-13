@@ -1,8 +1,10 @@
 # SQLite version 3.x
 #   gem install sqlite3-ruby (not necessary on OS X Leopard)
 development:
-  adapter: sqlite3
-  database: db/development.sqlite3
+  adapter: mysql
+  database: twfy_local_development
+  username: twfy_local_admin
+  password: 573gjug38pwus
   pool: 5
   timeout: 5000
 
