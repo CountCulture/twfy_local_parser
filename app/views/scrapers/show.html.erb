@@ -8,7 +8,7 @@
       <strong>for</strong> <%= link_to "#{@scraper.council.name} Council", council_path(@scraper.council) %><br />
       <strong>scraping for</strong> <%= @scraper.scraping_for %>
     </p>
-    <%= render :partial => 'parser', :object => @scraper.parser %>
+    <%= render :partial => '/parsers/parser', :object => @scraper.parser %>
     
   </div>
   <!-- <div id="expectations">

@@ -39,11 +39,11 @@
         </p>
         <div id="parser_attribute_parser">
           <h3>Attribute parser</h3>
-          <%= render :partial => 'attrib', :collection => @scraper.parser.attribute_parser_object %>
+          <%= render :partial => '/parsers/attrib', :collection => @scraper.parser.attribute_parser_object %>
         </div>
         <br class="clear-left">
         <p><%= link_to_function "add more attributes" do |page|
-          page.insert_html :bottom, :parser_attribute_parser, :partial => 'attrib', :object => Parser::AttribObject.new
+          page.insert_html :bottom, :parser_attribute_parser, :partial => '/parsers/attrib', :object => Parser::AttribObject.new
         end %></p>
       <% end %>
   </fieldset>

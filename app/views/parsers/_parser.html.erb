@@ -1,5 +1,6 @@
-<div class="parser">
+<%- div_for parser do -%>
   <h3>Parser details</h3>
+  <p><%= link_to "edit", edit_parser_path(parser) %></p>
   <h4>Item parser <em>finds items from scraped page</em></h4>
   <code class="item_parser"><%= h parser.item_parser %></code>
   <h4>Item attribute parser <em>extracts each item's attributes from item</em></h4>
@@ -10,4 +11,4 @@
     </div>
   <%- end -%>
   <br class="clear-left" />
-</div>
+<%- end -%>
