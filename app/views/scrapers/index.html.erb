@@ -3,10 +3,10 @@
   <%- for council in @councils -%>
     <%- div_for council do -%>
       <h3><%= link_for council %></h3>
-      <p><%= link_to "Add new ItemScraper", new_scraper_path(:type => "ItemScraper", :council_id => council.id) %> <%= link_to "Add new InfoScraper", new_scraper_path(:type => "InfoScraper", :council_id => council.id) %></p>
+      <p><%= link_to "+ new ItemScraper", new_scraper_path(:type => "ItemScraper", :council_id => council.id) %> <%= link_to "+ new InfoScraper", new_scraper_path(:type => "InfoScraper", :council_id => council.id) %></p>
       <ul>
         <%- for scraper in council.scrapers -%>
-          <li><%= link_for scraper %></li>
+          <li><%= link_for scraper %> <%= link_to "edit", edit_scraper_path(scraper) %></li>
         <%- end -%>
       </ul>
     <%- end -%>
