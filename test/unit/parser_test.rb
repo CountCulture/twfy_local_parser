@@ -6,11 +6,12 @@ class ParserTest < Test::Unit::TestCase
     should_have_many :scrapers
     should_belong_to :portal_system
     should_validate_presence_of :result_model
+    should_validate_presence_of :scraper_type
     should_allow_values_for :result_model, "Member", "Committee", "Meeting"
     should_not_allow_values_for :result_model, "foo", "User"
 
     should "serialize attribute_parser" do
-      parser = Parser.create!(:description => "description of parser", :item_parser => "foo", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"}, :result_model => "Member")
+      parser = Parser.create!(:description => "description of parser", :item_parser => "foo", :scraper_type => "ItemScraper", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"}, :result_model => "Member")
       assert_equal({:foo => "\"bar\"", :foo2 => "nil"}, parser.reload.attribute_parser)
     end
     
@@ -29,7 +30,7 @@ class ParserTest < Test::Unit::TestCase
       end
 
       should "return details as title" do
-        assert_equal "Member parser for this scraper only", @parser.title
+        assert_equal "Member item parser for this scraper only", @parser.title
       end
     end
     
@@ -40,7 +41,7 @@ class ParserTest < Test::Unit::TestCase
       end
 
       should "return details of portal_system in title" do
-        assert_equal "Member parser for Portal for Parser", @parser.title
+        assert_equal "Member item parser for Portal for Parser", @parser.title
       end
     end
         

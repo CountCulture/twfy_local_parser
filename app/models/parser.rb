@@ -4,6 +4,7 @@ class Parser < ActiveRecord::Base
   ALLOWED_RESULT_CLASSES = %w(Member Committee Meeting)
   AttribObject = Struct.new(:attrib_name, :parsing_code, :to_param)
   validates_presence_of :result_model
+  validates_presence_of :scraper_type
   validates_inclusion_of :result_model, :in => ALLOWED_RESULT_CLASSES, :message => "is invalid"
   has_many :scrapers
   belongs_to :portal_system
@@ -54,7 +55,7 @@ class Parser < ActiveRecord::Base
   end
   
   def title
-    "#{result_model} parser for #{portal_system.try(:name) || 'this scraper only'}"
+    "#{result_model} #{scraper_type.sub('Scraper','').downcase} parser for #{portal_system.try(:name) || 'this scraper only'}"
   end
   
 end

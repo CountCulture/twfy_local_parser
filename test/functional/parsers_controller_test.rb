@@ -6,15 +6,21 @@ class ParsersControllerTest < ActionController::TestCase
   context "on GET to :show for first record" do
     setup do
       @parser = Factory(:parser)
+      @scraper = Factory(:scraper, :parser => @parser)
       get :show, :id => @parser.id
     end
   
     should_assign_to :parser
+    should_assign_to :scrapers
     should_respond_with :success
     should_render_template :show
       
     should "show link to perform edit" do
       assert_select ".parser a", /edit/
+    end
+    
+    should "list associated scrapers" do
+      assert_select "#scrapers a", @scraper.title
     end
   end
   
@@ -41,6 +47,7 @@ class ParsersControllerTest < ActionController::TestCase
 
       should "show form" do
         assert_select "form#new_parser"
+        assert_select "select#parser_scraper_type"
       end
 
       should "show include portal_system in hidden field" do

@@ -4,9 +4,6 @@ class PortalSystemsControllerTest < ActionController::TestCase
 
   def setup
     @portal = Factory(:portal_system)
-    # @council = @member.council
-    # @old_member = Factory(:old_member, :council => @council)
-    # @another_council = Factory(:another_council)
   end
   
   # index test

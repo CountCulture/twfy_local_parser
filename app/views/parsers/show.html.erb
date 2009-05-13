@@ -1,2 +1,11 @@
 <h1><%= @parser.title %></h1>
 <%= render :partial => 'parser', :object => @parser %>
+
+<% unless @scrapers.blank? %>
+  <h3>Scrapers</h3>
+  <ul id="scrapers">
+    <% for scraper in @scrapers %>
+      <%= link_for scraper %>
+    <% end %>
+  </ul>
+<% end %>

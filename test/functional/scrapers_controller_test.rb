@@ -282,6 +282,7 @@ class ScrapersControllerTest < ActionController::TestCase
                           :url => "http://anytown.com/committees", 
                           :parser_attributes => { :description => "new parser", 
                                                   :result_model => "Committee", 
+                                                  :scraper_type => "InfoScraper", 
                                                   :item_parser => "some code",
                                                   :attribute_parser_object => [{:attrib_name => "foo", :parsing_code => "bar"}] }}
       @exist_scraper_params = { :council_id => @council.id, 

@@ -22,12 +22,14 @@ end
 Factory.define :parser do |f|
   f.description 'description of dummy parser'
   f.item_parser  'foo="bar"'
-  f.result_model 'Member' 
+  f.result_model 'Member'
+  f.scraper_type 'ItemScraper'
   f.attribute_parser({:foo => "\"bar\"", :foo1 => "\"bar1\""})
 end
 
 Factory.define :another_parser, :parent => :parser do |f|
   f.description 'another dummy parser'
+  f.scraper_type 'InfoScraper'
 end
 
 Factory.define :council do |f|

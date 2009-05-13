@@ -2,6 +2,7 @@ class ParsersController < ApplicationController
 
   def show
     @parser = Parser.find(params[:id])
+    @scrapers = @parser.scrapers
   end
   
   def new
