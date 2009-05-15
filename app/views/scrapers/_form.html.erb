@@ -1,8 +1,4 @@
 <% form_for :scraper, @scraper, :url => (@scraper.new_record? ? scrapers_path : scraper_path(@scraper)), :html => { :method => (@scraper.new_record? ? :post : :put)} do |f| -%>
-    <!-- <p>
-      <%#= f.label :council, "Council" %>
-      <%#= f.collection_select :council_id, Council.find(:all), :id, :name, { :include_blank => true } %>
-    </p> -->
     <%= hidden_field_tag :type, @scraper.class.to_s %>
     <%- unless @scraper.is_a?(InfoScraper) -%>
       <p>
@@ -10,42 +6,47 @@
         <%= f.text_field :url, :size => 60 %>
       </p>
     <%- end -%>
-    <%- if @scraper.portal_system -%>
+    <%- if @scraper.portal_system && !@scraper.parser.new_record? -%>
       <p>
-        <%= f.label :parser_id, "Choose Parser" %>
-        <%= f.select :parser_id, @scraper.possible_parsers.collect{ |p| [p.title, p.id] }, { :include_blank => true } %>
+        <%= f.hidden_field :parser_id %>
       </p>
-      <p>or use dedicated parser:</p>
-    <%- end -%>
-    <fieldset id="parser_details">
-      <legend>Parser details</legend>
-      <% f.fields_for :parser do |pf| %>
-        <p>
-          <%= pf.label :result_model, "Result Model" %>
-          <%= pf.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
-        </p>
-        <p>
-          <em>or...</em><br />
-          <%= pf.label :related_model, "Related model" %>
-          <%= pf.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
-        </p>
-        <p>
-          <%= pf.label :description, "Parser Description" %>
-          <%= pf.text_field :description %>
-        </p>
-        <p>
-          <%= pf.label :item_parser %>
-          <%= pf.text_area :item_parser, :rows => 3 %>
-        </p>
-        <div id="parser_attribute_parser">
-          <h3>Attribute parser</h3>
-          <%= render :partial => '/parsers/attrib', :collection => @scraper.parser.attribute_parser_object %>
-        </div>
-        <br class="clear-left">
-        <p><%= link_to_function "add more attributes" do |page|
-          page.insert_html :bottom, :parser_attribute_parser, :partial => '/parsers/attrib', :object => Parser::AttribObject.new
-        end %></p>
-      <% end %>
-  </fieldset>
+      <%= render :partial => '/parsers/parser', :object => @scraper.parser %>
+    <%- else -%>
+      <%- if @scraper.portal_system -%>
+        <p class="alert">No parser written yet to parse this. 
+        <%= link_to "Add new parser for #{@scraper.portal_system.name}", new_parser_path(:portal_system_id => @scraper.portal_system.id, :result_model => @scraper.result_model, :scraper_type => @scraper.class.to_s) %>
+        or use dedicated parser for this council only:</p>      
+      <%- end -%>
+      <fieldset id="parser_details">
+        <legend>Parser details</legend>
+        <% f.fields_for :parser do |pf| %>
+          <p>
+            <%= pf.label :result_model, "Result Model" %>
+            <%= pf.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+          </p>
+          <p>
+            <em>or...</em><br />
+            <%= pf.label :related_model, "Related model" %>
+            <%= pf.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+          </p>
+          <p>
+            <%= pf.label :description, "Parser Description" %>
+            <%= pf.text_field :description %>
+          </p>
+          <p>
+            <%= pf.label :item_parser %>
+            <%= pf.text_area :item_parser, :rows => 3 %>
+          </p>
+          <div id="parser_attribute_parser">
+            <h3>Attribute parser</h3>
+            <%= render :partial => '/parsers/attrib', :collection => @scraper.parser.attribute_parser_object %>
+          </div>
+          <br class="clear-left">
+          <p><%= link_to_function "add more attributes" do |page|
+            page.insert_html :bottom, :parser_attribute_parser, :partial => '/parsers/attrib', :object => Parser::AttribObject.new
+          end %></p>
+        <% end %>
+    </fieldset>
+  <%- end -%>
   <%= f.submit "Submit" %>
 <% end -%>

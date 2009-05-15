@@ -263,20 +263,71 @@ class ScrapersControllerTest < ActionController::TestCase
         @portal_system = Factory(:portal_system, :name => "Some Portal for Councils")
         @portal_system.parsers << @parser = Factory(:another_parser) # add a parser to portal_system...
         @council.update_attribute(:portal_system_id, @portal_system.id)# .. and associate portal_system to council
-        get :new, :type  => "InfoScraper", :council_id => @council.id
+        @parser = Factory(:parser, :portal_system => @portal_system)
+        get :new, :type  => "ItemScraper", :result_model => @parser.result_model, :council_id => @council.id
       end
     
-      should "show select box for possible_parsers" do
-        assert_select "select#scraper_parser_id" do
-          assert_select "option[value=#{@parser.id}]", @parser.title
-        end
+      should_assign_to :scraper 
+      should_respond_with :success
+      should_render_template :new
+      should_not_set_the_flash
+      should_render_a_form
+      
+      should "assign appropriate parser to scraper" do
+        assert_equal @parser, assigns(:scraper).parser
+      end
+      
+      should "show text box for url" do
+        assert_select "input#scraper_url"
       end
   
-      # should "hide parser form" do
-      #   assert_select "fieldset#parser[style='display:hidden']"
-      # end
+      should "show hidden field with parser details" do
+        assert_select "input#scraper_parser_id[type=hidden][value=#{@parser.id}]"
+      end
+      
+      
+      should "not show parser details form" do
+        assert_select "fieldset#parser_details", false
+      end
+      
+      should "show parser details" do
+        assert_select "div#parser_#{@parser.id}"
+      end
     end
     
+    context "when scraper council has portal system but parser does not exist" do
+      setup do
+        @portal_system = Factory(:portal_system, :name => "Some Portal for Councils")
+        @portal_system.parsers << @parser = Factory(:another_parser) # add a parser to portal_system...
+        @council.update_attribute(:portal_system_id, @portal_system.id)# .. and associate portal_system to council
+        @parser = Factory(:parser, :portal_system => @portal_system)
+        get :new, :type  => "ItemScraper", :result_model => "Meeting", :council_id => @council.id
+      end
+    
+      should_assign_to :scraper 
+      should_respond_with :success
+      should_render_template :new
+      should_not_set_the_flash
+      should_render_a_form
+      
+      should "assign appropriate fresh parser to scraper" do
+        assert assigns(:scraper).parser.new_record?
+      end
+      
+      should "show text box for url" do
+        assert_select "input#scraper_url"
+      end
+  
+      should "show parser details form" do
+        assert_select "fieldset#parser_details"
+      end
+      
+      should "show link to add new parser for portal_system" do
+        assert_select "form p.alert", /no parser/i do
+          assert_select "a", /add new/i
+        end
+      end
+    end
   end
   
   # create tests
