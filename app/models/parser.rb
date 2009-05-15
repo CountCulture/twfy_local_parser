@@ -56,7 +56,8 @@ class Parser < ActiveRecord::Base
   end
   
   def title
-    "#{result_model} #{scraper_type.sub('Scraper','').downcase} parser for #{portal_system.try(:name) || 'this scraper only'}"
+    "#{result_model} #{scraper_type.sub('Scraper','').downcase} parser for " +
+    (portal_system ? portal_system.name : 'single scraper only')
   end
   
 end

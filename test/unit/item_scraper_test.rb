@@ -62,7 +62,7 @@ class ItemScraperTest < ActiveSupport::TestCase
         end
       
       end
-      context "item_scraper with related_model and no url" do
+      context "item_scraper with related_model" do
         setup do
           @scraper.parser.update_attribute(:related_model, "Committee")
           

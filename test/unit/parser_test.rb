@@ -32,7 +32,11 @@ class ParserTest < Test::Unit::TestCase
       end
 
       should "return details as title" do
-        assert_equal "Member item parser for this scraper only", @parser.title
+        assert_equal "Member item parser for single scraper only", @parser.title
+      end
+      
+      should "return details as title when new parser" do
+        assert_equal "Committee item parser for single scraper only", Parser.new(:result_model => "Committee", :scraper_type => "ItemScraper").title
       end
     end
     

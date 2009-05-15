@@ -21,14 +21,15 @@
         <legend>Parser details</legend>
         <% f.fields_for :parser do |pf| %>
           <p>
-            <%= pf.label :result_model, "Result Model" %>
+            <%= pf.label :result_model, "Result Model <em>Kind of object your scraping for</em>" %>
             <%= pf.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
           </p>
-          <p>
-            <em>or...</em><br />
-            <%= pf.label :related_model, "Related model" %>
-            <%= pf.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
-          </p>
+          <%- if @scraper.is_a?(ItemScraper) -%>
+            <p>
+              <%= pf.label :related_model, "Related model <em>optional</em>" %>
+              <%= pf.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+            </p>
+          <%- end -%>
           <p>
             <%= pf.label :description, "Parser Description" %>
             <%= pf.text_field :description %>
@@ -39,11 +40,11 @@
           </p>
           <div id="parser_attribute_parser">
             <h3>Attribute parser</h3>
-            <%= render :partial => '/parsers/attrib', :collection => @scraper.parser.attribute_parser_object %>
+            <%= render :partial => 'attrib', :collection => @scraper.parser.attribute_parser_object %>
           </div>
           <br class="clear-left">
           <p><%= link_to_function "add more attributes" do |page|
-            page.insert_html :bottom, :parser_attribute_parser, :partial => '/parsers/attrib', :object => Parser::AttribObject.new
+            page.insert_html :bottom, :parser_attribute_parser, :partial => 'attrib', :object => Parser::AttribObject.new
           end %></p>
         <% end %>
     </fieldset>

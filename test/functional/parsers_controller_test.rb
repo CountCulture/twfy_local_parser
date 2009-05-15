@@ -36,9 +36,21 @@ class ParsersControllerTest < ActionController::TestCase
       end
     end
     
+    context "with no portal_system given" do
+      should "raise exception" do
+        assert_raise(ArgumentError) { get :new, :result_model => "Member", :scraper_type => "ItemParser" }
+      end
+    end
+    
+    context "with no scraper_type given" do
+      should "raise exception" do
+        assert_raise(ActionView::TemplateError) { get :new, :portal_system_id  => @portal_system.id, :result_model => "Member" }
+      end
+    end
+    
     context "for basic parser" do
       setup do
-        get :new, :portal_system_id  => @portal_system.id
+        get :new, :portal_system_id  => @portal_system.id, :result_model => "Member", :scraper_type => "ItemParser"
       end
       
       should_assign_to(:parser)
@@ -47,10 +59,9 @@ class ParsersControllerTest < ActionController::TestCase
 
       should "show form" do
         assert_select "form#new_parser"
-        assert_select "select#parser_scraper_type"
       end
 
-      should "show include portal_system in hidden field" do
+      should "include portal_system in hidden field" do
         assert_select "input#parser_portal_system_id[type=hidden][value=#{@portal_system.id}]"
       end
     end
@@ -113,7 +124,9 @@ class ParsersControllerTest < ActionController::TestCase
       @portal_system = Factory(:portal_system)
       @parser = Factory(:parser, :portal_system => @portal_system)
       @parser_params = { :description => "New Description", 
-                         :result_model => "Committee"}
+                         :result_model => "Committee",
+                         :item_parser => "foo=\"new_bar\"",
+                         :attribute_parser_object => [{:attrib_name => "newfoo", :parsing_code => "barbar"}]}
      end
 
 
@@ -125,6 +138,8 @@ class ParsersControllerTest < ActionController::TestCase
         should_not_change "Parser.count"
         should_change "@parser.reload.description", :to => "New Description"
         should_change "@parser.reload.result_model", :to => "Committee"
+        should_change "@parser.reload.item_parser", :to => "foo=\"new_bar\""
+        should_change "@parser.reload.attribute_parser", :to => {:newfoo => "barbar"}
         should_assign_to :parser
         should_redirect_to( "the show page for parser") { parser_path(assigns(:parser)) }
         should_set_the_flash_to "Successfully updated parser"

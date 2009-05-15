@@ -1,0 +1,9 @@
+<% fields_for "scraper[parser_attributes][attribute_parser_object][]", attrib do |h_form| %>
+  <div class="item_attribute">
+    <p><label for="scraper_parser_attributes_attributes_parser_object__attrib_name">attribute name</label><br />
+    <%= h_form.text_field "attrib_name", :size => 20 %></p>
+    <p><label for="scraper_parser_attributes_attributes_parser_object__parsing_code">parsing code</label><br />
+    <%= h_form.text_field "parsing_code", :size => 40 %></p>
+    <p><%= link_to_function "Delete attribute", "this.up('div').remove()" %></p>
+  </div>      
+<% end %>                

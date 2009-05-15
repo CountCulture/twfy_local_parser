@@ -219,13 +219,9 @@ class ScrapersControllerTest < ActionController::TestCase
       should_not_set_the_flash
       should_render_a_form
   
-      should "create given type of scraper" do
+      should "assign given type of scraper" do
         assert_kind_of InfoScraper, assigns(:scraper)
       end
-  
-      # should "show select box for councils" do
-      #   assert_select "select[name=?]", "scraper[council_id]"
-      # end
   
       should "show nested form for parser" do
         assert_select "textarea#scraper_parser_attributes_item_parser"
@@ -240,6 +236,10 @@ class ScrapersControllerTest < ActionController::TestCase
       should "not show select box for possible_parsers" do
         assert_select "select#scraper_parser_id", false
       end
+      
+      should "not show related_model select_box for info scraper" do
+        assert_select "select#scraper_parser_attributes_related_model", false
+      end
     end
     
     context "for basic scraper with given result model" do
@@ -251,10 +251,30 @@ class ScrapersControllerTest < ActionController::TestCase
         assert_equal "Committee", assigns(:scraper).result_model
       end
   
-      should "show result_model in form" do
+      should "show result_model select box in form" do
         assert_select "select#scraper_parser_attributes_result_model" do
           assert_select "option[value='Committee'][selected='selected']"
         end
+      end
+    end
+    
+    context "for basic item_scraper" do
+      setup do
+        get :new, :type  => "ItemScraper", :council_id => @council.id
+      end
+  
+      should_assign_to :scraper
+      should_respond_with :success
+      should_render_template :new
+      should_not_set_the_flash
+      should_render_a_form
+  
+      should "assign given type of scraper" do
+        assert_kind_of ItemScraper, assigns(:scraper)
+      end
+      
+      should "not show related_model select_box for info scraper" do
+        assert_select "select#scraper_parser_attributes_related_model"
       end
     end
     
