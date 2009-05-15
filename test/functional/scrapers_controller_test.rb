@@ -6,7 +6,9 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on GET to :index" do
     setup do
       @scraper1 = Factory(:scraper)
-      @scraper2 = Factory(:info_scraper)
+      @portal_system = Factory(:portal_system)
+      @council2 = Factory(:another_council, :portal_system => @portal_system)
+      @scraper2 = Factory(:info_scraper, :council => @council2)
       get :index
     end
   
@@ -26,6 +28,12 @@ class ScrapersControllerTest < ActionController::TestCase
     should "list scrapers for each council" do
       assert_select "#council_#{@scraper1.council.id}" do
         assert_select "li a", @scraper1.title
+      end
+    end
+    
+    should "link to portal system if council has portal system" do
+      assert_select "#council_#{@scraper2.council.id}" do
+        assert_select "a", @portal_system.name
       end
     end
     
