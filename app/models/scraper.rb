@@ -11,10 +11,8 @@ class Scraper < ActiveRecord::Base
   attr_accessor :related_objects, :parsing_results
   attr_protected :results
   delegate :result_model, :to => :parser
-  # delegate :result_model=, :to => :parser
   delegate :related_model, :to => :parser
   delegate :portal_system, :to => :council
-  # delegate :related_model=, :to => :parser
   
   def validate
     errors.add(:parser, "can't be blank") unless parser

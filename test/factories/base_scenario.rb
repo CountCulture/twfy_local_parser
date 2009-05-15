@@ -1,20 +1,16 @@
 Factory.define :scraper, :class => :item_scraper do |s|
   s.url 'http://www.anytown.gov.uk/members/bob'
-  # s.result_model 'Member' 
-  # s.expected_result_attributes ":foo => \"bar\""
   s.association :parser
   s.association :council
 end
 
 Factory.define :item_scraper, :class => :item_scraper do |s|
   s.url 'http://www.anytown.gov.uk/members'
-  # s.result_model 'Member' 
   s.association :parser
   s.association :council, :factory => :tricky_council
 end
 
 Factory.define :info_scraper, :class => :info_scraper do |s|
-  # s.result_model 'Member' 
   s.association :parser, :factory => :another_parser
   s.association :council, :factory => :another_council
 end

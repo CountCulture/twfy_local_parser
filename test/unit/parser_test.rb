@@ -9,6 +9,8 @@ class ParserTest < Test::Unit::TestCase
     should_validate_presence_of :scraper_type
     should_allow_values_for :result_model, "Member", "Committee", "Meeting"
     should_not_allow_values_for :result_model, "foo", "User"
+    should_allow_values_for :scraper_type, "InfoScraper", "ItemScraper"
+    should_not_allow_values_for :scraper_type, "foo", "OtherScraper"
 
     should "serialize attribute_parser" do
       parser = Parser.create!(:description => "description of parser", :item_parser => "foo", :scraper_type => "ItemScraper", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"}, :result_model => "Member")
@@ -22,7 +24,7 @@ class ParserTest < Test::Unit::TestCase
       PortalSystem.delete_all # some reason not getting rid of old records -- poss 2.3.2 bug (see Caboose blog)
       @parser = Factory(:parser)
     end
-
+    
     context "in general" do
       should "have results accessor" do
         @parser.instance_variable_set(:@results, "foo")

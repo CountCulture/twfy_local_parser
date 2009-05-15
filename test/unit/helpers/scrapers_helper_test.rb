@@ -2,6 +2,7 @@ require 'test_helper'
 
 class ScrapersHelperTest < ActionView::TestCase
 
+  include ApplicationHelper
   include ScrapersHelper
   
   context "class_for_result helper method" do
@@ -85,5 +86,29 @@ class ScrapersHelperTest < ActionView::TestCase
      end
      
   end
-  
+ 
+  context "scraper_links_for_council helper method" do
+    setup do
+      @scraper = Factory(:scraper)
+      @council = @scraper.council
+    end
+
+    should "return array" do
+      assert_kind_of Array, scraper_links_for_council(@council)
+    end
+    
+    should "return array of links for council's scrapers" do
+      assert_equal link_for(@scraper), scraper_links_for_council(@council).first
+    end
+    
+    should "return links for all possible scrapers" do
+      assert_equal Scraper::SCRAPER_TYPES.size*Parser::ALLOWED_RESULT_CLASSES.size, scraper_links_for_council(@council).size
+    end
+    
+    should "return links for not yet created scrapers" do
+      links = scraper_links_for_council(@council)
+      assert links.include?(link_to("Add Committee item scraper for #{@council.name} council", new_scraper_path(:council_id => @council.id, :result_model => "Committee", :type => "ItemScraper"), :class => "new_scraper_link")) 
+    end
+  end
+   
 end

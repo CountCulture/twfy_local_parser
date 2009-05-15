@@ -24,4 +24,20 @@ module ScrapersHelper
     return if css_classes.blank? || css_classes == "unchanged"
     "<span class='#{css_classes} flash'>#{css_classes}</span>"
   end
+  
+  def scraper_links_for_council(council)
+    existing_scraper_links, new_scraper_links = [], []
+    scrapers = council.scrapers
+    
+    Parser::ALLOWED_RESULT_CLASSES.each do |r|
+      Scraper::SCRAPER_TYPES.each do |st|
+        if es = scrapers.detect{ |s| s.type == st && s.result_model == r }
+          existing_scraper_links << link_for(es)
+        else
+          new_scraper_links << link_to("Add #{r} #{st.sub('Scraper', '').downcase} scraper for #{council.name} council", new_scraper_path(:council_id => council.id, :result_model => r, :type => st), :class => "new_scraper_link")
+        end
+      end
+    end
+    existing_scraper_links + new_scraper_links
+  end
 end
