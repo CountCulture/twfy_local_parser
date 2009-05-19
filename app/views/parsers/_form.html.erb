@@ -17,11 +17,11 @@
     <%= pf.text_field :description %>
   </p>
   <p>
-    <%= pf.label :item_parser %>
+    <%= pf.label :item_parser, "Item Parser <em>(base Hpricot doc is 'item')</em>" %>
     <%= pf.text_area :item_parser, :rows => 3 %>
   </p>
   <div id="parser_attribute_parser">
-    <h3>Attribute parser</h3>
+    <h3>Attribute parser <em>(base item is 'item')</em></h3>
     <%= render :partial => 'attrib', :collection => @parser.attribute_parser_object %>
   </div>
   <br class="clear-left">

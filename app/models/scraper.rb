@@ -13,6 +13,7 @@ class Scraper < ActiveRecord::Base
   delegate :result_model, :to => :parser
   delegate :related_model, :to => :parser
   delegate :portal_system, :to => :council
+  delegate :base_url, :to => :council
   
   def validate
     errors.add(:parser, "can't be blank") unless parser

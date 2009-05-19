@@ -73,6 +73,11 @@ class ScraperTest < ActiveSupport::TestCase
       assert_equal "portal_system", @scraper.portal_system
     end
     
+    should "delegate base_url to council" do
+      @council.expects(:base_url).returns("http://some.council.com/democracy")
+      assert_equal "http://some.council.com/democracy", @scraper.base_url
+    end
+    
     should "have results accessor" do
       @scraper.instance_variable_set(:@results, "foo")
       assert_equal "foo", @scraper.results

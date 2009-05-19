@@ -27,12 +27,11 @@ class Parser < ActiveRecord::Base
   
   def process(doc, scraper=nil)
     @raw_response = doc
+    @current_scraper = scraper
     now_parsing = "items"
     parsing_code = item_parser
     object_to_be_parsed = doc
     
-    # items = item_parser.blank? ? doc : doc.instance_eval(item_parser)
-    # items = eval_parsing_code(item_parser, doc)
     items = item_parser.blank? ? doc : eval_parsing_code(item_parser, doc)
     now_parsing = "attributes"
     items = [items] unless items.is_a?(Array)
@@ -41,7 +40,6 @@ class Parser < ActiveRecord::Base
       attribute_parser.each do |key, value|
         parsing_code = value
         object_to_be_parsed = item
-        # result_hash[key] = item.instance_eval(value)
         result_hash[key] = eval_parsing_code(value, item)
       end
       result_hash
@@ -64,6 +62,7 @@ class Parser < ActiveRecord::Base
   
   protected
   def eval_parsing_code(code=nil, item=nil)
+    base_url = @current_scraper.try(:base_url)
     # THIS CODE IS DANGEROUS AT THE MOMENT.
     # WRAP in new thread with higher $SAFE level as per pickaxe, 
     # or investigate using proc as per http://www.davidflanagan.com/2008/11/safe-is-proc-lo.html

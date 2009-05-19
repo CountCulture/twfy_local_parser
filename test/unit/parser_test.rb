@@ -133,6 +133,12 @@ class ParserTest < Test::Unit::TestCase
         given_obj = stub
         assert_equal given_obj, @parser.send(:eval_parsing_code, "item", given_obj) # will raise exception unless item local variable exists
       end
+      
+      should "make current_scraper base_url available as 'base_url' local variable" do
+        scraper = stub(:base_url => "http://base.url")
+        @parser.instance_variable_set(:@current_scraper, scraper)
+        assert_equal "http://base.url", @parser.send(:eval_parsing_code, "base_url") # will raise exception unless base_url local variable exists
+      end
     end
     
     context "when processing" do
@@ -145,6 +151,11 @@ class ParserTest < Test::Unit::TestCase
 
         should "return self" do
           assert_equal @parser, @parser.process(@dummy_hpricot)
+        end
+        
+        should "save given scraper in instance variable" do
+          scraper = stub
+          assert_equal scraper, @parser.process(@dummy_hpricot, scraper).instance_variable_get(:@current_scraper)
         end
 
         should "eval item_parser code on hpricot doc" do

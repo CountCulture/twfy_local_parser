@@ -1,5 +1,6 @@
 <% form_for :scraper, @scraper, :url => (@scraper.new_record? ? scrapers_path : scraper_path(@scraper)), :html => { :method => (@scraper.new_record? ? :post : :put)} do |f| -%>
     <%= hidden_field_tag :type, @scraper.class.to_s %>
+    <%= f.hidden_field :council_id %>
     <%- unless @scraper.is_a?(InfoScraper) -%>
       <p>
         <%= f.label :url, "Url to be scraped" %>
@@ -7,9 +8,7 @@
       </p>
     <%- end -%>
     <%- if @scraper.portal_system && !@scraper.parser.new_record? -%>
-      <p>
-        <%= f.hidden_field :parser_id %>
-      </p>
+      <%= f.hidden_field :parser_id %>
       <%= render :partial => '/parsers/parser', :object => @scraper.parser %>
     <%- else -%>
       <%- if @scraper.portal_system -%>

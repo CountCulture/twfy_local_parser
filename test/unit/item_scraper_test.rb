@@ -57,6 +57,11 @@ class ItemScraperTest < ActiveSupport::TestCase
           @scraper.process
         end
       
+        should "pass self to associated parser" do
+          @parser.expects(:process).with(anything, @scraper).returns(stub_everything(:results => []))
+          @scraper.process
+        end
+        
       end
       context "item_scraper with related_model" do
         setup do
@@ -85,6 +90,11 @@ class ItemScraperTest < ActiveSupport::TestCase
           should "get data from url interpolated with related object" do
             @scraper.expects(:_data).with("http://www.anytown.gov.uk/meetings?ctte_id=77")
             @scraper.expects(:_data).with("http://www.anytown.gov.uk/meetings?ctte_id=78")
+            @scraper.process
+          end
+          
+          should "pass self to associated parser" do
+            @parser.expects(:process).twice.with(anything, @scraper).returns(stub_everything(:results => []))
             @scraper.process
           end
         end

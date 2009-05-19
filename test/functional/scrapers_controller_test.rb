@@ -233,6 +233,10 @@ class ScrapersControllerTest < ActionController::TestCase
         assert_select "input#type[type=hidden][value=InfoScraper]"
       end
       
+      should "include council in hidden field" do
+        assert_select "input#scraper_council_id[type=hidden][value=#{@council.id}]"
+      end
+      
       should "not show select box for possible_parsers" do
         assert_select "select#scraper_parser_id", false
       end

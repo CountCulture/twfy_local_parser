@@ -23,6 +23,16 @@ class CouncilTest < ActiveSupport::TestCase
     should "alias name as title" do
       assert_equal @council.name, @council.title
     end
+    
+    should "return url as base_url if base_url is not set" do
+      assert_equal @council.url, @council.base_url
+    end
+    
+    should "return base_url as base_url if base_url is set" do
+      council = Factory(:another_council, :base_url => "another.url")
+      assert_equal "another.url", council.base_url
+    end
+    
   end
   
 end

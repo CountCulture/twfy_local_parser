@@ -9,4 +9,8 @@ class Council < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
   alias_attribute :title, :name
+  
+  def base_url
+    read_attribute(:base_url) || url
+  end
 end
