@@ -21,7 +21,7 @@
         <legend>Parser details</legend>
         <% f.fields_for :parser do |pf| %>
           <p>
-            <%= pf.label :result_model, "Result Model <em>Kind of object your scraping for</em>" %>
+            <%= pf.label :result_model, "Result Model <em>Kind of object you're scraping for</em>" %>
             <%= pf.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
           </p>
           <%- if @scraper.is_a?(ItemScraper) -%>

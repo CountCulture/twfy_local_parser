@@ -159,7 +159,12 @@ class ScraperTest < ActiveSupport::TestCase
       end
       
       should "pass data to associated parser" do
-        @parser.expects(:process).with("something").returns(stub_everything)
+        @parser.expects(:process).with("something", anything).returns(stub_everything)
+        @scraper.process
+      end
+
+      should "pass self to associated parser" do
+        @parser.expects(:process).with(anything, @scraper).returns(stub_everything)
         @scraper.process
       end
 

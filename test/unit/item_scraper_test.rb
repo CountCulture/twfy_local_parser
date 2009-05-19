@@ -4,8 +4,6 @@ class ItemScraperTest < ActiveSupport::TestCase
   
   context "The ItemScraper class" do
     
-    # should_validate_presence_of :url
-    # should_have_db_column :related_model
     should "be subclass of Scraper class" do
       assert_equal Scraper, ItemScraper.superclass
     end
@@ -24,8 +22,6 @@ class ItemScraperTest < ActiveSupport::TestCase
     context "with related model" do
       setup do
         @scraper.parser.update_attribute(:related_model, "Committee")
-        # @related_model_scraper = ItemScraper.new(:related_model => "Committee", :council_id => 44)
-        # @scraper.parser.update_attribute(:result_model, "Meeting")
       end
 
       should "return related model" do

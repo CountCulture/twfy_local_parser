@@ -118,27 +118,45 @@ class ParserTest < Test::Unit::TestCase
       end
     end
  
+    context "when evaluating parsing code" do
+      should "evaluate code" do
+        @parser.expects(:eval).with("some code")
+        @parser.send(:eval_parsing_code, "some code", "foo")
+      end
+      
+      should "return result" do
+        @parser.stubs(:eval).with("some code").returns("some return value")
+        assert_equal "some return value", @parser.send(:eval_parsing_code, "some code", "foo")
+      end
+      
+      should "make given object available as 'item' local variable" do
+        given_obj = stub
+        assert_equal given_obj, @parser.send(:eval_parsing_code, "item", given_obj) # will raise exception unless item local variable exists
+      end
+    end
+    
     context "when processing" do
       
       context "in general" do
         setup do
           @dummy_hpricot = stub_everything
+          @parser.stubs(:eval_parsing_code)
         end
 
         should "return self" do
           assert_equal @parser, @parser.process(@dummy_hpricot)
         end
 
-        should "evaluate item_parser code in contect of hpricot doc" do
-          @dummy_hpricot.expects(:instance_eval).with('foo="bar"')
+        should "eval item_parser code on hpricot doc" do
+          @parser.expects(:eval_parsing_code).with('foo="bar"', @dummy_hpricot )
           @parser.process(@dummy_hpricot)
         end
         
-        should "pass hpricot doc directly to attribute_parser if not item_parser" do
-          @no_item_parser_parser = Factory.build(:parser, :item_parser => nil)
-          @dummy_hpricot = mock
-          @dummy_hpricot.expects(:instance_eval).with(){ |value| value =~ /bar/ }
-          @no_item_parser_parser.process(@dummy_hpricot).errors
+        should "eval attribute_parser code on hpricot doc if no item_parser" do
+          no_item_parser_parser = Factory.build(:parser, :item_parser => nil)
+          dummy_hpricot = mock
+          no_item_parser_parser.expects(:eval_parsing_code).with(){ |code, item| (code =~ /bar/) && (item == dummy_hpricot) }
+          no_item_parser_parser.process(dummy_hpricot)
         end
       end
       
@@ -146,16 +164,17 @@ class ParserTest < Test::Unit::TestCase
       context "and single item is returned" do
         setup do
           @dummy_item = stub
-          @dummy_hpricot = stub(:instance_eval => @dummy_item)
+          @dummy_hpricot = stub
+          @parser.stubs(:eval_parsing_code).with(@parser.item_parser, @dummy_hpricot).returns(@dummy_item)
         end
       
-        should "evaluate each attribute_parser value on item in context of item" do
-          @dummy_item.expects(:instance_eval).twice.with(){ |value| value =~ /bar/ }
+        should "evaluate each attribute_parser on item" do
+          @parser.expects(:eval_parsing_code).twice.with(){ |code, item| (code =~ /bar/)&&(item == @dummy_item) }
           @parser.process(@dummy_hpricot)
         end
         
         should "store result of attribute_parser as hash using attribute_parser keys" do
-          @dummy_item.stubs(:instance_eval).returns("some value")
+          @parser.expects(:eval_parsing_code).twice.with(){ |code, item| (code =~ /bar/)&&(item == @dummy_item) }.returns("some value")
           assert_equal ([{:foo => "some value", :foo1 => "some value"}]), @parser.process(@dummy_hpricot).results
         end
       end
@@ -163,18 +182,19 @@ class ParserTest < Test::Unit::TestCase
       context "and array of items is returned" do
         setup do
           @dummy_item_1, @dummy_item_2 = stub, stub
-          @dummy_hpricot = stub(:instance_eval => [@dummy_item_1, @dummy_item_2])
+          @dummy_hpricot = stub
+          @parser.stubs(:eval_parsing_code).with(@parser.item_parser, @dummy_hpricot).returns([@dummy_item_1, @dummy_item_2])
         end
       
-        should "evaluate each attribute_parser value on item in context of item" do
-          @dummy_item_1.expects(:instance_eval).twice.with(){ |value| value =~ /bar/ }
-          @dummy_item_2.expects(:instance_eval).twice.with(){ |value| value =~ /bar/ }
+        should "evaluate each attribute_parser value on item" do
+          @parser.expects(:eval_parsing_code).twice.with(){ |code, item| (code =~ /bar/)&&(item == @dummy_item_1) }
+          @parser.expects(:eval_parsing_code).twice.with(){ |code, item| (code =~ /bar/)&&(item == @dummy_item_2) }
           @parser.process(@dummy_hpricot)
         end
         
         should "store result of attribute_parser as hash using attribute_parser keys" do
-          @dummy_item_1.stubs(:instance_eval).returns("some value")
-          @dummy_item_2.stubs(:instance_eval).returns("another value")
+          @parser.stubs(:eval_parsing_code).with(){ |code, item| (code =~ /bar/)&&(item == @dummy_item_1) }.returns("some value")
+          @parser.stubs(:eval_parsing_code).with(){ |code, item| (code =~ /bar/)&&(item == @dummy_item_2) }.returns("another value")
           assert_equal ([{ :foo => "some value", :foo1 => "some value" },
                          { :foo => "another value", :foo1 => "another value" }]), @parser.process(@dummy_hpricot).results
         end
@@ -206,9 +226,9 @@ class ParserTest < Test::Unit::TestCase
       context "and problems occur when parsing attributes" do
         setup do
           @dummy_item_1, @dummy_item_2 = "String_1", "String_2"
-          @dummy_hpricot_for_attrib_prob = stub(:instance_eval => [@dummy_item_1, @dummy_item_2])
-
+          @dummy_hpricot_for_attrib_prob = stub
           @problem_parser = Parser.new(:item_parser => "#nothing here", :attribute_parser => {:full_name => "foobar"}) # => unknown local variable
+          @problem_parser.stubs(:eval_parsing_code).with("#nothing here", @dummy_hpricot_for_attrib_prob).returns([@dummy_item_1, @dummy_item_2])
         end
       
         should "not raise exception" do

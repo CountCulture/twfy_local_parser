@@ -3,7 +3,7 @@ class InfoScraper < Scraper
   def process(options={})
     @related_objects = [options[:objects]].flatten if options[:objects]
     related_objects.each do |obj|
-      raw_results = parser.process(_data(obj.url)).results
+      raw_results = parser.process(_data(obj.url), self).results
       update_with_results(raw_results, obj, options)
     end
     self

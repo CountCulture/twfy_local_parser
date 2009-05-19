@@ -63,10 +63,15 @@ class InfoScraperTest < ActiveSupport::TestCase
         end
 
         should "parse info returned from url" do
-          @parser.expects(:process).with("something").returns(stub_everything(:results => []))
+          @parser.expects(:process).with("something", anything).returns(stub_everything(:results => []))
           @scraper.process(:objects => @dummy_related_object)
         end
         
+        should "pass self to associated parser" do
+          @parser.expects(:process).with(anything, @scraper).returns(stub_everything(:results => []))
+          @scraper.process(:objects => @dummy_related_object)
+        end
+
         should "update existing instance of result_class" do
           @scraper.process(:objects => @dummy_related_object)
           assert_equal "Fred Flintstone", @dummy_related_object.full_name
@@ -111,7 +116,7 @@ class InfoScraperTest < ActiveSupport::TestCase
           @scraper.stubs(:_data).returns("something")
           @parser = @scraper.parser
           
-          @dummy_object_1, @dummy_object_2 = Member.new, Member.new
+          @dummy_object_1, @dummy_object_2 = Member.new(:url => "http://www.anytown.gov.uk/members/fred"), Member.new(:url => "http://www.anytown.gov.uk/members/bob")
           @dummy_collection = [@dummy_object_1, @dummy_object_2]
           @parser.stubs(:results).returns([{ :full_name => "Fred Flintstone", 
                                              :url => "http://www.anytown.gov.uk/members/fred" }] 
@@ -119,16 +124,26 @@ class InfoScraperTest < ActiveSupport::TestCase
                                                            :url => "http://www.anytown.gov.uk/members/barney" }])
         end
       
-        should "process url" do
-          @scraper.expects(:process)
+        should "get data from objects' urls" do
+          @scraper.expects(:_data).with("http://www.anytown.gov.uk/members/fred").then.with("http://www.anytown.gov.uk/members/bob")
           @scraper.process(:objects => @dummy_collection)
         end
-      
+
         should "save in related_objects" do
           @scraper.process(:objects => @dummy_collection)
           assert_equal @dummy_collection, @scraper.related_objects
         end
       
+        should "parse info returned from url" do
+          @parser.expects(:process).with("something", anything).twice.returns(stub_everything(:results => []))
+          @scraper.process(:objects => @dummy_collection)
+        end
+        
+        should "pass self to associated parser" do
+          @parser.expects(:process).with(anything, @scraper).twice.returns(stub_everything(:results => []))
+          @scraper.process(:objects => @dummy_collection)
+        end
+
         should "return self" do
           assert_equal @scraper, @scraper.process(:objects => @dummy_collection)
         end
