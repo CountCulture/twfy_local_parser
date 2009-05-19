@@ -11,7 +11,8 @@ class ParserTest < Test::Unit::TestCase
     should_not_allow_values_for :result_model, "foo", "User"
     should_allow_values_for :scraper_type, "InfoScraper", "ItemScraper"
     should_not_allow_values_for :scraper_type, "foo", "OtherScraper"
-
+    should_have_db_column :path
+    
     should "serialize attribute_parser" do
       parser = Parser.create!(:description => "description of parser", :item_parser => "foo", :scraper_type => "ItemScraper", :attribute_parser => {:foo => "\"bar\"", :foo2 => "nil"}, :result_model => "Member")
       assert_equal({:foo => "\"bar\"", :foo2 => "nil"}, parser.reload.attribute_parser)

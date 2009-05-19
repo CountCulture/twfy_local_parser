@@ -117,6 +117,62 @@ class ScraperTest < ActiveSupport::TestCase
       assert_equal "some error", @scraper.parsing_errors[:base]
     end
     
+    context "if scraper has url attribute" do
+      should "return url attribute as url" do
+        assert_equal 'http://www.anytown.gov.uk/members/bob', @scraper.url
+      end
+      
+      should "ignore base_url and parser path when returning url" do
+        @scraper.parser.expects(:path).never
+        @scraper.expects(:base_url).never
+        assert_equal 'http://www.anytown.gov.uk/members/bob', @scraper.url
+      end
+    end
+    
+    context "if url attribute is nil" do
+      setup do
+        @scraper.url = nil
+      end
+      
+      should "use computed_url for url" do
+        @scraper.expects(:computed_url).returns("http://council.gov.uk/computed_url/")
+        assert_equal "http://council.gov.uk/computed_url/", @scraper.url
+      end
+    end
+    
+    context "if url attribute is blank" do
+      setup do
+        @scraper.url = ""
+      end
+      
+      should "use computed_url for url" do
+        @scraper.expects(:computed_url).returns("http://council.gov.uk/computed_url/")
+        assert_equal "http://council.gov.uk/computed_url/", @scraper.url
+      end
+    end
+    
+    context "for computed url" do
+
+      should "combine base_url and parser path" do
+        @scraper.stubs(:base_url).returns("http://council.gov.uk/democracy/")
+        @scraper.parser.stubs(:path).returns("path/to/councillors")
+        assert_equal 'http://council.gov.uk/democracy/path/to/councillors', @scraper.computed_url
+      end
+      
+      should "return nil if base_url is nil" do
+        @scraper.stubs(:base_url) # => nil
+        @scraper.parser.stubs(:path).returns("path/to/councillors")
+        assert_nil @scraper.computed_url 
+      end
+      
+      should "return nil if parser path is nil" do
+        @scraper.stubs(:base_url).returns("http://council.gov.uk/democracy/")
+        @scraper.parser.stubs(:path) # => nil
+        assert_nil @scraper.computed_url
+      end
+    end
+    
+    
     context "that belongs to council with portal system" do
       setup do
         @portal_system = Factory(:portal_system, :name => "Big Portal System")

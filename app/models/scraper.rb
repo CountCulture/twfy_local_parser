@@ -19,6 +19,10 @@ class Scraper < ActiveRecord::Base
     errors.add(:parser, "can't be blank") unless parser
   end
   
+  def computed_url
+    !base_url.blank?&&!parser.path.blank? ? "#{base_url}#{parser.path}" : nil
+  end
+  
   def expected_result_attributes
     read_attribute(:expected_result_attributes) ? Hash.new.instance_eval("merge(#{read_attribute(:expected_result_attributes)})") : {}
   end
@@ -45,7 +49,12 @@ class Scraper < ActiveRecord::Base
   def results
     @results ||=[]
   end
-    
+  
+  # build url from council's base_url and parsers path unless url is set
+  def url
+    read_attribute(:url).blank? ? computed_url : read_attribute(:url)
+  end
+  
   protected
   def _data(target_url=nil)
     Hpricot.parse(_http_get(target_url), :fixup_tags => true)

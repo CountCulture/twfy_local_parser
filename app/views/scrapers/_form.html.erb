@@ -6,6 +6,7 @@
         <%= f.label :url, "Url to be scraped" %>
         <%= f.text_field :url, :size => 60 %>
       </p>
+      <%= content_tag(:p, "Will use #{@scraper.computed_url} by default", :class => "faint") if @scraper.computed_url %>
     <%- end -%>
     <%- if @scraper.portal_system && !@scraper.parser.new_record? -%>
       <%= f.hidden_field :parser_id %>

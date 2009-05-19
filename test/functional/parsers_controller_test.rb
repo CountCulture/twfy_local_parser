@@ -29,12 +29,6 @@ class ParsersControllerTest < ActionController::TestCase
     setup do
       @portal_system = Factory(:portal_system)
     end
-
-    context "with no portal_system given" do
-      should "raise exception" do
-        assert_raise(ArgumentError) { get :new }
-      end
-    end
     
     context "with no portal_system given" do
       should "raise exception" do

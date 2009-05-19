@@ -17,6 +17,10 @@
     <%= pf.text_field :description %>
   </p>
   <p>
+    <%= pf.label :path, "Path <em>optional. This will be added to council's base_url to generate url to be scraped</em>" %>
+    <%= pf.text_field :path %>
+  </p>
+  <p>
     <%= pf.label :item_parser, "Item Parser <em>(base Hpricot doc is 'item')</em>" %>
     <%= pf.text_area :item_parser, :rows => 3 %>
   </p>
