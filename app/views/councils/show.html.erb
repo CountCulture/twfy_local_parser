@@ -5,6 +5,8 @@
 <p>Address <strong><%= @council.address %></strong></p>
 <p>Telephone <strong><%= @council.telephone %></strong></p>
 <p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
+<p>Notes</p>
+<div class="notes"><%= @council.notes %></div>
 
 <h3>Current council members</h3>
 <ul id="members">

@@ -222,7 +222,12 @@ class ScrapersControllerTest < ActionController::TestCase
       should "assign given type of scraper" do
         assert_kind_of InfoScraper, assigns(:scraper)
       end
-  
+    
+      should "build parser from params" do
+        assert assigns(:scraper).parser.new_record?
+        assert_equal "InfoScraper", assigns(:scraper).parser.scraper_type
+      end
+      
       should "show nested form for parser" do
         assert_select "textarea#scraper_parser_attributes_item_parser"
         assert_select "input#scraper_parser_attributes_attribute_parser_object__attrib_name"
@@ -244,6 +249,19 @@ class ScrapersControllerTest < ActionController::TestCase
       should "not show related_model select_box for info scraper" do
         assert_select "select#scraper_parser_attributes_related_model", false
       end
+      
+      should "not have hidden parser details form" do
+        assert_select "fieldset#parser_details[style='display:none']", false
+      end
+      
+      should "not have link to show parser form" do
+        assert_select "form a", :text => /use dedicated parser/i, :count => 0
+      end
+
+      should "show hidden field with parser scraper_type" do
+        assert_select "input#scraper_parser_attributes_scraper_type[type=hidden][value=InfoScraper]"
+      end
+      
     end
     
     context "for basic scraper with given result model" do
@@ -251,8 +269,10 @@ class ScrapersControllerTest < ActionController::TestCase
         get :new, :type  => "InfoScraper", :council_id => @council.id, :result_model => "Committee"
       end
   
-      should "assign result_model to parser" do
+      should "build parser from params" do
+        assert assigns(:scraper).parser.new_record?
         assert_equal "Committee", assigns(:scraper).result_model
+        assert_equal "InfoScraper", assigns(:scraper).parser.scraper_type
       end
   
       should "show result_model select box in form" do
@@ -309,13 +329,32 @@ class ScrapersControllerTest < ActionController::TestCase
         assert_select "input#scraper_parser_id[type=hidden][value=#{@parser.id}]"
       end
       
+      should "have hidden parser details form" do
+        assert_select "fieldset#parser_details[style='display:none']"
+      end
       
-      should "not show parser details form" do
-        assert_select "fieldset#parser_details", false
+      should "not use parser in parser details form" do
+        assert_select "fieldset#parser_details input#scraper_parser_attributes_description[value='#{@parser.description}']", false
+      end
+      
+      should "show result_model in parser details form" do
+        assert_select "select#scraper_parser_attributes_result_model option[selected='selected'][value='#{@parser.result_model}']"
+      end
+      
+      should "not show parser attribute_parser details in parser form" do
+        assert_select "input#scraper_parser_attributes_attribute_parser_object__attrib_name[value='#{@parser.attribute_parser.keys.first}']", false
+      end
+      
+      should "show hidden field with parser scraper_type" do
+        assert_select "input#scraper_parser_attributes_scraper_type[type=hidden][value=ItemScraper]"
       end
       
       should "show parser details" do
         assert_select "div#parser_#{@parser.id}"
+      end
+      
+      should "have link to show parser form" do
+        assert_select "form a", /use dedicated parser/i
       end
     end
     

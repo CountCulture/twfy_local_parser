@@ -36,6 +36,11 @@ class Scraper < ActiveRecord::Base
     parser.errors
   end
   
+  # Returns true if associated parser belons to portal_system, false otherwise
+  def portal_parser?
+    !!parser.try(:portal_system)
+  end
+  
   def possible_parsers
     portal_system.parsers
   end

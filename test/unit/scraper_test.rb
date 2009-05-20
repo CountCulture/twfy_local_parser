@@ -171,8 +171,7 @@ class ScraperTest < ActiveSupport::TestCase
         assert_nil @scraper.computed_url
       end
     end
-    
-    
+        
     context "that belongs to council with portal system" do
       setup do
         @portal_system = Factory(:portal_system, :name => "Big Portal System")
@@ -186,6 +185,22 @@ class ScraperTest < ActiveSupport::TestCase
       
       should "return portal system's parsers as possible parsers" do
         assert_equal [@parser], @scraper.possible_parsers
+      end
+    end
+    
+    context "has portal_parser? method which" do
+
+      should "return true for if parser has associated portal system" do
+        @scraper.parser.portal_system = Factory(:portal_system)
+        assert @scraper.portal_parser?
+      end
+      
+      should "return false if parser does not have associated portal system" do
+        assert !@scraper.portal_parser?
+      end
+      
+      should "return false if no parser" do
+        assert !Scraper.new.portal_parser?
       end
     end
     

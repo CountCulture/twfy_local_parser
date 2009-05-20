@@ -19,7 +19,7 @@ class ScrapersController < ApplicationController
     @council = Council.find(params[:council_id])
     @scraper = params[:type].constantize.new(:council_id => @council.id)
     parser = Parser.find_by_portal_system_id_and_result_model_and_scraper_type(@council.portal_system_id, params[:result_model], params[:type])
-    parser ? (@scraper.parser = parser) : @scraper.build_parser(:result_model => params[:result_model])
+    parser ? (@scraper.parser = parser) : @scraper.build_parser(:result_model => params[:result_model], :scraper_type => params[:type])
   end
   
   def create

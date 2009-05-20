@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090519164111) do
+ActiveRecord::Schema.define(:version => 20090519183439) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(:version => 20090519164111) do
     t.text     "address"
     t.string   "authority_type"
     t.integer  "portal_system_id"
+    t.text     "notes"
   end
 
   create_table "meetings", :force => true do |t|

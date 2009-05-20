@@ -37,5 +37,10 @@
     <%= f.text_field :telephone %>
   </p>
   
+  <p>
+    <%= f.label :notes, "Notes <em>admin use only</em>" %>
+    <%= f.text_area :notes %>
+  </p>
+  
   <%= f.submit "Submit" %>
 <% end -%>
