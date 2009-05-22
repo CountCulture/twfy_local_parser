@@ -16,6 +16,7 @@ class CouncilTest < ActiveSupport::TestCase
     should_have_db_column :notes
     should_have_db_column :wikipedia_url
     should_have_db_column :ons_url
+    should_have_db_column :egr_id
   end
   
   context "A Council instance" do
