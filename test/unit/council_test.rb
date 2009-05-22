@@ -14,6 +14,8 @@ class CouncilTest < ActiveSupport::TestCase
     should_have_many :meetings
     should_belong_to :portal_system
     should_have_db_column :notes
+    should_have_db_column :wikipedia_url
+    should_have_db_column :ons_url
   end
   
   context "A Council instance" do

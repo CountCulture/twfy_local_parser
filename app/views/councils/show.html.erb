@@ -5,6 +5,8 @@
 <p>Address <strong><%= @council.address %></strong></p>
 <p>Telephone <strong><%= @council.telephone %></strong></p>
 <p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
+<p>Wikipedia page <strong><%= @council.wikipedia_url %></strong></p>
+<p>Office for National Statistics url <strong><%= @council.ons_url %></strong></p>
 <p>Notes</p>
 <div class="notes"><%= @council.notes %></div>
 
