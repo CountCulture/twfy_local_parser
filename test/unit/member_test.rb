@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class MemberTest < ActiveSupport::TestCase
-  should_validate_presence_of :first_name, :last_name, :url, :council_id
+  should_validate_presence_of :last_name, :url, :council_id
   should_belong_to :council
   should_have_many :memberships
   should_have_many :committees, :through => :memberships
@@ -59,16 +59,16 @@ class MemberTest < ActiveSupport::TestCase
       assert !new_member.ex_member?
     end
         
-    should "update details using MemberScraper" do
+    # should "update details using MemberScraper" do
       # MemberScraper.any_instance.expects(:update).with(@old_member)
       # @old_member.update
-    end
+    # end
     
-    should "update member details with info from MemberScraper" do
+    # should "update member details with info from MemberScraper" do
       # MemberScraper.any_instance.stubs(:update).returns(:party => 'Conservative')
       # @old_member.update
       # assert_equal 'Conservative', @old_member.party
-    end
+    # end
   end
   
   private

@@ -1,7 +1,7 @@
 class CouncilsController < ApplicationController
 
   def index
-    @councils = Council.find(:all)
+    @councils = Council.find(:all, :order => "name")
     respond_to do |format|
       format.html
       format.xml { render :xml => @councils.to_xml }
