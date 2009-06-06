@@ -3,7 +3,7 @@
   
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <title><%= @title || "TWFY Local" %></title>
+    <title><%= @title ? "#{@title} :: TWFY Local" : "They Work For You Local" %></title>
     <link rel="stylesheet" href="/stylesheets/blueprint/screen.css" type="text/css" media="screen, projection">
     <link rel="stylesheet" href="/stylesheets/blueprint/print.css" type="text/css" media="print"> 
     <!--[if IE]>

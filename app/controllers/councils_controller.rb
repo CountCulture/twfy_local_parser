@@ -2,11 +2,22 @@ class CouncilsController < ApplicationController
 
   def index
     @councils = Council.find(:all)
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @councils.to_xml }
+      format.js { render :json =>  @councils.to_json }
+    end
   end
   
   def show
     @council = Council.find(params[:id])
     @members = @council.members.current
+    @title = @council.name
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @council.to_xml }
+      format.js { render :json =>  @council.to_json }
+    end
   end
   
   def new

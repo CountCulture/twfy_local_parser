@@ -2,7 +2,7 @@
 <div id="councils">
   <%- for council in @councils -%>
     <%- div_for council do -%>
-      <h3><%= link_for council %></h3>
+      <h3><%= link_for council, :name => dom_id(council) %></h3>
       <%= content_tag(:p, "<strong>Portal System</strong> " + link_for(council.portal_system)) if council.portal_system %>
       <ul>
         <%- for scraper_link in scraper_links_for_council(council) -%>

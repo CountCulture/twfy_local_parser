@@ -17,6 +17,11 @@ class ApplicationHelperTest < ActionView::TestCase
       obj = Factory(:committee, :title => "something & nothing... which <needs> escaping" ) 
       assert_equal link_to(h(obj.title), obj), link_for(obj)
     end
+    
+    should "pass on options" do
+      obj = Factory(:committee, :title => "something & nothing... which <needs> escaping" ) 
+      assert_equal link_to(h(obj.title), obj, :foo => "bar"), link_for(obj, :foo => "bar")
+    end
   end
   
 end

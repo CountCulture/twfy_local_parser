@@ -11,28 +11,76 @@ class CouncilsControllerTest < ActionController::TestCase
   
   # index test
    context "on GET to :index" do
-     setup do
-       get :index
-     end
+     context "with basic request" do
+       setup do
+         get :index
+       end
 
-     should_assign_to(:councils) { Council.find(:all)}
-     should_respond_with :success
-     should_render_template :index
-   end  
+       should_assign_to(:councils) { Council.find(:all)}
+       should_respond_with :success
+       should_render_template :index
+     end
+     
+     context "with xml requested" do
+       setup do
+         get :index, :format => "xml"
+       end
+
+       should_assign_to(:councils) { Council.find(:all)}
+       should_respond_with :success
+       should_render_without_layout
+       should_respond_with_content_type 'application/xml'
+     end
+     
+     context "with json requested" do
+       setup do
+         get :index, :format => "js"
+       end
+
+       should_assign_to(:councils) { Council.find(:all)}
+       should_respond_with :success
+       should_render_without_layout
+       should_respond_with_content_type 'text/javascript'
+     end
+   end
 
   # show test
   context "on GET to :show for first record" do
-    setup do
-     get :show, :id => @council.id
+    context "with basic request" do
+      setup do
+        get :show, :id => @council.id
+      end
+
+      should_assign_to(:council) { @council}
+      should_respond_with :success
+      should_render_template :show
+      should_assign_to(:members) { @council.members.current }
+
+      should "list all members" do
+       assert_select "ul#members li", @council.members.current.size
+      end
     end
+    
+    context "with xml requested" do
+      setup do
+        get :show, :id => @council.id, :format => "xml"
+      end
 
-    should_assign_to(:council) { @council}
-    should_respond_with :success
-    should_render_template :show
-    should_assign_to(:members) { @council.members.current }
+      should_assign_to(:council) { @council}
+      should_respond_with :success
+      should_render_without_layout
+      should_respond_with_content_type 'application/xml'
+    end
+    
+    context "with json requested" do
+      setup do
+       get :show, :id => @council.id, :format => "js"
+      end
 
-    should "list all members" do
-     assert_select "ul#members li", @council.members.current.size
+      should_assign_to(:council) { @council}
+      should_respond_with :success
+      should_render_without_layout
+      should_respond_with_content_type 'text/javascript'
     end
   end  
 

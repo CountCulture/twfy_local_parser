@@ -1,5 +1,5 @@
 <h1>Scraper details</h1>
-<p><%= link_to "See all scrapers", scrapers_path %></p>
+<p><%= link_to "#{@scraper.council.name} Scrapers", scrapers_path(:anchor => dom_id(@scraper.council)) %> :: <%= link_to "All scrapers", scrapers_path %></p>
 <div id="scraper">
   
   <div id="core_info">
@@ -11,11 +11,6 @@
     <%= render :partial => '/parsers/parser', :object => @scraper.parser %>
     
   </div>
-  <!-- <div id="expectations">
-    <p><strong>Expected Result Size</strong> <%#= h @scraper.expected_result_size %></p>
-    <p><strong>Expected Result Class</strong> <%#= h @scraper.expected_result_class %></p>
-    <p><strong>Expected Result Attributes</strong> <code><%#= h @scraper.expected_result_attributes.inspect %></code></p>
-  </div> -->
   <p><strong>Last updated</strong> <%= @scraper.updated_at %></p>
   <p>
     <%= link_to "edit", edit_scraper_path(@scraper) %> 
@@ -30,11 +25,7 @@
   <div id="results">
     <h3>Completed <%= params[:process] ? "Processing" : "Test Scrape" %>: <%= @results.size %> records found</h3>
     <%- for result in @results -%>
-      <%#- div_for result do -%>
-      <%#= render :partial => result.class.to_s.downcase, :object => result %>
       <%= render :partial => 'scraped_object', :object => result %>
-        
-      <%#- end -%>
     <%- end -%>
   </div> 
   
