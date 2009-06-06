@@ -40,4 +40,11 @@ class ScrapersController < ApplicationController
     flash[:notice] = "Successfully updated scraper"
     redirect_to scraper_url(@scraper)
   end
+  
+  def destroy
+    @scraper = Scraper.find(params[:id])
+    @scraper.destroy
+    flash[:notice] = "Successfully destroyed scraper"
+    redirect_to scrapers_url(:anchor => "council_#{@scraper.council_id}")
+  end
 end

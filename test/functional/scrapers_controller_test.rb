@@ -604,5 +604,19 @@ class ScrapersControllerTest < ActionController::TestCase
     end
   end
   
+  # delete tests
+  context "on delete to :destroy a scraper" do
+    
+    setup do
+      @scraper = Factory(:scraper)
+      delete :destroy, :id => @scraper.id
+    end
+    
+    should "destroy scraper" do
+      assert_nil Scraper.find_by_id(@scraper.id)
+    end
+    should_redirect_to ( "the scrapers page") { scrapers_url(:anchor => "council_#{@scraper.council_id}") }
+    should_set_the_flash_to "Successfully destroyed scraper"
+  end
   
 end

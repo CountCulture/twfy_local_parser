@@ -14,12 +14,12 @@ class PortalSystemsController < ApplicationController
   end
   
   def create
-      @portal_system = PortalSystem.new(params[:portal_system])
-      @portal_system.save!
-      flash[:notice] = "Successfully created portal system"
-      redirect_to portal_system_path(@portal_system)
-    rescue
-      render :action => "new"
+    @portal_system = PortalSystem.new(params[:portal_system])
+    @portal_system.save!
+    flash[:notice] = "Successfully created portal system"
+    redirect_to portal_system_path(@portal_system)
+  rescue
+    render :action => "new"
   end
   
   def edit
