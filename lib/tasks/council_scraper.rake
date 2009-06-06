@@ -3,7 +3,6 @@ task :scrape_egr_for_councils => :environment do
   BASE_URL = "http://www.brent.gov.uk"
   require 'hpricot'
   require 'open-uri'
-  # klass = ENV["KLASS"] || "Club"
   url = "http://www.brent.gov.uk/egr.nsf/SCV?ReadForm&View=LAsByRegion&Category=London"
   doc = Hpricot(open(url))
   council_data = doc.search("#viewZone tr")[1..-2]

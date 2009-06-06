@@ -6,50 +6,51 @@
       <%= f.label :url, "Url to be scraped" %>
       <%= f.text_field :url, :size => 60 %>
     </p>
-    <%= content_tag(:p, "Will use #{link_to(@scraper.computed_url, @scraper.computed_url, :class => 'external')} by default", :class => "faint") if @scraper.computed_url %>
+    <%= content_tag(:p, "Will use #{link_to(@scraper.computed_url, @scraper.computed_url, :class => 'external')} by default", :class => "faint", :id => "scraper_default_url") if @scraper.computed_url %>
   <%- end -%>
   
-  <%- if @scraper.portal_parser? -%>
+  <%- if @scraper.portal_parser? && !params[:dedicated_parser] -%>
     <%= f.hidden_field :parser_id %>
     <%= render :partial => '/parsers/parser', :object => @scraper.parser %>
-    <p><%= link_to_function "Use dedicated parser instead", "$('parser_details').toggle();$('parser_#{@scraper.parser_id}').toggle()", {:class => "alert"} %></p>
+    <p><%= link_to_function "Use dedicated parser instead", "$('parser_details').show();$('parser_#{@scraper.parser_id}').remove();$('scraper_parser_id').remove();this.remove();$('scraper_default_url').remove();this.remove()", {:class => "alert"} %></p>
   <%- elsif @scraper.portal_system -%>
     <p class="alert">No parser written yet to parse this. 
     <%= link_to "Add new parser for #{@scraper.portal_system.name}", new_parser_path(:portal_system_id => @scraper.portal_system.id, :result_model => @scraper.result_model, :scraper_type => @scraper.class.to_s) %>
     or use dedicated parser for this council only:</p>      
   <%- end -%>
-  <fieldset id="parser_details" style=<%= @scraper.portal_parser? ? 'display:none' : '' %>>
-    <legend>Parser details</legend>
-    <% f.fields_for :parser, (@scraper.portal_parser? ? Parser.new(:result_model => params[:result_model], :scraper_type => @scraper.class.to_s) : @scraper.parser) do |pf| %>
-      <%= pf.hidden_field :scraper_type %>
-      <p>
-        <%= pf.label :result_model, "Result Model <em>Kind of object you're scraping for</em>" %>
-        <%= pf.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
-      </p>
-      <%- if @scraper.is_a?(ItemScraper) -%>
+  <%- if !@scraper.portal_parser? || params[:dedicated_parser]-%>
+    <fieldset id="parser_details" %>>
+      <legend>Parser details</legend>
+      <% f.fields_for :parser, (@scraper.portal_parser? ? Parser.new(:result_model => params[:result_model], :scraper_type => @scraper.class.to_s) : @scraper.parser) do |pf| %>
+        <%= pf.hidden_field :scraper_type %>
         <p>
-          <%= pf.label :related_model, "Related model <em>optional</em>" %>
-          <%= pf.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+          <%= pf.label :result_model, "Result Model <em>Kind of object you're scraping for</em>" %>
+          <%= pf.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
         </p>
-      <%- end -%>
-      <p>
-        <%= pf.label :description, "Parser Description" %>
-        <%= pf.text_field :description %>
-      </p>
-      <p>
-        <%= pf.label :item_parser %>
-        <%= pf.text_area :item_parser, :rows => 3 %>
-      </p>
-      <div id="parser_attribute_parser">
-        <h3>Attribute parser</h3>
-        <%= render :partial => 'attrib', :collection => (@scraper.portal_parser? ? [Parser::AttribObject.new] : @scraper.parser.attribute_parser_object) %>
-      </div>
-      <br class="clear-left">
-      <p><%= link_to_function "add more attributes" do |page|
-        page.insert_html :bottom, :parser_attribute_parser, :partial => 'attrib', :object => Parser::AttribObject.new
-      end %></p>
-    <% end %>
-  </fieldset>
-  <%#- end -%>
+        <%- if @scraper.is_a?(ItemScraper) -%>
+          <p>
+            <%= pf.label :related_model, "Related model <em>optional</em>" %>
+            <%= pf.select("related_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
+          </p>
+        <%- end -%>
+        <p>
+          <%= pf.label :description, "Parser Description" %>
+          <%= pf.text_field :description %>
+        </p>
+        <p>
+          <%= pf.label :item_parser %>
+          <%= pf.text_area :item_parser, :rows => 3 %>
+        </p>
+        <div id="parser_attribute_parser">
+          <h3>Attribute parser</h3>
+          <%= render :partial => 'attrib', :collection => (@scraper.portal_parser? ? [Parser::AttribObject.new] : @scraper.parser.attribute_parser_object) %>
+        </div>
+        <br class="clear-left">
+        <p><%= link_to_function "add more attributes" do |page|
+          page.insert_html :bottom, :parser_attribute_parser, :partial => 'attrib', :object => Parser::AttribObject.new
+        end %></p>
+      <% end %>
+    </fieldset>
+  <%- end -%>
   <%= f.submit "Submit" %>
 <% end -%>

@@ -5,8 +5,8 @@ class Scraper < ActiveRecord::Base
   SCRAPER_TYPES = %w(InfoScraper ItemScraper)
   belongs_to :parser
   belongs_to :council
-  validates_presence_of :council_id#, :parser_id
-  # validates_inclusion_of :result_model, :in => ALLOWED_RESULT_CLASSES, :message => "is invalid"
+  validates_presence_of :council_id
+
   accepts_nested_attributes_for :parser
   attr_accessor :related_objects, :parsing_results
   attr_protected :results
@@ -70,18 +70,19 @@ class Scraper < ActiveRecord::Base
   
   def _http_get(target_url)
     return false if RAILS_ENV=="test"  # make sure we don't call make calls to external services in test environment. Mock this method to simulate response instead
-    response = nil 
-     target_url = URI.parse(target_url)
-     request = Net::HTTP.new(target_url.host, target_url.port)
-     request.read_timeout = 5 # set timeout at 5 seconds
-    begin
-      response = request.get(target_url.request_uri)
-      raise RequestError, "Problem retrieving info from #{target_url}." unless response.is_a? Net::HTTPSuccess
-    rescue Timeout::Error
-      raise RequestError, "Timeout::Error retrieving info from #{target_url}."
-    end
-    logger.debug "********Scraper response = #{response.body.inspect}"
-    response.body
+    # response = nil 
+    # target_url = URI.parse(target_url)
+    # request = Net::HTTP.new(target_url.host, target_url.port)
+    # request.read_timeout = 5 # set timeout at 5 seconds
+    # begin
+    #   response = request.get(target_url.request_uri)
+    #   raise RequestError, "Problem retrieving info from #{target_url}." unless response.is_a? Net::HTTPSuccess
+    # rescue Timeout::Error
+    #   raise RequestError, "Timeout::Error retrieving info from #{target_url}."
+    # end
+    open(target_url).read
+    # logger.debug "********Scraper response = #{response.body.inspect}"
+    # response.body
   end
   
   # def match_attribute(result, key, value)

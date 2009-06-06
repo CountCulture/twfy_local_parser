@@ -6,10 +6,7 @@ class ScraperTest < ActiveSupport::TestCase
   should_belong_to :parser
   should_belong_to :council
   should_validate_presence_of :council_id
-  # should_validate_presence_of :parser_id
   should_accept_nested_attributes_for :parser
-  # should_allow_values_for :result_model, "Member", "Committee"
-  # should_not_allow_values_for :result_model, "foo", "User"
   
   
   context "The Scraper class" do

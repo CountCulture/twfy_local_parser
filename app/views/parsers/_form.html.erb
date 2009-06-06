@@ -7,6 +7,7 @@
     <%= pf.select("result_model", Parser::ALLOWED_RESULT_CLASSES.collect{ |c| [c,c] }, { :include_blank => true }) %>
   </p>
   <%= pf.hidden_field :portal_system_id %>
+  <%= pf.hidden_field :scraper_type %>
   
   <p>
     <%= pf.label :related_model, "Related model" %>

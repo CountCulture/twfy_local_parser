@@ -6,7 +6,7 @@ class ParsersController < ApplicationController
   end
   
   def new
-    raise ArgumentError unless params[:portal_system_id]
+    raise ArgumentError unless params[:portal_system_id]&&params[:scraper_type]
     @parser = PortalSystem.find(params[:portal_system_id]).parsers.build(:result_model => params[:result_model], :scraper_type => params[:scraper_type])
   end
   

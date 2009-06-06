@@ -38,7 +38,7 @@ class ParsersControllerTest < ActionController::TestCase
     
     context "with no scraper_type given" do
       should "raise exception" do
-        assert_raise(ActionView::TemplateError) { get :new, :portal_system_id  => @portal_system.id, :result_model => "Member" }
+        assert_raise(ArgumentError) { get :new, :portal_system_id  => @portal_system.id, :result_model => "Member" }
       end
     end
     
@@ -57,6 +57,10 @@ class ParsersControllerTest < ActionController::TestCase
 
       should "include portal_system in hidden field" do
         assert_select "input#parser_portal_system_id[type=hidden][value=#{@portal_system.id}]"
+      end
+      
+      should "include scraper_type in hidden field" do
+        assert_select "input#parser_scraper_type[type=hidden][value='ItemParser']"
       end
     end
     
@@ -84,6 +88,17 @@ class ParsersControllerTest < ActionController::TestCase
        context "with invalid params" do
          setup do
            post :create, :parser => @parser_params.except(:result_model)
+         end
+
+         should_not_change "Parser.count"
+         should_assign_to :parser
+         should_render_template :new
+         should_not_set_the_flash
+       end
+
+       context "with no scraper_type" do
+         setup do
+           post :create, :parser => @parser_params.except(:scraper_type)
          end
 
          should_not_change "Parser.count"
