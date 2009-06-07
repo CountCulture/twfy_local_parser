@@ -17,6 +17,24 @@ div.title {
 p.attribution {
 	text-align: right; }
 	
+/*General template format*/
+body { 
+	background-color:#ddd; }
+.container {
+	background-color:#fff; 
+	padding: 18px;}
+#header { padding: 6px 0;
+	border-bottom: #036 solid 3px;
+	margin-bottom: 9px;}	
+#header h2 { 
+	margin: 0; }	
+#header h2 a { 
+	text-decoration: none;
+	color: #69b; }	
+#header h2 em { 
+	color: #036;
+	font-size:100%; }	
+#footer {}
 /*Parser-specific formatting*/
 div.item_attribute {
 	clear:left; }
