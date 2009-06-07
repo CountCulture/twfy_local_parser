@@ -28,7 +28,7 @@ class ParsersController < ApplicationController
     @parser = Parser.find(params[:id])
     @parser.update_attributes!(params[:parser])
     flash[:notice] = "Successfully updated parser"
-    redirect_to parser_path(@parser)
+    redirect_to parser_url(@parser)
   rescue
     render :action => "edit"
   end

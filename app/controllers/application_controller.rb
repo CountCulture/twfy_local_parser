@@ -15,8 +15,9 @@ class ApplicationController < ActionController::Base
   
   private
   def authenticate
-    authenticate_or_request_with_http_digest("TWFY_local") do |username|
-      AUTHENTICATED_USERS[username] || false
+    authenticate_or_request_with_http_basic("TWFY_local") do |username, password|
+      # AUTHENTICATED_USERS[username] || false
+      AUTHENTICATED_USERS[username] == password
     end
   end
 end
