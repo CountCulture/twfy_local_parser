@@ -1,4 +1,5 @@
 class ScrapersController < ApplicationController
+  before_filter :authenticate
   
   def index
     @councils = Council.find(:all, :include => :scrapers, :order => "name")
@@ -47,4 +48,5 @@ class ScrapersController < ApplicationController
     flash[:notice] = "Successfully destroyed scraper"
     redirect_to scrapers_url(:anchor => "council_#{@scraper.council_id}")
   end
+  
 end

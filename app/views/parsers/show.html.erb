@@ -1,4 +1,5 @@
 <h1><%= @parser.title %></h1>
+<p><%= link_to "All Scrapers", scrapers_path %></p>
 <%= render :partial => 'parser', :object => @parser %>
 
 <% unless @scrapers.blank? %>

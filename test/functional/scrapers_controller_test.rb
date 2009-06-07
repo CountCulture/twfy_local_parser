@@ -3,8 +3,18 @@ require 'test_helper'
 class ScrapersControllerTest < ActionController::TestCase
 
   # index test
+  context "on GET to :index without auth" do
+    setup do
+      Factory(:scraper)
+      get :index
+    end
+  
+    should_respond_with 401
+  end
+  
   context "on GET to :index" do
     setup do
+      stub_authentication
       @scraper1 = Factory(:scraper)
       @portal_system = Factory(:portal_system)
       @council2 = Factory(:another_council, :portal_system => @portal_system)
@@ -40,10 +50,20 @@ class ScrapersControllerTest < ActionController::TestCase
   end
   
   # show test
+  context "on GET to :show for first record without auth" do
+    setup do
+      @scraper = Factory(:scraper)
+      get :show, :id => @scraper.id
+    end
+  
+    should_respond_with 401
+  end
+
   context "on GET to :show for first record" do
     setup do
       @scraper = Factory(:scraper)
       @scraper.class.any_instance.expects(:test).never
+      stub_authentication
       get :show, :id => @scraper.id
     end
   
@@ -67,6 +87,7 @@ class ScrapersControllerTest < ActionController::TestCase
       
     should "run process scraper" do
       @scraper.class.any_instance.expects(:process).returns(stub_everything)
+      stub_authentication
       get :show, :id => @scraper.id, :dry_run => true
     end
   end
@@ -79,6 +100,7 @@ class ScrapersControllerTest < ActionController::TestCase
       @new_member = Member.new(:full_name => "Fred Flintstone", :uid => 55)
       @scraper.class.any_instance.stubs(:process).returns(@scraper)
       @scraper.stubs(:results).returns([@member, @new_member])
+      stub_authentication
       get :show, :id => @scraper.id, :dry_run => true
     end
   
@@ -109,6 +131,7 @@ class ScrapersControllerTest < ActionController::TestCase
       parser.stubs(:results) # pretend there are no results
       parser.errors.add_to_base("problems ahoy")
       Scraper.expects(:find).returns(@scraper)
+      stub_authentication
       get :show, :id => @scraper.id, :dry_run => true
     end
     
@@ -129,6 +152,7 @@ class ScrapersControllerTest < ActionController::TestCase
       
     should "run test on scraper" do
       @scraper.class.any_instance.expects(:process).with(:save_results => true).returns(stub_everything)
+      stub_authentication
       get :show, :id => @scraper.id, :process => true
     end
   end
@@ -138,6 +162,7 @@ class ScrapersControllerTest < ActionController::TestCase
       @scraper = Factory(:scraper)
       @scraper.class.any_instance.stubs(:_data).returns(stub_everything)
       @scraper.class.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :uid => 1, :url => "http://www.anytown.gov.uk/members/fred" }] )
+      stub_authentication
       get :show, :id => @scraper.id, :process => true
     end
   
@@ -164,6 +189,7 @@ class ScrapersControllerTest < ActionController::TestCase
       @scraper.class.any_instance.stubs(:_data).returns(stub_everything)
       @scraper.class.any_instance.stubs(:parsing_results).returns([{ :full_name => "Fred Flintstone", :uid => 1, :url => "http://www.anytown.gov.uk/members/fred" },
                                                             { :full_name => "Bob Nourl"}] )
+      stub_authentication
       get :show, :id => @scraper.id, :process => true
     end
     
@@ -187,18 +213,21 @@ class ScrapersControllerTest < ActionController::TestCase
   # new test
   context "on GET to :new with no scraper type given" do
     should "raise exception" do
+      stub_authentication
       assert_raise(ArgumentError) { get :new }
     end
   end
   
   context "on GET to :new with bad scraper type" do
     should "raise exception" do
+      stub_authentication
       assert_raise(ArgumentError) { get :new, :type  => "Member" }
     end
   end
   
   context "on GET to :new with no given council" do
     should "raise exception" do
+      stub_authentication
       assert_raise(ArgumentError) { get :new, :type  => "InfoScraper" }
     end
   end
@@ -210,6 +239,7 @@ class ScrapersControllerTest < ActionController::TestCase
   
     context "for basic scraper" do
       setup do
+        stub_authentication
         get :new, :type  => "InfoScraper", :council_id => @council.id
       end
   
@@ -266,6 +296,7 @@ class ScrapersControllerTest < ActionController::TestCase
     
     context "for basic scraper with given result model" do
       setup do
+        stub_authentication
         get :new, :type  => "InfoScraper", :council_id => @council.id, :result_model => "Committee"
       end
   
@@ -284,6 +315,7 @@ class ScrapersControllerTest < ActionController::TestCase
     
     context "for basic item_scraper" do
       setup do
+        stub_authentication
         get :new, :type  => "ItemScraper", :council_id => @council.id
       end
   
@@ -308,6 +340,7 @@ class ScrapersControllerTest < ActionController::TestCase
         @portal_system.parsers << @parser = Factory(:another_parser) # add a parser to portal_system...
         @council.update_attribute(:portal_system_id, @portal_system.id)# .. and associate portal_system to council
         @parser = Factory(:parser, :portal_system => @portal_system)
+        stub_authentication
         get :new, :type  => "ItemScraper", :result_model => @parser.result_model, :council_id => @council.id
       end
     
@@ -368,6 +401,7 @@ class ScrapersControllerTest < ActionController::TestCase
         @portal_system.parsers << @parser = Factory(:another_parser) # add a parser to portal_system...
         @council.update_attribute(:portal_system_id, @portal_system.id)# .. and associate portal_system to council
         @parser = Factory(:parser, :portal_system => @portal_system)
+        stub_authentication
         get :new, :type  => "ItemScraper", :result_model => @parser.result_model, :council_id => @council.id, :dedicated_parser => true
       end
     
@@ -428,6 +462,7 @@ class ScrapersControllerTest < ActionController::TestCase
         @portal_system.parsers << @parser = Factory(:another_parser) # add a parser to portal_system...
         @council.update_attribute(:portal_system_id, @portal_system.id)# .. and associate portal_system to council
         @parser = Factory(:parser, :portal_system => @portal_system)
+        stub_authentication
         get :new, :type  => "ItemScraper", :result_model => "Meeting", :council_id => @council.id
       end
     
@@ -478,12 +513,14 @@ class ScrapersControllerTest < ActionController::TestCase
     
     context "with no scraper type given" do
       should "raise exception" do
+        stub_authentication
         assert_raise(ArgumentError) { post :create, { :scraper => @scraper_params } }
       end
     end
     
     context "with bad scraper type" do
       should "raise exception" do
+        stub_authentication
         assert_raise(ArgumentError) { get :create, { :type  => "Member", :scraper => @scraper_params } }
       end
     end
@@ -492,6 +529,7 @@ class ScrapersControllerTest < ActionController::TestCase
       
       context "and new parser" do
         setup do
+          stub_authentication
           post :create, { :type => "InfoScraper", :scraper => @scraper_params }
         end
       
@@ -521,6 +559,7 @@ class ScrapersControllerTest < ActionController::TestCase
       
       context "and existing parser" do
         setup do
+          stub_authentication
           post :create, { :type => "InfoScraper", :scraper => @exist_scraper_params }
         end
       
@@ -543,6 +582,7 @@ class ScrapersControllerTest < ActionController::TestCase
       
       context "and new parser and existing parser details both given" do
         setup do
+          stub_authentication
           post :create, { :type => "InfoScraper", :scraper => @scraper_params.merge(:parser_id => @existing_parser.id ) }
         end
       
@@ -566,6 +606,7 @@ class ScrapersControllerTest < ActionController::TestCase
     
     setup do
       @scraper = Factory(:scraper)
+      stub_authentication
       get :edit, :id => @scraper.id
     end
     
@@ -584,6 +625,7 @@ class ScrapersControllerTest < ActionController::TestCase
   context "on PUT to :update" do
     setup do
       @scraper = Factory(:scraper)
+      stub_authentication
       put :update, { :id => @scraper.id, 
                      :scraper => { :council_id => @scraper.council_id, 
                                    :result_model => "Committee", 
@@ -609,6 +651,7 @@ class ScrapersControllerTest < ActionController::TestCase
     
     setup do
       @scraper = Factory(:scraper)
+      stub_authentication
       delete :destroy, :id => @scraper.id
     end
     
@@ -619,4 +662,7 @@ class ScrapersControllerTest < ActionController::TestCase
     should_set_the_flash_to "Successfully destroyed scraper"
   end
   
+  def stub_authentication
+    @controller.stubs(:authenticate).returns(true)
+  end
 end
