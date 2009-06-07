@@ -1,4 +1,5 @@
 class ParsersController < ApplicationController
+  before_filter :authenticate
 
   def show
     @parser = Parser.find(params[:id])

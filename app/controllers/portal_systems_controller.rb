@@ -1,4 +1,6 @@
 class PortalSystemsController < ApplicationController
+  before_filter :authenticate
+
   def index
     @portal_systems = PortalSystem.find(:all)
   end

@@ -3,10 +3,21 @@ require 'test_helper'
 class ParsersControllerTest < ActionController::TestCase
   
   # show tests
+  context "on GET to :show without auth" do
+    setup do
+      @parser = Factory(:parser)
+      @scraper = Factory(:scraper, :parser => @parser)
+      get :show, :id => @parser.id
+    end
+  
+    should_respond_with 401
+  end
+
   context "on GET to :show for first record" do
     setup do
       @parser = Factory(:parser)
       @scraper = Factory(:scraper, :parser => @parser)
+      stub_authentication
       get :show, :id => @parser.id
     end
   
@@ -32,18 +43,28 @@ class ParsersControllerTest < ActionController::TestCase
     
     context "with no portal_system given" do
       should "raise exception" do
+        stub_authentication
         assert_raise(ArgumentError) { get :new, :result_model => "Member", :scraper_type => "ItemParser" }
       end
     end
     
     context "with no scraper_type given" do
       should "raise exception" do
+        stub_authentication
         assert_raise(ArgumentError) { get :new, :portal_system_id  => @portal_system.id, :result_model => "Member" }
       end
     end
     
+    context "without auth" do
+      setup do
+        get :new, :portal_system_id  => @portal_system.id, :result_model => "Member", :scraper_type => "ItemParser"
+      end
+      should_respond_with 401
+    end
+    
     context "for basic parser" do
       setup do
+        stub_authentication
         get :new, :portal_system_id  => @portal_system.id, :result_model => "Member", :scraper_type => "ItemParser"
       end
       
@@ -72,9 +93,18 @@ class ParsersControllerTest < ActionController::TestCase
        @portal_system = Factory(:portal_system)
        @parser_params = Factory.attributes_for(:parser, :portal_system => @portal_system)
       end
+      
+      context "without auth" do
+        setup do
+          post :create, :parser => @parser_params
+        end
 
+        should_respond_with 401
+      end
+      
        context "with valid params" do
          setup do
+           stub_authentication
            post :create, :parser => @parser_params
          end
 
@@ -87,6 +117,7 @@ class ParsersControllerTest < ActionController::TestCase
        
        context "with invalid params" do
          setup do
+           stub_authentication
            post :create, :parser => @parser_params.except(:result_model)
          end
 
@@ -98,6 +129,7 @@ class ParsersControllerTest < ActionController::TestCase
 
        context "with no scraper_type" do
          setup do
+           stub_authentication
            post :create, :parser => @parser_params.except(:scraper_type)
          end
 
@@ -110,10 +142,21 @@ class ParsersControllerTest < ActionController::TestCase
    end  
 
   # edit tests
+  context "on GET to :edit without auth" do
+    setup do
+      @portal_system = Factory(:portal_system)
+      @parser = Factory(:parser, :portal_system => @portal_system)
+      get :edit, :id  => @parser.id
+    end
+  
+    should_respond_with 401
+  end
+
   context "on GET to :edit" do
     setup do
       @portal_system = Factory(:portal_system)
       @parser = Factory(:parser, :portal_system => @portal_system)
+      stub_authentication
       get :edit, :id  => @parser.id
     end
 
@@ -138,9 +181,17 @@ class ParsersControllerTest < ActionController::TestCase
                          :attribute_parser_object => [{:attrib_name => "newfoo", :parsing_code => "barbar"}]}
      end
 
+     context "wihtout auth" do
+       setup do
+         put :update, :id => @parser.id, :parser => @parser_params
+       end
 
+       should_respond_with 401
+     end
+     
       context "with valid params" do
         setup do
+          stub_authentication
           put :update, :id => @parser.id, :parser => @parser_params
         end
 
@@ -157,6 +208,7 @@ class ParsersControllerTest < ActionController::TestCase
 
       context "with invalid params" do
         setup do
+          stub_authentication
           put :update, :id => @parser.id, :parser => {:result_model => ""}
         end
 

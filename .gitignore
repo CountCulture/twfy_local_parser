@@ -4,3 +4,4 @@ tmp/**/*
 doc/api
 doc/app
 db/*.sqlite3
+config/initializers/authentication_details.rb

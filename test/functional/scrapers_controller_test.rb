@@ -211,6 +211,15 @@ class ScrapersControllerTest < ActionController::TestCase
   end
   
   # new test
+  context "on GET to :new without auth" do
+    setup do
+      @council = Factory(:council)
+      get :new, :type  => "InfoScraper", :council_id => @council.id
+    end
+  
+    should_respond_with 401
+  end
+
   context "on GET to :new with no scraper type given" do
     should "raise exception" do
       stub_authentication
@@ -493,6 +502,7 @@ class ScrapersControllerTest < ActionController::TestCase
   end
   
   # create tests
+
   context "on POST to :create" do
     setup do
       @council = Factory(:council)
@@ -509,6 +519,14 @@ class ScrapersControllerTest < ActionController::TestCase
       @exist_scraper_params = { :council_id => @council.id, 
                                 :url => "http://anytown.com/committees", 
                                 :parser_id => @existing_parser.id }
+    end
+    
+    context "without auth" do
+      setup do
+        post :create, { :type => "InfoScraper", :scraper => @scraper_params }
+      end
+
+      should_respond_with 401
     end
     
     context "with no scraper type given" do
@@ -602,8 +620,16 @@ class ScrapersControllerTest < ActionController::TestCase
   end
   
   # edit tests
+  context "on get to :edit a scraper without auth" do
+    setup do
+      @scraper = Factory(:scraper)
+      get :edit, :id => @scraper.id
+    end
+  
+    should_respond_with 401
+  end
+
   context "on get to :edit a scraper" do
-    
     setup do
       @scraper = Factory(:scraper)
       stub_authentication
@@ -622,6 +648,19 @@ class ScrapersControllerTest < ActionController::TestCase
   end
   
   # update tests
+  context "on PUT to :update without auth" do
+    setup do
+      @scraper = Factory(:scraper)
+      put :update, { :id => @scraper.id, 
+                     :scraper => { :council_id => @scraper.council_id, 
+                                   :result_model => "Committee", 
+                                   :url => "http://anytown.com/new_committees", 
+                                   :parser_attributes => { :id => @scraper.parser.id, :description => "new parsing description", :item_parser => "some code" }}}
+    end
+  
+    should_respond_with 401
+  end
+  
   context "on PUT to :update" do
     setup do
       @scraper = Factory(:scraper)
@@ -647,6 +686,15 @@ class ScrapersControllerTest < ActionController::TestCase
   end
   
   # delete tests
+  context "on delete to :destroy a scraper without auth" do
+    setup do
+      @scraper = Factory(:scraper)
+      delete :destroy, :id => @scraper.id
+    end
+  
+    should_respond_with 401
+  end
+  
   context "on delete to :destroy a scraper" do
     
     setup do
@@ -662,7 +710,4 @@ class ScrapersControllerTest < ActionController::TestCase
     should_set_the_flash_to "Successfully destroyed scraper"
   end
   
-  def stub_authentication
-    @controller.stubs(:authenticate).returns(true)
-  end
 end

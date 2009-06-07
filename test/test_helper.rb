@@ -36,4 +36,7 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   # require 'factory_girl'
+  def stub_authentication
+    @controller.stubs(:authenticate).returns(true)
+  end
 end

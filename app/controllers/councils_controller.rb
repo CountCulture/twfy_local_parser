@@ -1,4 +1,5 @@
 class CouncilsController < ApplicationController
+  before_filter :authenticate, :except => [:index, :show]
 
   def index
     @councils = Council.find(:all, :order => "name")
