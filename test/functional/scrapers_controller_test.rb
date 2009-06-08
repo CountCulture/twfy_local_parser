@@ -305,6 +305,7 @@ class ScrapersControllerTest < ActionController::TestCase
     
     context "for basic scraper with given result model" do
       setup do
+        Factory(:parser, :result_model => "Committee", :scraper_type => "InfoScraper") # make sure there's at least one parser already in db with this result model
         stub_authentication
         get :new, :type  => "InfoScraper", :council_id => @council.id, :result_model => "Committee"
       end
@@ -336,6 +337,7 @@ class ScrapersControllerTest < ActionController::TestCase
   
       should "assign given type of scraper" do
         assert_kind_of ItemScraper, assigns(:scraper)
+        assert assigns(:scraper).new_record?
       end
       
       should "not show related_model select_box for info scraper" do

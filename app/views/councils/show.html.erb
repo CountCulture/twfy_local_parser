@@ -1,14 +1,17 @@
 <h1><%= @title %></h1>
-
-<p>website <strong><%= link_to @council.url, @council.url, :class => :external %></strong></p>
-<p>Authority type <strong><%= @council.authority_type %></strong></p>
-<p>Address <strong><%= @council.address %></strong></p>
-<p>Telephone <strong><%= @council.telephone %></strong></p>
-<p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
-<p>Wikipedia page <strong><%= @council.wikipedia_url %></strong></p>
-<p>Office for National Statistics url <strong><%= @council.ons_url %></strong></p>
-<p>Notes</p>
-<div class="notes"><%= @council.notes %></div>
+<div id="data">
+  <p>website <strong><%= link_to @council.url, @council.url, :class => :external %></strong></p>
+  <p>Authority type <strong><%= @council.authority_type %></strong></p>
+  <p>Address <strong><%= @council.address %></strong></p>
+  <p>Telephone <strong><%= @council.telephone %></strong></p>
+  <p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
+  <p>Wikipedia page <strong><%= @council.wikipedia_url %></strong></p>
+  <div class="extra_info">
+    <p>Office for National Statistics url <strong><%= @council.ons_url %></strong></p>
+    <p>Notes</p>
+    <div class="notes"><%= @council.notes %></div> 
+  </div>
+</div>
 
 <h3>Current council members</h3>
 <ul id="members">

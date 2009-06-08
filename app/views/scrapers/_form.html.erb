@@ -19,7 +19,7 @@
     or use dedicated parser for this council only:</p>      
   <%- end -%>
   <%- if !@scraper.portal_parser? || params[:dedicated_parser]-%>
-    <fieldset id="parser_details" %>>
+    <fieldset id="parser_details" %>
       <legend>Parser details</legend>
       <% f.fields_for :parser, (@scraper.portal_parser? ? Parser.new(:result_model => params[:result_model], :scraper_type => @scraper.class.to_s) : @scraper.parser) do |pf| %>
         <%= pf.hidden_field :scraper_type %>
