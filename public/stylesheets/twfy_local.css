@@ -30,6 +30,13 @@ a.external:hover {
 	background: transparent url(../images/ext_link_hover.gif) no-repeat scroll right center;
 	padding-right:10px; }
 	
+a.feed {
+	background: transparent url(../images/feed_icon.gif) no-repeat scroll right center;
+	margin-right:2px;
+	padding-right:18px; }
+p.more_info {
+	text-align:right;
+}
 /*General template format*/
 body { 
 	background-color:#ddd; }

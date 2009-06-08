@@ -7,7 +7,7 @@ module NameParser
   
   def parse(fn)
     titles, qualifications, result_hash = [], [], {}
-    names = fn.sub('Councillor', '').gsub(/([.,])/, '').gsub(/\(\w+\)/, '').gsub(/[A-Z]{3,}/, '').split(" ")
+    names = fn.sub(/Councillor|Cllr/, '').gsub(/([.,])/, '').gsub(/\(\w+\)/, '').gsub(/[A-Z]{3,}/, '').split(" ")
     names.delete_if{ |n| Titles.include?(n) ? titles << n : (Qualifications.include?(n) ? qualifications << n : false)}
     result_hash[:first_name] = names[0..-2].join(" ")
     result_hash[:last_name] = names.last
