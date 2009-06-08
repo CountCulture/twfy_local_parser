@@ -22,7 +22,8 @@ body {
 	background-color:#ddd; }
 .container {
 	background-color:#fff; 
-	padding: 18px;}
+	padding: 18px;
+	margin-top: 18px;}
 #header { padding: 6px 0;
 	border-bottom: #036 solid 3px;
 	margin-bottom: 9px;}	

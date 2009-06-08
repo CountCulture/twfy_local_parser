@@ -51,13 +51,13 @@ class CouncilsControllerTest < ActionController::TestCase
     
     context "with json requested" do
       setup do
-        get :index, :format => "js"
+        get :index, :format => "json"
       end
   
       should_assign_to(:councils) { [@council]}
       should_respond_with :success
       should_render_without_layout
-      should_respond_with_content_type 'text/javascript'
+      should_respond_with_content_type 'application/json'
     end
   end
 
@@ -92,13 +92,13 @@ class CouncilsControllerTest < ActionController::TestCase
     
     context "with json requested" do
       setup do
-       get :show, :id => @council.id, :format => "js"
+       get :show, :id => @council.id, :format => "json"
       end
 
       should_assign_to(:council) { @council}
       should_respond_with :success
       should_render_without_layout
-      should_respond_with_content_type 'text/javascript'
+      should_respond_with_content_type 'application/json'
     end
   end  
 

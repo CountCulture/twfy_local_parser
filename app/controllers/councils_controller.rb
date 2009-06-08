@@ -6,7 +6,7 @@ class CouncilsController < ApplicationController
     respond_to do |format|
       format.html
       format.xml { render :xml => @councils.to_xml }
-      format.js { render :json =>  @councils.to_json }
+      format.json { render :json =>  @councils.to_json }
     end
   end
   
@@ -17,7 +17,7 @@ class CouncilsController < ApplicationController
     respond_to do |format|
       format.html
       format.xml { render :xml => @council.to_xml }
-      format.js { render :json =>  @council.to_json }
+      format.json { render :json =>  @council.to_json }
     end
   end
   

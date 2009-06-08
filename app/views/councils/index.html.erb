@@ -5,3 +5,5 @@
     <li><%= link_to council.name, council, :class => (council.parsed? ? "parsed" : "unparsed") %></li>
   <% end %>
 </ul>
+
+<%= render :partial => '/shared/api_info' %>

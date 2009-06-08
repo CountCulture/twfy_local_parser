@@ -39,4 +39,5 @@ class ActiveSupport::TestCase
   def stub_authentication
     @controller.stubs(:authenticate).returns(true)
   end
+     
 end
