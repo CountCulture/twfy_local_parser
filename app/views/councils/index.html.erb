@@ -1,7 +1,7 @@
 <h1>Councils list</h1>
 
-<ul>
+<ul id="councils">
   <% for council in @councils %>
-    <li><%= link_to council.name, council %></li>
+    <li><%= link_to council.name, council, :class => (council.parsed? ? "parsed" : "unparsed") %></li>
   <% end %>
 </ul>

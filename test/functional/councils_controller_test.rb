@@ -30,6 +30,12 @@ class CouncilsControllerTest < ActionController::TestCase
       should_assign_to(:councils) { Council.find(:all, :order => "name")} # all councils
       should_respond_with :success
       should_render_template :index
+      should "class unparsed councils as unparsed" do
+        assert_select "#councils .unparsed", @another_council.name
+      end
+      should "class parsed councils as parsed" do
+        assert_select "#councils .parsed", @council.name
+      end
     end
     
     context "with xml requested" do

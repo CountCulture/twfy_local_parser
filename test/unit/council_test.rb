@@ -44,6 +44,14 @@ class CouncilTest < ActiveSupport::TestCase
       assert_equal "another.url", council.base_url
     end
     
+    should "be considered parsed if it has members" do
+      Factory(:member, :council => @council)
+      assert @council.parsed?
+    end
+    
+    should "be considered unparsed if it has no members" do
+      assert !@council.parsed?
+    end
   end
   
 end

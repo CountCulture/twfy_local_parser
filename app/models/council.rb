@@ -17,4 +17,8 @@ class Council < ActiveRecord::Base
   def self.parsed
     find(:all, :conditions => "members.council_id = councils.id", :joins => "INNER JOIN members", :group => "councils.id")
   end
+  
+  def parsed?
+    !members.blank?
+  end
 end
