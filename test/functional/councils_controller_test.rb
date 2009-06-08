@@ -17,7 +17,17 @@ class CouncilsControllerTest < ActionController::TestCase
         get :index
       end
   
-      should_assign_to(:councils) { Council.find(:all, :order => "name")}
+      should_assign_to(:councils) { [@council]} # only parsed councils
+      should_respond_with :success
+      should_render_template :index
+    end
+    
+    context "including unparsed councils" do
+      setup do
+        get :index, :include_unparsed => true
+      end
+  
+      should_assign_to(:councils) { Council.find(:all, :order => "name")} # all councils
       should_respond_with :success
       should_render_template :index
     end
@@ -27,7 +37,7 @@ class CouncilsControllerTest < ActionController::TestCase
         get :index, :format => "xml"
       end
   
-      should_assign_to(:councils) { Council.find(:all, :order => "name")}
+      should_assign_to(:councils) { [@council]}
       should_respond_with :success
       should_render_without_layout
       should_respond_with_content_type 'application/xml'
@@ -38,7 +48,7 @@ class CouncilsControllerTest < ActionController::TestCase
         get :index, :format => "js"
       end
   
-      should_assign_to(:councils) { Council.find(:all, :order => "name")}
+      should_assign_to(:councils) { [@council]}
       should_respond_with :success
       should_render_without_layout
       should_respond_with_content_type 'text/javascript'

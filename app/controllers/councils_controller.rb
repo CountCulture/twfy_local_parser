@@ -2,7 +2,7 @@ class CouncilsController < ApplicationController
   before_filter :authenticate, :except => [:index, :show]
 
   def index
-    @councils = Council.find(:all, :order => "name")
+    @councils = params[:include_unparsed] ? Council.find(:all, :order => "name") : Council.parsed
     respond_to do |format|
       format.html
       format.xml { render :xml => @councils.to_xml }
