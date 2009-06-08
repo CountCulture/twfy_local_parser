@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/stylesheets/twfy_local.css" type="text/css" media="screen" charset="utf-8">
     <%= javascript_include_tag :defaults %>
   </head>
-  <body>
+  <body class='<%= @controller.controller_name %>'>
     <div class="container">
       <div id="header">
         <h2><%= link_to "They Work For You <em>Local</em>", root_path %></h2>

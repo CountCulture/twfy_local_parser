@@ -1,23 +1,30 @@
 <h1><%= @title %></h1>
 <div id="data">
-  <p>website <strong><%= link_to @council.url, @council.url, :class => :external %></strong></p>
-  <p>Authority type <strong><%= @council.authority_type %></strong></p>
-  <p>Address <strong><%= @council.address %></strong></p>
-  <p>Telephone <strong><%= @council.telephone %></strong></p>
-  <p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
-  <p>Wikipedia page <strong><%= @council.wikipedia_url %></strong></p>
+  <p class="attribute"><strong>website</strong> <%= link_to @council.url, @council.url, :class => :external %></p>
+  <p class="attribute"><strong>Authority type</strong> <%= @council.authority_type %></p>
+  <p class="attribute"><strong>Address</strong> <%= @council.address %></p>
+  <p class="attribute"><strong>Telephone</strong> <%= @council.telephone %></p>
+  <p class="clear"><strong>Wikipedia page</strong> <%= link_to @council.wikipedia_url, @council.wikipedia_url, :class => 'external' %></p>
   <div class="extra_info">
-    <p>Office for National Statistics url <strong><%= @council.ons_url %></strong></p>
-    <p>Notes</p>
-    <div class="notes"><%= @council.notes %></div> 
+    <h3>Other info</h3>
+    <ul>
+      <li><%= link_to "Office for National Statistics page", @council.ons_url, :class => 'external' %></li>
+      <li><%= link_to "eGovernment Register page", "http://www.brent.gov.uk/egr.nsf/laref/#{@council.egr_id}", :class => 'external' %></li>
+    </ul>
+    <div class="notes">
+      <h4>Notes</h4>
+      <%= simple_format @council.notes %>
+    </div> 
   </div>
 </div>
+
+<p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
 
 <h3>Current council members</h3>
 <ul id="members">
   <% for member in @members %>
-    <li><%= link_to member.full_name, member %></li>
+    <li><%= link_to member.full_name, member %> (<%= member.party %>)</li>
   <% end %>
 </ul>
-
+<p>Last updated <%= @council.updated_at.to_s(:short) %></p>
 <%= render :partial => '/shared/api_info' %>
