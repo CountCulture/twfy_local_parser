@@ -17,6 +17,7 @@ class CouncilTest < ActiveSupport::TestCase
     should_have_db_column :wikipedia_url
     should_have_db_column :ons_url
     should_have_db_column :egr_id
+    should_have_db_column :wdtk_name
     
     should "return councils with members as parsed" do
       @another_council = Factory(:another_council)
@@ -52,6 +53,13 @@ class CouncilTest < ActiveSupport::TestCase
     should "be considered unparsed if it has no members" do
       assert !@council.parsed?
     end
+    
+    should "return name without Borough etc as short_name" do
+      assert_equal "Brent", Council.new(:name => "London Borough of Brent").short_name
+      assert_equal "Westminster", Council.new(:name => "City of Westminster").short_name
+      assert_equal "Kingston upon Thames", Council.new(:name => "Royal Borough of Kingston upon Thames").short_name
+    end
+    
   end
   
 end

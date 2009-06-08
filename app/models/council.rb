@@ -21,4 +21,8 @@ class Council < ActiveRecord::Base
   def parsed?
     !members.blank?
   end
+  
+  def short_name
+    name.gsub(/Borough|City|Royal|London|of/, '').strip
+  end
 end

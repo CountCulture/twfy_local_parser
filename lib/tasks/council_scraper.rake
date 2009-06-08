@@ -29,3 +29,23 @@ task :scrape_egr_for_councils => :environment do
   end
   
 end
+
+desc "Scraper WhatDoTheyKnow.com to get WDTK name" 
+task :scrape_wdtk_for_names => :environment do
+  require 'hpricot'
+  require 'open-uri'
+  url = "http://www.whatdotheyknow.com/body/list/local_council"
+  doc = Hpricot(open(url))
+  wdtk_councils = doc.search("#body_list .body_listing span.head")
+  Council.find(:all, :conditions => 'wdtk_name IS NULL').each do |council|
+    wdtk_council = wdtk_councils.at("a[text()*='#{council.short_name}']")
+    if wdtk_council
+      wdtk_name = wdtk_council[:href].gsub('/body/', '')
+      council.update_attribute(:wdtk_name, wdtk_name)
+      puts "Added WDTK name (#{wdtk_name}) to #{council.name} record\n____________"
+    else
+      puts "Failed to find entry for #{council.name}"
+    end
+  end
+  
+end

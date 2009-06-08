@@ -8,6 +8,7 @@
   <div class="extra_info">
     <h3>Other info</h3>
     <ul>
+      <li><%= link_to "WhatDoTheyKnow.com FoI requests", "http://www.whatdotheyknow.com/body/#{@council.wdtk_name}", :class => 'external' %></li>
       <li><%= link_to "Office for National Statistics page", @council.ons_url, :class => 'external' %></li>
       <li><%= link_to "eGovernment Register page", "http://www.brent.gov.uk/egr.nsf/laref/#{@council.egr_id}", :class => 'external' %></li>
     </ul>

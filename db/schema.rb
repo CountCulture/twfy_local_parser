@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090522101929) do
+ActiveRecord::Schema.define(:version => 20090608145856) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(:version => 20090522101929) do
     t.string   "wikipedia_url"
     t.string   "ons_url"
     t.integer  "egr_id"
+    t.string   "wdtk_name"
   end
 
   create_table "meetings", :force => true do |t|
