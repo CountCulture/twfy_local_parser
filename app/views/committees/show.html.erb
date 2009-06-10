@@ -1,4 +1,4 @@
-<h1><%= @committee.title %> <em><%= link_to "council page", @committee.url, :class => 'council_page_link' %></em></h1>
+<h1><%= @committee.title %> <em><%= council_page_for @committee %></em></h1>
 <p>
   Council <strong><%= link_for @committee.council %></strong>
   <em>(<%= link_to "see all #{h(@committee.council.name)} Council committees", committees_path(:council_id => @council.id) %> )</em>

@@ -1,7 +1,13 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  
+  def council_page_for(obj)
+    link_to("council page", obj.url, :class => "council_page_link external")
+  end
+  
   def link_for(obj=nil, options={})
-    link_to(h(obj.title), obj, options) unless obj.blank?
+    css_class = ["#{obj.class.to_s.downcase}_link", options.delete(:class)].compact.join(" ")
+    link_to(h(obj.title), obj, { :class => css_class }.merge(options)) unless obj.blank?
   end
   
   def link_to_api_url(response_type)

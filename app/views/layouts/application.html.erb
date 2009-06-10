@@ -17,9 +17,11 @@
       <div id="header">
         <h2><%= link_to "They Work For You <em>Local</em>", root_path %></h2>
       </div>
-      <%= yield %>
+        <div id="content">
+          <%= yield %>
+        </div>
       <div id="footer">
-        <p>Put together for sheer hell of it in spare time by <%= link_to "CountCulture", "http://countculture.wordpress.com", :class => "external" %></p>
+        Put together for sheer hell of it in spare time by <%= link_to "CountCulture", "http://countculture.wordpress.com", :class => "external" %>
       </div>
     </div>
   </body>

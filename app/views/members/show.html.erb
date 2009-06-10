@@ -1,4 +1,4 @@
-<h1><%= @member.full_name %> <em><%= link_to "council page", @member.url %></em></h1>
+<h1><%= @member.full_name %> <em><%= council_page_for @member %></em></h1>
 <p>Council <strong><%= link_to h(@member.council.name), @member.council %></strong></p>
 <p>Party <strong><%= @member.party %></strong></p>
 <p>Email <strong><%= @member.email ? mail_to(@member.email) : 'not known' %></strong></p>

@@ -1,0 +1,22 @@
+<h4>Meeting of <%= link_for @committee.council %></h4>
+<h1><%= @title %> <em><%= council_page_for @meeting %></em></h1>
+
+<%- unless @committee.members.blank? -%>
+<h3>Members of this committee</h3>
+  <ul id="members">
+    <% for member in @committee.members %>
+      <li><%= link_for member %></li>
+    <% end %>
+  </ul>
+<%- end -%>
+
+<%- unless @committee.meetings.blank? -%>
+<h3>Other meetings of this committee</h3>
+  <ul id="meetings">
+    <% for meeting in @other_meetings %>
+      <li><%= link_for meeting %></li>
+    <% end %>
+  </ul>
+<%- end -%>
+<%= render :partial => '/shared/api_info' %>
+<p class="attribution">Last updated <%= @meeting.updated_at.to_s(:short) %> (<%= time_ago_in_words(@meeting.updated_at) %> ago)</p>

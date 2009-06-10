@@ -43,7 +43,10 @@ body {
 .container {
 	background-color:#fff; 
 	padding: 18px;
+	padding-bottom: 0px;
 	margin-top: 18px;}
+#content {
+	min-height: 600px; }
 #header { padding: 6px 0;
 	border-bottom: #036 solid 3px;
 	margin-bottom: 9px;}	
@@ -55,7 +58,10 @@ body {
 #header h2 em { 
 	color: #036;
 	font-size:100%; }	
-#footer {}
+#footer {
+	margin-top:18px;
+	text-align:right;
+}
 
 /*Council formatting*/
 a.unparsed {
