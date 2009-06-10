@@ -24,8 +24,8 @@
 <h3>Current council members</h3>
 <ul id="members">
   <% for member in @members %>
-    <li><%= link_to member.full_name, member %> (<%= member.party %>)</li>
+    <li><%= link_to member.full_name, member %><%= " (#{member.party})" unless member.party.blank? %></li>
   <% end %>
 </ul>
-<p>Last updated <%= @council.updated_at.to_s(:short) %></p>
 <%= render :partial => '/shared/api_info' %>
+<p class="attribution">Last updated <%= @council.updated_at.to_s(:short) %></p>

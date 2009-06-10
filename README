@@ -6,3 +6,4 @@ Anyone wishing to help on this project, please email me at countculture at googl
 
 BUGS
 When adding join model (e.g. committee memberships), currently added even when test processing. Plus no reporting, as reporting uses Dirty, which doesn't act on associations
+When doing test scrape of member info new info (eg email addresses shows up), but doesn't when processing

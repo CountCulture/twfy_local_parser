@@ -8,8 +8,12 @@ class CommitteesController < ApplicationController
   def show
     @committee = Committee.find(params[:id])
     @council = @committee.council
-    @members = @committee.members
-    @meetings = @committee.meetings
+    @title = @committee.title
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @committee.to_xml(:include => [:members, :meetings]) }
+      format.json { render :json => @committee.to_json(:include => [:members, :meetings]) }
+    end
   end
   
 end

@@ -2,26 +2,74 @@ require 'test_helper'
 
 class CommitteesControllerTest < ActionController::TestCase
   # show test
-   context "on GET to :show for first record" do
+   context "on GET to :show" do
+     
      setup do
        @committee = Factory(:committee)
        @member = Factory(:member, :council => @committee.council)
        @meeting = Factory(:meeting, :council => @committee.council, :committee => @committee)
        @committee.members << @member
-       get :show, :id => @committee.id
      end
 
-     should_assign_to :committee, :members, :meetings
-     should_respond_with :success
-     should_render_template :show
+     context "with basic request" do
+       setup do
+         get :show, :id => @committee.id
+       end
+
+       should_assign_to :committee
+       should_respond_with :success
+       should_render_template :show
+      
+       should "show committee in title" do
+         assert_select "title", /#{@committee.title}/
+       end
+       
+       should "list members" do
+         assert_select "ul#members li a", @member.title
+       end
      
-     should "list members" do
-       assert_select "ul#members li a", @member.title
+       should "list meetings" do
+         assert_select "ul#meetings li a", @meeting.title
+       end
      end
      
-     should "list meetings" do
-       assert_select "ul#meetings li a", @meeting.title
+     context "with xml request" do
+       setup do
+         get :show, :id => @committee.id, :format => "xml"
+       end
+
+       should_assign_to :committee
+       should_respond_with :success
+       should_render_without_layout
+       should_respond_with_content_type 'application/xml'
+       
+       should "include members in response" do
+         assert_select "committee member"
+       end
+       
+       should "include meetings in response" do
+         assert_select "committee meeting"
+       end
      end
+     
+     context "with json request" do
+       setup do
+         get :show, :id => @committee.id, :format => "json"
+       end
+
+       should_assign_to :committee
+       should_respond_with :success
+       should_render_without_layout
+       should_respond_with_content_type 'application/json'
+       
+       should "include members in response" do
+         assert_match /committee\":.+members\":/, @response.body
+       end
+       should "include meetings in response" do
+         assert_match /committee\":.+meetings\":/, @response.body
+       end
+     end
+     
    end  
 
    # index test

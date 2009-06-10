@@ -1,22 +1,25 @@
-<h1><%= @committee.title %> <em><%= link_to "council page", @committee.url %></em></h1>
+<h1><%= @committee.title %> <em><%= link_to "council page", @committee.url, :class => 'council_page_link' %></em></h1>
 <p>
-  Council <strong><%= link_to h(@committee.council.name), @committee.council %></strong>
+  Council <strong><%= link_for @committee.council %></strong>
   <em>(<%= link_to "see all #{h(@committee.council.name)} Council committees", committees_path(:council_id => @council.id) %> )</em>
 </p>
 
-<%- unless @members.blank? -%>
+<%- unless @committee.members.blank? -%>
+<h3>Members</h3>
   <ul id="members">
-    <% for member in @members %>
+    <% for member in @committee.members %>
       <li><%= link_for member %></li>
     <% end %>
   </ul>
 <%- end -%>
 
-<%- unless @meetings.blank? -%>
+<%- unless @committee.meetings.blank? -%>
+<h3>Meetings</h3>
   <ul id="meetings">
-    <% for meeting in @meetings %>
+    <% for meeting in @committee.meetings %>
       <li><%= link_for meeting %></li>
     <% end %>
   </ul>
 <%- end -%>
+<%= render :partial => '/shared/api_info' %>
 <p class="attribution">Last updated <%= @committee.updated_at.to_s(:short) %> (<%= time_ago_in_words(@committee.updated_at) %> ago)</p>
