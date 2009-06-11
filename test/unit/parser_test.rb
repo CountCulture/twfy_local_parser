@@ -24,6 +24,7 @@ class ParserTest < Test::Unit::TestCase
     setup do
       PortalSystem.delete_all # some reason not getting rid of old records -- poss 2.3.2 bug (see Caboose blog)
       @parser = Factory(:parser)
+      @parser.item_parser.taint # as it's been submitted by form rails will have tainted it
     end
     
     context "in general" do
@@ -121,18 +122,21 @@ class ParserTest < Test::Unit::TestCase
  
     context "when evaluating parsing code" do
       should "evaluate code" do
-        @parser.expects(:eval).with("some code")
-        @parser.send(:eval_parsing_code, "some code", "foo")
+        assert_equal "bar", @parser.send(:eval_parsing_code, code_to_parse("foo='bar'"))
       end
       
-      should "return result" do
-        @parser.stubs(:eval).with("some code").returns("some return value")
-        assert_equal "some return value", @parser.send(:eval_parsing_code, "some code", "foo")
+      should "raise execption if problem evaluating code" do
+        assert_raise(NameError) { @parser.send(:eval_parsing_code, code_to_parse("foo")) }
       end
       
       should "make given object available as 'item' local variable" do
         given_obj = stub
-        assert_equal given_obj, @parser.send(:eval_parsing_code, "item", given_obj) # will raise exception unless item local variable exists
+        assert_nothing_raised(Exception) { @parser.send(:eval_parsing_code, code_to_parse, given_obj) } # will raise exception unless item local variable exists
+      end
+      
+      should "not raise exception if duped item is changed by code" do
+        given_obj = "hello world"
+        assert_nothing_raised(Exception) { @parser.send(:eval_parsing_code, code_to_parse("item.to_sym"), given_obj) } 
       end
       
       should "make current_scraper base_url available as 'base_url' local variable" do
@@ -143,7 +147,7 @@ class ParserTest < Test::Unit::TestCase
     end
     
     context "when processing" do
-      
+            
       context "in general" do
         setup do
           @dummy_hpricot = stub_everything
@@ -266,5 +270,9 @@ class ParserTest < Test::Unit::TestCase
   private
   def dummy_response(response_name)
     IO.read(File.join([RAILS_ROOT + "/test/fixtures/dummy_responses/#{response_name.to_s}.html"]))
+  end
+  
+  def code_to_parse(some_code="item")
+    some_code.taint
   end
 end

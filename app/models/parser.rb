@@ -63,11 +63,21 @@ class Parser < ActiveRecord::Base
   protected
   def eval_parsing_code(code=nil, item=nil)
     base_url = @current_scraper.try(:base_url)
-    # THIS CODE IS DANGEROUS AT THE MOMENT.
-    # WRAP in new thread with higher $SAFE level as per pickaxe, 
-    # or investigate using proc as per http://www.davidflanagan.com/2008/11/safe-is-proc-lo.html
-    eval(code)
-    # THIS CODE IS DANGEROUS AT THE MOMENT.
+    # Wraps in new thread with higher $SAFE level as per Pickaxe, 
+    # ... poss investigate using proc as per http://www.davidflanagan.com/2008/11/safe-is-proc-lo.html
+    code_to_eval = code.dup
+    code_to_eval.untaint # like code it will tainted as it was submitted in form. Can't eval tainted string
+    thread = Thread.start do
+      $SAFE = 2
+      begin
+        eval(code_to_eval)
+      rescue Exception => e
+        logger.debug { "********Exception raised in thread: #{e.message}\n#{e.backtrace}" }
+        raise e
+      end
+      
+    end
+    thread.value # wait for the thread to finish and return value
   end
   
 end

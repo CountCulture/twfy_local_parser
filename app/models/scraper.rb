@@ -46,6 +46,7 @@ class Scraper < ActiveRecord::Base
   end
   
   def process(options={})
+    # debugger
     self.parsing_results = parser.process(_data(url), self).results
     update_with_results(parsing_results, options)
     self
