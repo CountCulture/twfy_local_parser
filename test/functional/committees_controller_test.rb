@@ -24,12 +24,16 @@ class CommitteesControllerTest < ActionController::TestCase
          assert_select "title", /#{@committee.title}/
        end
        
+       should "show council in title" do
+         assert_select "title", /#{@committee.council.title}/
+       end
+       
        should "list members" do
-         assert_select "ul#members li a", @member.title
+         assert_select "div#members li a", @member.title
        end
      
        should "list meetings" do
-         assert_select "ul#meetings li a", @meeting.title
+         assert_select "div#meetings li a", @meeting.title
        end
      end
      
@@ -86,6 +90,11 @@ class CommitteesControllerTest < ActionController::TestCase
      should_assign_to(:council) { @council }
      should_respond_with :success
      should_render_template :index
+
+     should "show council in title" do
+       assert_select "title", /#{@council.title}/
+     end
+     
      should "should list committees for council" do
        assert_select "ul li", 2 do
         
