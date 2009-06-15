@@ -13,7 +13,7 @@ class ParsersControllerTest < ActionController::TestCase
     should_respond_with 401
   end
 
-  context "on GET to :show for first record" do
+  context "on GET to :show" do
     setup do
       @parser = Factory(:parser)
       @scraper = Factory(:scraper, :parser => @parser)
@@ -33,8 +33,33 @@ class ParsersControllerTest < ActionController::TestCase
     should "list associated scrapers" do
       assert_select "#scrapers a", @scraper.title
     end
+    
+    should "show related model field" do
+      assert_select ".parser strong", /related/i
+    end
   end
   
+  context "on GET to :show for InfoScraper parser" do
+    setup do
+      @parser = Factory(:another_parser)
+      @scraper = Factory(:scraper, :parser => @parser)
+      stub_authentication
+      get :show, :id => @parser.id
+    end
+  
+    should_assign_to :parser
+    should_assign_to :scrapers
+    should_respond_with :success
+    should_render_template :show
+    
+    should "list associated scrapers" do
+      assert_select "#scrapers a", @scraper.title
+    end
+      
+    should "not show related model field" do
+      assert_select ".parser strong", :text => /related/i, :count => 0
+    end
+  end
   # new tests
   context "on GET to :new" do
     setup do

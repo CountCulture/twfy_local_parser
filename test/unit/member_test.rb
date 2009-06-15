@@ -59,17 +59,35 @@ class MemberTest < ActiveSupport::TestCase
       assert !new_member.ex_member?
     end
         
-    # should "update details using MemberScraper" do
-      # MemberScraper.any_instance.expects(:update).with(@old_member)
-      # @old_member.update
-    # end
-    
-    # should "update member details with info from MemberScraper" do
-      # MemberScraper.any_instance.stubs(:update).returns(:party => 'Conservative')
-      # @old_member.update
-      # assert_equal 'Conservative', @old_member.party
-    # end
+    context "with committees" do
+      # this part is really just testing inclusion of uid_association extension in committees association
+      setup do
+        @member = Factory(:member)
+        @council = @member.council
+        @another_council = Factory(:another_council)
+        @old_committee = Factory(:committee, :council => @council)
+        @new_committee = Factory(:committee, :council => @council, :uid => @old_committee.uid+1, :title => "new committee")
+        @another_council_committee = Factory(:committee, :council => @another_council, :uid => 999, :title => "another council committee")
+        @member.committees << @old_committee
+      end
+
+      should "return committee uids" do
+        assert_equal [@old_committee.uid], @member.committees_uids
+      end
+      
+      should "replace existing committees with ones with given uids" do
+        @member.committees_uids = [@new_committee.uid]
+        assert_equal [@new_committee], @member.committees
+      end
+      
+      should "not add committees with that don't exist for council" do
+        @member.committees_uids = [@another_council_committee.uid]
+        assert_equal [], @member.committees
+      end
+      
+    end
   end
+  
   
   private
   def new_member(options={})

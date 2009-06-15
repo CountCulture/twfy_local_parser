@@ -233,8 +233,8 @@ class ParserTest < Test::Unit::TestCase
         should "store errors in parser" do
           errors = @problem_parser.process(@dummy_hpricot_for_problem_parser).errors[:base]
           assert_match /Exception raised.+parsing items/, errors
-          assert_match /Problem .+parsing code .+foo \+ bar/, errors
-          assert_match /Hpricot.+#{@dummy_hpricot_for_problem_parser.inspect}/, errors
+          assert_match /Problem .+parsing code.+foo \+ bar/m, errors
+          assert_match /Hpricot.+#{@dummy_hpricot_for_problem_parser.inspect}/m, errors
         end
         
       end
@@ -258,8 +258,8 @@ class ParserTest < Test::Unit::TestCase
         should "store errors in parser" do
           errors = @problem_parser.process(@dummy_hpricot_for_attrib_prob).errors[:base]
           assert_match /Exception raised.+parsing attributes/, errors
-          assert_match /Problem .+parsing code .+foobar/, errors
-          assert_match /Hpricot.+#{@dummy_item_1.inspect}/, errors
+          assert_match /Problem .+parsing code.+foobar/m, errors
+          assert_match /Hpricot.+#{@dummy_item_1.inspect}/m, errors
         end
         
       end

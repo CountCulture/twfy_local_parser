@@ -47,8 +47,8 @@ class Parser < ActiveRecord::Base
     logger.debug { "*********results from processing parser = #{@results.inspect}" }
     self
   rescue Exception => e
-    message = "Exception raised parsing #{now_parsing}: #{e.message}\n" +
-                "Problem occurred using parsing code <code>#{parsing_code}</code> on following Hpricot object: #{object_to_be_parsed.inspect}"
+    message = "Exception raised parsing #{now_parsing}: #{e.message}\n\n" +
+                "Problem occurred using parsing code:\n#{parsing_code}\n\n on following Hpricot object:\n#{object_to_be_parsed.inspect}"
     logger.debug { message }
     logger.debug { "Backtrace:\n#{e.backtrace}" }
     errors.add_to_base(message)

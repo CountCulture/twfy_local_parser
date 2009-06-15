@@ -4,7 +4,9 @@
   <p>
     <strong>Portal system</strong> <%= parser.portal_system ? link_for(parser.portal_system) : 'None' %><br />
     <strong>Result model</strong> <%= parser.result_model %><br />
-    <strong>Related model</strong> <%= parser.related_model %><br />
+    <%- if parser.scraper_type == "ItemScraper" -%>
+      <strong>Related model</strong> <%= parser.related_model %><br />
+    <%- end -%>
     <strong>Path</strong> <%= parser.path %>
   </p>
   <h4>Item parser <em>finds items from scraped page</em></h4>

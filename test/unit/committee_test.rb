@@ -27,10 +27,11 @@ class CommitteeTest < ActiveSupport::TestCase
     end
     
     context "with members" do
+      # this part is really just testing inclusion of uid_association extension in members association
       setup do
         @member = Factory(:member, :council => @council)
         @old_member = Factory(:old_member, :council => @council)
-        @another_council_member = Factory(:member, :council => @another_council)
+        @another_council_member = Factory(:member, :council => @another_council, :uid => 999)
         @committee.members << @old_member
       end
 
@@ -43,9 +44,9 @@ class CommitteeTest < ActiveSupport::TestCase
         assert_equal [@member], @committee.members
       end
       
-      should "not add members from different councils" do
+      should "not add members that don't exist for council" do
         @committee.members_uids = [@another_council_member.uid]
-        assert !@committee.members.include?(@another_council_member)
+        assert_equal [], @committee.members
       end
       
     end
