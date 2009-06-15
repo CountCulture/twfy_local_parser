@@ -75,7 +75,7 @@ class CouncilsControllerTest < ActionController::TestCase
       should_assign_to(:members) { @council.members.current }
 
       should "list all members" do
-       assert_select "ul#members li", @council.members.current.size
+       assert_select "#members li", @council.members.current.size
       end
     end
     

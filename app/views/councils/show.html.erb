@@ -21,11 +21,17 @@
 
 <p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
 
-<h3>Current council members</h3>
-<ul id="members">
-  <% for member in @members %>
-    <li><%= link_to member.full_name, member %><%= " (#{member.party})" unless member.party.blank? %></li>
-  <% end %>
-</ul>
-<%= render :partial => '/shared/api_info' %>
-<p class="attribution">Last updated <%= @council.updated_at.to_s(:short) %></p>
+<div id="members" class="item_grouping">
+  <h3>Current councillors</h3>
+  <ul>
+    <% for member in @members %>
+      <li><%= link_to member.full_name, member %><%= " (#{member.party})" unless member.party.blank? %></li>
+    <% end %>
+  </ul>
+  <%= render :partial => '/shared/api_info' %>
+  <p class="attribution">Last updated <%= @council.updated_at.to_s(:short) %></p>
+</div>
+
+<div id="committees" class="item_grouping">
+  
+</div>
