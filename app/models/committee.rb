@@ -6,6 +6,6 @@ class Committee < ActiveRecord::Base
   has_many :meetings
   has_many :memberships, :primary_key => :uid
   has_many :members, :through => :memberships, :extend => UidAssociationExtension
-  delegate :uids, :to => :members, :prefix => true
-  delegate :uids=, :to => :members, :prefix => true
+  delegate :uids, :to => :members, :prefix => "member"
+  delegate :uids=, :to => :members, :prefix => "member"
 end

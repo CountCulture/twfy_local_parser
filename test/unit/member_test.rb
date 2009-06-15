@@ -72,16 +72,16 @@ class MemberTest < ActiveSupport::TestCase
       end
 
       should "return committee uids" do
-        assert_equal [@old_committee.uid], @member.committees_uids
+        assert_equal [@old_committee.uid], @member.committee_uids
       end
       
       should "replace existing committees with ones with given uids" do
-        @member.committees_uids = [@new_committee.uid]
+        @member.committee_uids = [@new_committee.uid]
         assert_equal [@new_committee], @member.committees
       end
       
       should "not add committees with that don't exist for council" do
-        @member.committees_uids = [@another_council_committee.uid]
+        @member.committee_uids = [@another_council_committee.uid]
         assert_equal [], @member.committees
       end
       

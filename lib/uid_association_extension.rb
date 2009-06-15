@@ -1,3 +1,14 @@
+# This module should be included in associations to allow relationships to be 
+# set given just a collection of uids. So if we have in the Committee model:
+# # has_many :members, :through => :memberships, :extend => UidAssociationExtension
+# this will add: members.uids and members.uids= methods. For convenience these can
+# be rewritten as members_uids and members_uids= using :delegate e.g.
+# # delegate :uids, :to => :members, :prefix => "member" 
+# which delegates the member_uids method to the uids method of the members 
+# association.
+# See http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
+# for more details
+
 module UidAssociationExtension
   def add_or_update(members)
     # not yet done
