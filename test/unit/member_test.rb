@@ -58,7 +58,24 @@ class MemberTest < ActiveSupport::TestCase
     should "not be ex_member if has not left office" do
       assert !new_member.ex_member?
     end
-        
+    
+    should "store party attribute" do
+      assert_equal "Conservative", new_member(:party => "Conservative").party
+    end
+    
+    should "discard 'Party' from given party name" do
+      assert_equal "Conservative", new_member(:party => "Conservative Party").party
+      assert_equal "Conservative", new_member(:party => "Conservative party").party
+    end
+    
+    should "strip extraneous spaces from given party name" do
+       assert_equal "Conservative", new_member(:party => "  Conservative ").party
+     end
+     
+    should "strip extraneous spaces and 'Party' from given party name" do
+      assert_equal "Liberal Democrat", new_member(:party => "  Liberal Democrat Party ").party
+    end
+
     context "with committees" do
       # this part is really just testing inclusion of uid_association extension in committees association
       setup do

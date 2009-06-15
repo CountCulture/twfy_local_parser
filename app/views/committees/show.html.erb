@@ -3,18 +3,14 @@
   <em>(<%= link_to "see all #{h(@committee.council.name)} Council committees", committees_path(:council_id => @council.id) %> )</em>
 </p>
 
-<%- unless @committee.members.blank? -%>
 <div id="members" class="item_grouping">
   <h3>Members</h3>
-  <li><%= list_all @committee.members %></li>
+  <%= list_all @committee.members %>
 </div>
-<%- end -%>
 
-<%- unless @committee.meetings.blank? -%>
 <div id="meetings" class="item_grouping">
   <h3>Meetings</h3>
-    <%= list_all @committee.meetings %>
-  <%- end -%>
+  <%= list_all @committee.meetings %>
 </div>
 <%= render :partial => '/shared/api_info' %>
 <p class="attribution">Last updated <%= @committee.updated_at.to_s(:short) %> (<%= time_ago_in_words(@committee.updated_at) %> ago)</p>

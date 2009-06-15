@@ -28,4 +28,7 @@ class Member < ActiveRecord::Base
     date_left
   end
   
+  def party=(party_name)
+    self[:party] = party_name.gsub(/party/i, '').strip
+  end
 end
