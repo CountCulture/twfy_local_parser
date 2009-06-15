@@ -24,14 +24,15 @@
 <div id="members" class="item_grouping">
   <h3>Current councillors</h3>
   <ul>
-    <% for member in @members %>
+    <%- for member in @members -%>
       <li><%= link_to member.full_name, member %><%= " (#{member.party})" unless member.party.blank? %></li>
-    <% end %>
+    <%- end -%>
   </ul>
-  <%= render :partial => '/shared/api_info' %>
-  <p class="attribution">Last updated <%= @council.updated_at.to_s(:short) %></p>
 </div>
 
 <div id="committees" class="item_grouping">
-  
+  <h3>Committees</h3>
+  <%= list_all @council.committees %>
 </div>
+<%= render :partial => '/shared/api_info' %>
+<p class="attribution">Last updated <%= @council.updated_at.to_s(:short) %></p>

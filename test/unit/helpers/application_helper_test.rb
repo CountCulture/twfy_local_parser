@@ -52,4 +52,31 @@ class ApplicationHelperTest < ActionView::TestCase
     
   end
   
+  context "list_all helper method" do
+    setup do
+      @obj1 = Factory(:committee )
+      @obj2 = Factory(:another_council)
+    end
+
+    should "return message if no object given" do
+      assert_dom_equal "<p class='no_results'>No results</p>", list_all
+    end
+    
+    should "return message if empty_array given" do
+      assert_dom_equal "<p class='no_results'>No results</p>", list_all([])
+    end
+    
+    should "return message if nil given" do
+      assert_dom_equal "<p class='no_results'>No results</p>", list_all(nil)
+    end
+    
+    should "return unordered list of objects using link_for helper method" do
+      assert_dom_equal "<ul><li>#{link_for(@obj1)}</li><li>#{link_for(@obj2)}</li></ul>", list_all([@obj1,@obj2])
+    end
+    
+    should "return unordered list of single object" do
+      assert_dom_equal "<ul><li>#{link_for(@obj1)}</li></ul>", list_all(@obj1)
+    end
+  end
+  
 end

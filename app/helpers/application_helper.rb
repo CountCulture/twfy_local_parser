@@ -13,4 +13,13 @@ module ApplicationHelper
   def link_to_api_url(response_type)
     link_to(response_type, params.merge(:format => response_type), :class => "api_link")
   end
+  
+  def list_all(coll=nil)
+    if coll.blank?
+      "<p class='no_results'>No results</p>"
+    else
+      coll = coll.is_a?(Array) ? coll : [coll]
+      content_tag(:ul, coll.collect{ |i| (content_tag(:li, link_for(i))) }.join)
+    end
+  end
 end

@@ -29,12 +29,12 @@ class MeetingsControllerTest < ActionController::TestCase
       end
       
       should "list members" do
-        assert_select "ul#members li a", @member.title
+        assert_select "#members ul a", @member.title
       end
     
       should "list other meetings" do
-        assert_select "ul#meetings li a", @another_meeting.title
-        assert_select "ul#meetings li a", :text => @meeting.title, :count => 0
+        assert_select "#meetings ul a", @another_meeting.title
+        assert_select "#meetings ul a", :text => @meeting.title, :count => 0
       end
     end
     

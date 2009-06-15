@@ -7,6 +7,7 @@ class CouncilsControllerTest < ActionController::TestCase
     @council = @member.council
     @old_member = Factory(:old_member, :council => @council)
     @another_council = Factory(:another_council)
+    @committee = Factory(:committee, :council => @council)
   end
   
   # index test
@@ -76,6 +77,9 @@ class CouncilsControllerTest < ActionController::TestCase
 
       should "list all members" do
        assert_select "#members li", @council.members.current.size
+      end
+      should "list all committees" do
+       assert_select "#committees li", @council.committees.size
       end
     end
     

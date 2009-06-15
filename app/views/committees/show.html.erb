@@ -6,22 +6,14 @@
 <%- unless @committee.members.blank? -%>
 <div id="members" class="item_grouping">
   <h3>Members</h3>
-  <ul>
-    <% for member in @committee.members %>
-      <li><%= link_for member %></li>
-    <% end %>
-  </ul>
+  <li><%= list_all @committee.members %></li>
 </div>
 <%- end -%>
 
 <%- unless @committee.meetings.blank? -%>
 <div id="meetings" class="item_grouping">
   <h3>Meetings</h3>
-  <ul>
-    <% for meeting in @committee.meetings %>
-      <li><%= link_for meeting %></li>
-    <% end %>
-  </ul>
+    <%= list_all @committee.meetings %>
   <%- end -%>
 </div>
 <%= render :partial => '/shared/api_info' %>
