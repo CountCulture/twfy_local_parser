@@ -19,8 +19,6 @@
   </div>
 </div>
 
-<p><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></p>
-
 <div id="members" class="item_grouping">
   <h3>Current councillors</h3>
   <ul>
@@ -31,7 +29,7 @@
 </div>
 
 <div id="committees" class="item_grouping">
-  <h3>Committees</h3>
+  <h3><%= link_to "Council Committees", committees_path(:council_id => @council.id) %></h3>
   <%= list_all @council.committees %>
 </div>
 <%= render :partial => '/shared/api_info' %>

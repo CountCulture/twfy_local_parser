@@ -20,6 +20,7 @@ input, textarea {
 div.title {
 	font-weight: bold; }
 p.attribution {
+	clear:both;
 	text-align: right; }
 .extra_info {
 	border: 1px solid #ddd;

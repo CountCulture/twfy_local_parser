@@ -1,18 +1,14 @@
 <h1><%= @member.full_name %> <em><%= council_page_for @member %></em></h1>
 <p>Council <strong><%= link_to h(@member.council.name), @member.council %></strong></p>
 <p>Party <strong><%= @member.party %></strong></p>
-<p>Email <strong><%= @member.email ? mail_to(@member.email) : 'not known' %></strong></p>
+<p>Email <strong><%= @member.email ? mail_to(@member.email, @member.email, :encode => "javascript") : 'not known' %></strong></p>
 
-<h3>Council Committee Memberships</h3>
-<% if !@committees.blank? %>
-  <ul>
-    <% for committee in @committees %>
-      <li><%= link_for committee %></li>
-    <% end %>
-  </ul>
-<%- else -%>
-  <p>Not a member of any committee</p>
-<% end %>
+<div id="committees" class="item_grouping">
+  <h3>Council Committee Memberships</h3>
+  <%= list_all @committees %>
+</div>
+
+<%= render :partial => '/shared/api_info' %>
 
 <p class="attribution">Last updated <%= @member.updated_at.to_s(:short) %> (<%= time_ago_in_words(@member.updated_at) %> ago)</p>
 
