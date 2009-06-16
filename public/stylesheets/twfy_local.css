@@ -43,6 +43,13 @@ a.feed {
 p.more_info {
 	text-align:right;
 }
+a.new {
+	padding-left: 24px;
+	background: transparent url(../images/new_flash.gif) no-repeat left;}
+a.updated {
+	padding-left: 46px;
+	background: transparent url(../images/updated_flash.gif) no-repeat left;}
+
 /*General template format*/
 body { 
 	background-color:#ddd; }
@@ -117,7 +124,7 @@ div.parser_attribute .title {
 div.parser code.item_parser {
 	margin-left: 9em; }
 	
-.new, .changed {
+div.new, .changed {
 	border:2px solid #DDDDDD;
 	margin-bottom:1em;
 	padding:0.8em;
@@ -126,7 +133,7 @@ div.parser code.item_parser {
 	background:#FFF6BF;
 	border-color:#FFD324;
 	}
-.new {
+div.new {
 	background:#E6EFC2;
 	border-color:#C6D880;
 	}

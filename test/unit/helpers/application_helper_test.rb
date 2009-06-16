@@ -8,23 +8,34 @@ class ApplicationHelperTest < ActionView::TestCase
     end
     
     should "return link for item with object title for link text" do
-      obj = Factory(:committee) # poss better way of testing this. obj can be any ActiveRecord obj 
+      obj = stale_factory_object(:committee) # poss better way of testing this. obj can be any ActiveRecord obj 
       assert_dom_equal link_to(obj.title, obj, :class => "committee_link"), link_for(obj)
     end
     
     should "escape object's title" do
-      obj = Factory(:committee, :title => "something & nothing... which <needs> escaping" ) 
+      obj = stale_factory_object(:committee, :title => "something & nothing... which <needs> escaping" ) 
       assert_dom_equal link_to(h(obj.title), obj, :class => "committee_link"), link_for(obj)
     end
     
     should "pass on options" do
-      obj = Factory(:committee, :title => "something & nothing... which <needs> escaping" ) 
+      obj = stale_factory_object(:committee, :title => "something & nothing... which <needs> escaping" ) 
       assert_dom_equal link_to(h(obj.title), obj, :foo => "bar", :class => "committee_link"), link_for(obj, :foo => "bar")
     end
     
     should "add given class to object class" do
-      obj = Factory(:committee, :title => "something & nothing... which <needs> escaping" )
+      obj = stale_factory_object(:committee, :title => "something & nothing... which <needs> escaping" )
       assert_dom_equal link_to(h(obj.title), obj, :class => "committee_link bar"), link_for(obj, :class => "bar")
+    end
+    
+    should "add new class if it has recently been created" do
+      obj = Factory(:committee) 
+      assert_dom_equal link_to(obj.title, obj, :class => "committee_link new"), link_for(obj)
+    end
+    
+    should "add updated class if it is not new but has recently been updated" do
+      obj = Factory(:committee) 
+      obj.stubs(:created_at => 8.days.ago)
+      assert_dom_equal link_to(obj.title, obj, :class => "committee_link updated"), link_for(obj)
     end
   end
   
@@ -79,4 +90,10 @@ class ApplicationHelperTest < ActionView::TestCase
     end
   end
   
+  private
+  def stale_factory_object(name, options={})
+    obj = Factory(name, options)
+    obj.stubs(:created_at => 8.days.ago, :updated_at => 8.days.ago)
+    obj
+  end
 end
