@@ -47,6 +47,9 @@ class ScrapersControllerTest < ActionController::TestCase
       end
     end
     
+    should "not show share block" do
+      assert_select "#share_block", false
+    end
   end
   
   # show test
@@ -77,6 +80,10 @@ class ScrapersControllerTest < ActionController::TestCase
   
     should "show link to perform edit" do
       assert_select "#scraper a", /edit/
+    end
+    
+    should "not show share block" do
+      assert_select "#share_block", false
     end
   end
   

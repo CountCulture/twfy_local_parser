@@ -37,6 +37,10 @@ class ParsersControllerTest < ActionController::TestCase
     should "show related model field" do
       assert_select ".parser strong", /related/i
     end
+    
+    should "not show share block" do
+      assert_select "#share_block", false
+    end
   end
   
   context "on GET to :show for InfoScraper parser" do
@@ -60,6 +64,7 @@ class ParsersControllerTest < ActionController::TestCase
       assert_select ".parser strong", :text => /related/i, :count => 0
     end
   end
+  
   # new tests
   context "on GET to :new" do
     setup do

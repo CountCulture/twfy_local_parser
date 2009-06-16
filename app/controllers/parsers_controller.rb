@@ -1,5 +1,6 @@
 class ParsersController < ApplicationController
   before_filter :authenticate
+  skip_before_filter :share_this
 
   def show
     @parser = Parser.find(params[:id])

@@ -1,5 +1,6 @@
 class PortalSystemsController < ApplicationController
   before_filter :authenticate
+  skip_before_filter :share_this
 
   def index
     @portal_systems = PortalSystem.find(:all)

@@ -1,9 +1,17 @@
 == twfy_local_parser is a scraper/parser for local authorities.
 
+A live version can be seen at http://theyworkforyoulocal.com
+
 At the moment it’s in the early stages, concentrating on developing a scraper/parser system where the scraper/parsers are stored in the db (via a web interface).
 
 Anyone wishing to help on this project, please email me at countculture at googlemail dot com
 
+Repository and bug tracker at http://github.com/CountCulture/twfy_local_parser
+
+Copyright (c) 2009 Chris Taggart.
+countculture at googlemail dot com;  http://countculture.wordpress.com/
+
+
 BUGS
-When adding join model (e.g. committee memberships), currently added even when test processing. Plus no reporting, as reporting uses Dirty, which doesn't act on associations
-When doing test scrape of member info new info (eg email addresses) shows up, but doesn't when processing
+* When adding join model (e.g. committee memberships), currently added even when test processing. Plus no reporting, as reporting uses Dirty, which doesn't act on associations
+* When doing test scrape of member info new info (eg email addresses) shows up, but doesn't when processing

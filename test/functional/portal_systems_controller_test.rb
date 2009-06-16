@@ -27,6 +27,10 @@ class PortalSystemsControllerTest < ActionController::TestCase
     should "list portal systems" do
       assert_select "li a", @portal.name
     end
+    
+    should "not show share block" do
+      assert_select "#share_block", false
+    end
   end  
 
   # show test
@@ -61,6 +65,10 @@ class PortalSystemsControllerTest < ActionController::TestCase
       assert_select "ul#parsers li" do
         assert_select "a", @parser.title
       end
+    end
+    
+    should "not show share block" do
+      assert_select "#share_block", false
     end
   end  
   

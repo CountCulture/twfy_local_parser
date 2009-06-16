@@ -1,5 +1,6 @@
 class ScrapersController < ApplicationController
   before_filter :authenticate
+  skip_before_filter :share_this
   
   def index
     @councils = Council.find(:all, :include => :scrapers, :order => "name")

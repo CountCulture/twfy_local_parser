@@ -69,7 +69,9 @@ body {
 	text-align:right;
 	clear:both;
 }
-
+#share_block {
+	text-align:right;}
+	
 /*Council formatting*/
 a.unparsed {
 	color:#9e9e9e; }

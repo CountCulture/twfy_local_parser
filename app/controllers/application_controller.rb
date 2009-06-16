@@ -3,6 +3,7 @@
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
+  before_filter :share_this, :only => [:index, :show]
 
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -19,5 +20,9 @@ class ApplicationController < ActionController::Base
       # AUTHENTICATED_USERS[username] || false
       AUTHENTICATED_USERS[username] == password
     end
+  end
+  
+  def share_this
+    @share_this = true
   end
 end
