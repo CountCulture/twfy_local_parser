@@ -17,12 +17,12 @@ task :scrape_egr_for_councils => :environment do
     council.attributes = default_hash
     egr_url = BASE_URL + council_link[:href]
     council.authority_type ||= council_datum.search("td")[2].at("font").inner_text.strip
-    council.url ||= council_datum.search("a").last.inner_text
     puts "About to scrape eGR page for #{short_title} (#{egr_url})"
     detailed_data = Hpricot(open(egr_url))
     values = detailed_data.search("#main tr")
     council.name ||= values.at("td[text()*='Full Name']").next_sibling.inner_text.strip
     council.telephone ||= values.at("td[text()*='Telephone']").next_sibling.inner_text.strip
+    council.url ||= values.at("td[text()*='Website']").next_sibling.inner_text.strip
     council.address ||= values.at("td[text()*='Address']").next_sibling.inner_text.strip
     council.ons_url ||= values.at("td[text()*='Nat Statistics']").next_sibling.at("a")[:href]
     council.wikipedia_url ||= values.at("td[text()*='Wikipedia']").next_sibling.inner_text.strip
