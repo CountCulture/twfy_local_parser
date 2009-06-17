@@ -1,7 +1,5 @@
 <h1><%= @title %></h1>
 
-<ul>
-  <% for committee in @committees %>
-    <li><%= link_to committee.title, committee %></li>
-  <% end %>
-</ul>
+<div id="committees">
+  <%= list_all @committees %>
+</div>

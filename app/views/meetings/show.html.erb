@@ -1,6 +1,6 @@
-<h4>Meeting of the <%= link_for @committee.council %></h4>
+<h4>Meeting of the <%= link_for @council %></h4>
 <h1><%= @title %> <em><%= council_page_for @meeting %></em></h1>
-
+<p class="extra_info"><strong><%= h @council.title %></strong> <%= link_to "Other meetings", meetings_path(:council_id => @council.id) %> :: <%= link_to "Other committees", committees_path(:council_id => @council.id) %></p>
 <div id="members" class="item_grouping">
   <h3>Members of this committee</h3>
   <%= list_all @committee.members %>
