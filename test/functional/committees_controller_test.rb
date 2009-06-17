@@ -83,23 +83,53 @@ class CommitteesControllerTest < ActionController::TestCase
        @council = @committee.council
        Factory.create(:committee, :council_id => @council.id, :uid =>@committee.uid+1, :title => "another committee", :url => "http://foo.com" )
        Factory.create(:committee, :council_id => Factory(:another_council).id, :uid => @committee.uid+1, :title => "another council's committee", :url => "http://foo.com" )
-       get :index, :council_id => @council.id
      end
 
-     should_assign_to :committees
-     should_assign_to(:council) { @council }
-     should_respond_with :success
-     should_render_template :index
+     context "with basic request" do
+       setup do
+         get :index, :council_id => @council.id
+       end
 
-     should "show council in title" do
-       assert_select "title", /#{@council.title}/
-     end
-     
-     should "should list committees for council" do
-       assert_select "ul li", 2 do
-        
+       should_assign_to :committees
+       should_assign_to(:council) { @council }
+       should_respond_with :success
+       should_render_template :index
+
+       should "show council in title" do
+         assert_select "title", /#{@council.title}/
+       end
+
+       should "should list committees for council" do
+         assert_select "#committees li", 2 do
+           assert_select "a", @committee.title
+         end
        end
      end
+
+     context "with xml requested" do
+       setup do
+         get :index, :council_id => @council.id, :format => "xml"
+       end
+
+       should_assign_to :committees
+       should_assign_to(:council) { @council }
+       should_respond_with :success
+       should_render_without_layout
+       should_respond_with_content_type 'application/xml'
+     end
+
+     context "with json requested" do
+       setup do
+         get :index, :council_id => @council.id, :format => "json"
+       end
+
+       should_assign_to :committees
+       should_assign_to(:council) { @council }
+       should_respond_with :success
+       should_render_without_layout
+       should_respond_with_content_type 'application/json'
+     end
+
    end
    
    context "on GET to :index without council_id" do

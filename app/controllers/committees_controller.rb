@@ -4,6 +4,11 @@ class CommitteesController < ApplicationController
     @council = Council.find(params[:council_id])
     @committees = @council.committees
     @title = "#{@council.title} committees"
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @committees.to_xml }
+      format.json { render :json => @committees.to_json }
+    end
   end
   
   def show
