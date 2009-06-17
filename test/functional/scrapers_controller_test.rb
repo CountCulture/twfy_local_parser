@@ -130,6 +130,26 @@ class ScrapersControllerTest < ActionController::TestCase
     end
   end
   
+  context "on GET to :show with :dry_run with request error" do
+    setup do
+      @scraper = Factory(:scraper)
+      @scraper.class.any_instance.stubs(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
+      parser = @scraper.parser
+      Scraper.expects(:find).returns(@scraper)
+      stub_authentication
+      get :show, :id => @scraper.id, :dry_run => true
+    end
+    
+    should_assign_to :scraper
+    should_respond_with :success
+    
+    should "show summary of problems" do
+      assert_select "div.errorExplanation" do
+        assert_select "li", /Problem getting data/
+      end
+    end
+  end
+  
   context "on GET to :show with :dry_run with parsing problems" do
     setup do
       @scraper = Factory(:scraper)

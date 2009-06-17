@@ -50,6 +50,9 @@ class Scraper < ActiveRecord::Base
     self.parsing_results = parser.process(_data(url), self).results
     update_with_results(parsing_results, options)
     self
+  rescue ScraperError => e
+    errors.add_to_base(e.message)
+    self
   end
   
   def results
@@ -63,10 +66,20 @@ class Scraper < ActiveRecord::Base
   
   protected
   def _data(target_url=nil)
-    Hpricot.parse(_http_get(target_url), :fixup_tags => true)
-  rescue Exception => e
-    logger.error { "Problem with data returned from #{target_url}: #{e}" }
-    raise ParsingError
+    begin
+      page_data = _http_get(target_url)
+    rescue Exception => e
+      error_message = "Problem getting data from #{target_url}: #{e.inspect}"
+      logger.error { error_message }
+      raise RequestError, error_message
+    end
+    
+    begin
+      Hpricot.parse(page_data, :fixup_tags => true)
+    rescue Exception => e
+      logger.error { "Problem with data returned from #{target_url}: #{e.inspect}" }
+      raise ParsingError
+    end
   end
   
   def _http_get(target_url)

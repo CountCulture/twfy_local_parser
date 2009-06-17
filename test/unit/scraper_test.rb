@@ -43,18 +43,6 @@ class ScraperTest < ActiveSupport::TestCase
       assert s.save
     end
     
-    # should "convert expected_result_attributes to hash" do
-    #    assert_kind_of Hash, @scraper.expected_result_attributes
-    #  end
-    #  
-    #  should "convert expected_result_attributes string to hash keys and values" do
-    #    assert_equal "bar", @scraper.expected_result_attributes[:foo]
-    #  end
-    #  
-    #  should "return empty hash for expected_result_attributes if nil" do
-    #    assert_equal Hash.new, Scraper.new.expected_result_attributes
-    #  end
-     
     should "delegate result_model to parser" do
       @parser.expects(:result_model).returns("result_model")
       assert_equal "result_model", @scraper.result_model
@@ -217,6 +205,11 @@ class ScraperTest < ActiveSupport::TestCase
         Hpricot.expects(:parse).raises
         assert_raise(Scraper::ParsingError) {@scraper.send(:_data)}
       end
+      
+      should "raise RequestError when problem getting page" do
+        @scraper.expects(:_http_get).raises(OpenURI::HTTPError, "404 Not Found")
+        assert_raise(Scraper::RequestError) {@scraper.send(:_data)}
+      end
     end
         
     context "when processing" do
@@ -272,6 +265,26 @@ class ScraperTest < ActiveSupport::TestCase
         end
       end
       
+      context "and problem getting data" do
+        
+        setup do
+          @scraper.expects(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
+        end
+        
+        should "not raise exception" do
+          assert_nothing_raised(Exception) { @scraper.process }
+        end
+        
+        should "store error in scraper" do
+          @scraper.process
+          assert_equal "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found", @scraper.errors[:base]
+        end
+        
+        should "return self" do
+          assert_equal @scraper, @scraper.process
+        end
+      end
+
       context "and saving results" do
 
         should "return self" do

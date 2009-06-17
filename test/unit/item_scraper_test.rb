@@ -63,6 +63,27 @@ class ItemScraperTest < ActiveSupport::TestCase
         end
         
       end
+
+      context "and problem getting data" do
+        
+        setup do
+          @scraper.expects(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
+        end
+        
+        should "not raise exception" do
+          assert_nothing_raised(Exception) { @scraper.process }
+        end
+        
+        should "store error in scraper" do
+          @scraper.process
+          assert_equal "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found", @scraper.errors[:base]
+        end
+        
+        should "return self" do
+          assert_equal @scraper, @scraper.process
+        end
+      end
+
       context "item_scraper with related_model" do
         setup do
           @scraper.parser.update_attribute(:related_model, "Committee")
@@ -99,7 +120,6 @@ class ItemScraperTest < ActiveSupport::TestCase
           end
         end
         
-        
         context "and no url" do
           setup do
             @scraper.update_attribute(:url, nil)
@@ -122,6 +142,25 @@ class ItemScraperTest < ActiveSupport::TestCase
           end
         end
         
+        context "and problem getting data" do
+
+          setup do
+            @scraper.expects(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
+          end
+
+          should "not raise exception" do
+            assert_nothing_raised(Exception) { @scraper.process }
+          end
+
+          should "store error in scraper" do
+            @scraper.process
+            assert_equal "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found", @scraper.errors[:base]
+          end
+
+          should "return self" do
+            assert_equal @scraper, @scraper.process
+          end
+        end
       end
             
     end

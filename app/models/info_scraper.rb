@@ -7,6 +7,9 @@ class InfoScraper < Scraper
       update_with_results(raw_results, obj, options)
     end
     self
+  rescue ScraperError => e
+    errors.add_to_base(e.message)
+    self
   end
   
   def related_objects

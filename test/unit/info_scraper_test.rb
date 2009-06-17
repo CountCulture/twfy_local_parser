@@ -102,11 +102,29 @@ class InfoScraperTest < ActiveSupport::TestCase
         end
         
         context "and problem parsing" do
-
           should "not build or update instance of result_class if no results" do
             @parser.stubs(:results) # => returns nil
             Member.expects(:attributes=).never
             @scraper.process(:objects => @dummy_related_object)
+          end
+        end
+        
+        context "and problem getting data" do
+          setup do
+            @scraper.expects(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
+          end
+
+          should "not raise exception" do
+            assert_nothing_raised(Exception) { @scraper.process(:objects => @dummy_related_object) }
+          end
+
+          should "store error in scraper" do
+            @scraper.process(:objects => @dummy_related_object)
+            assert_equal "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found", @scraper.errors[:base]
+          end
+
+          should "return self" do
+            assert_equal @scraper, @scraper.process(:objects => @dummy_related_object)
           end
         end
       end
@@ -168,6 +186,25 @@ class InfoScraperTest < ActiveSupport::TestCase
           assert_equal @dummy_collection, @scraper.process(:objects => @dummy_collection).results
         end
       
+        context "and problem getting data" do
+          setup do
+            @scraper.expects(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
+          end
+
+          should "not raise exception" do
+            assert_nothing_raised(Exception) { @scraper.process(:objects => @dummy_collection) }
+          end
+
+          should "store error in scraper" do
+            @scraper.process(:objects => @dummy_collection)
+            assert_equal "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found", @scraper.errors[:base]
+          end
+
+          should "return self" do
+            assert_equal @scraper, @scraper.process(:objects => @dummy_collection)
+          end
+        end
+
       end
       
       context "with no given objects" do
