@@ -19,12 +19,18 @@ class CouncilTest < ActiveSupport::TestCase
     should_have_db_column :egr_id
     should_have_db_column :wdtk_name
     
+    should "have parser named_scope" do
+      expected_options = { :conditions => "members.council_id = councils.id", :joins => "INNER JOIN members", :group => "councils.id" }
+      assert_equal expected_options, Council.parsed.proxy_options
+    end
+    
     should "return councils with members as parsed" do
       @another_council = Factory(:another_council)
       @member = Factory(:member, :council => @another_council)
       @another_member = Factory(:old_member, :council => @another_council) # add two members to @another council, @council has none
       assert_equal [@another_council], Council.parsed
     end
+    
   end
   
   context "A Council instance" do
