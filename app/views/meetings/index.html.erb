@@ -1,5 +1,5 @@
 <h1><%= @title %></h1>
-
+<p class="extra_info"><%= link_for @council %> :: <%= link_to h("#{@council.title} committees"), committees_path(:council_id => @council.id) %></p>
 <div id="meetings">
   <%= list_all @meetings %>
 </div>
