@@ -13,6 +13,7 @@ class MeetingTest < ActiveSupport::TestCase
     should_validate_presence_of :committee_id
     should_validate_presence_of :uid
     should_validate_uniqueness_of :uid, :scoped_to => :council_id
+    should_have_one :minutes # no macro for polymorphic stuff so tested below
 
     should "include ScraperModel mixin" do
       assert Meeting.respond_to?(:find_existing)
@@ -23,7 +24,7 @@ class MeetingTest < ActiveSupport::TestCase
   context "A Meeting instance" do
     setup do
       @committee = Committee.create!(:title => "Audit Group", :url => "some.url", :uid => 33, :council_id => 1)
-      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee, :uid => 22, :council_id => @committee.council_id)
+      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee, :uid => 22, :council_id => @committee.council_id, :url => "http//council.gov.uk/meeting/22")
     end
 
     should "convert date string to date" do
@@ -33,6 +34,54 @@ class MeetingTest < ActiveSupport::TestCase
     should "return committee name and date as title" do
       assert_equal "Audit Group, 2008-11-06", @meeting.title
     end
+    
+    should "have polymorphic document as minutes" do
+      doc = Factory(:document, :title => "minutes of some meeting")
+      @meeting.minutes = doc
+      assert_equal @meeting.id, doc.document_owner_id
+      assert_equal "Meeting", doc.document_owner_type
+    end
+    
+    context "when calling minutes_body setter" do
+      should "create new minutes document" do
+        @meeting.minutes_body = "some document text"
+        assert_kind_of Document, @meeting.minutes
+      end
+      
+      should "save new minutes document" do
+        @meeting.minutes_body = "some document text"
+        assert !@meeting.minutes.new_record?
+      end
+      
+      should "store passed value in document body" do
+        @meeting.minutes_body = "some document text"
+        assert_equal "some document text", @meeting.minutes.body
+      end
+      
+      should "save meeting url as document url" do
+        @meeting.minutes_body = "some document text"
+        assert_equal "http//council.gov.uk/meeting/22", @meeting.minutes.url
+      end
+      
+      context "when meeting has existing minutes" do
+        setup do
+          @existing_minutes = Factory(:document)
+          @meeting.minutes = @existing_minutes
+          @existing_minutes.save!
+        end
+
+        should "not replace minutes" do
+          @meeting.minutes_body = "some document text"
+          assert_equal @existing_minutes.id, @meeting.minutes.id
+        end
+        
+        should "update existing minutes body" do
+          @meeting.minutes_body = "some document text"
+          assert_equal "some document text", @existing_minutes.reload.body
+        end
+      end
+    end
+        
   end
 
   private
