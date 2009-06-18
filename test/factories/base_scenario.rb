@@ -75,3 +75,11 @@ Factory.define :portal_system do |f|
   f.name 'SuperPortal'
   f.url "http://www.superportal.com"
 end
+
+Factory.define :document do |f|
+  # f.association :council
+  # f.title 'Some council document'
+  f.url "http://www.council.gov.uk/document/33"
+  f.body "This is a document"
+end
+
