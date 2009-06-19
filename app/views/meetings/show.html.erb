@@ -1,7 +1,12 @@
-<h4>Meeting of the <%= link_for @council %></h4>
+<h4 class="owner">Meeting of the <%= link_for @council %></h4>
 <h1><%= @title %> <em><%= council_page_for @meeting %></em></h1>
-<%= content_tag(:p, link_to("minutes", @meeting.minutes)) if @meeting.minutes %>
-<p class="extra_info"><strong><%= h @council.title %></strong> <%= link_to "Other meetings", meetings_path(:council_id => @council.id) %> :: <%= link_to "Other committees", committees_path(:council_id => @council.id) %></p>
+
+<p class="extra_info">
+  <strong>Venue </strong><%= @meeting.venue || "Not known" %> :: 
+  <%= link_to("Minutes", @meeting.minutes)+" ::" if @meeting.minutes %>
+   Other <%= link_to "meetings", meetings_path(:council_id => @council.id) %>/<%= link_to "committees", committees_path(:council_id => @council.id) %> for <%= link_for @council %>
+</p>
+
 <div id="members" class="item_grouping">
   <h3>Members of this committee</h3>
   <%= list_all @committee.members %>

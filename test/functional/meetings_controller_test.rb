@@ -97,7 +97,7 @@ class MeetingsControllerTest < ActionController::TestCase
       end
 
       should "show link to minutes" do
-        assert_select "a", /minutes/
+        assert_select "a", /minutes/i
       end
     end
     

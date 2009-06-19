@@ -14,6 +14,7 @@ class MeetingTest < ActiveSupport::TestCase
     should_validate_presence_of :uid
     should_validate_uniqueness_of :uid, :scoped_to => :council_id
     should_have_one :minutes # no macro for polymorphic stuff so tested below
+    should_have_db_columns :venue
 
     should "include ScraperModel mixin" do
       assert Meeting.respond_to?(:find_existing)
@@ -32,7 +33,7 @@ class MeetingTest < ActiveSupport::TestCase
     end
     
     should "return committee name and date as title" do
-      assert_equal "Audit Group, 2008-11-06", @meeting.title
+      assert_equal "Audit Group meeting, 2008-11-06", @meeting.title
     end
     
     should "have polymorphic document as minutes" do

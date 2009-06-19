@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090619150752) do
+ActiveRecord::Schema.define(:version => 20090619172611) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -50,15 +50,13 @@ ActiveRecord::Schema.define(:version => 20090619150752) do
 
   create_table "meetings", :force => true do |t|
     t.date     "date_held"
-    t.string   "agenda_url"
-    t.string   "minutes_pdf"
-    t.string   "minutes_rtf"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "committee_id"
     t.integer  "uid"
     t.integer  "council_id"
     t.string   "url"
+    t.text     "venue"
   end
 
   create_table "members", :force => true do |t|

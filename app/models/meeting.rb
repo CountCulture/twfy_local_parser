@@ -7,7 +7,7 @@ class Meeting < ActiveRecord::Base
   validates_uniqueness_of :uid, :scope => :council_id
   
   def title
-    "#{committee.title}, #{date_held}"
+    "#{committee.title} meeting, #{date_held}"
   end
   
   def minutes_body=(doc_body=nil)
