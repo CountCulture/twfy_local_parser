@@ -19,6 +19,7 @@ class Document < ActiveRecord::Base
       link[:href].match(/^http:/) ? link : link.set_attribute(:href, "#{base_url}#{link[:href]}")
       link.set_attribute(:class, 'external')
     end
+    doc.search('img').remove
     doc.to_html
   end
 end

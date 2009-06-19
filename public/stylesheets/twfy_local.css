@@ -80,6 +80,7 @@ body {
 }
 #share_block {
 	text-align:right;}
+/*Council document formatting*/
 #document_body {
 	border: 1px solid #ddd;
 	padding: 12px;
@@ -91,6 +92,8 @@ body {
 	font-size: 1.6em;}
 #document_body h3 {
 	font-size: 1.4em;}
+#document_body p {
+	margin: 0;}
 /*Council formatting*/
 a.unparsed {
 	color:#9e9e9e; }

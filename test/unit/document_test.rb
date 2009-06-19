@@ -61,6 +61,10 @@ class DocumentTest < ActiveSupport::TestCase
         assert_match /councillor22\" class=\"external/, @document.send(:sanitize_body, @raw_text)
         assert_match /dummy\" class=\"external/, @document.send(:sanitize_body, @raw_text)
       end
+      
+      should "remove images" do
+        assert_match /with  image/, @document.send(:sanitize_body, "text with <img src='http://council.gov.uk/image' /> image")
+      end
     end
     
     # should "delegate council to document_owner" do
