@@ -5,14 +5,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :item_scrapers, :controller => "scrapers"
   map.resources :info_scrapers, :controller => "scrapers"
 
-  map.resources :councils
+  map.resources :committees, :councils, :documents, :meetings, :members, :parsers
 
-  map.resources :meetings
-
-  map.resources :committees
-
-  map.resources :members
-  map.resources :parsers
 
   # The priority is based upon order of creation: first created -> highest priority.
 

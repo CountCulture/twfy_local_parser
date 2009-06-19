@@ -89,6 +89,18 @@ class MeetingsControllerTest < ActionController::TestCase
       end
     end
     
+    context "when meeting has minutes" do
+      setup do
+        @document = Factory(:document, :document_owner => @meeting)
+        get :show, :id => @meeting.id
+        # p @meeting.minutes
+      end
+
+      should "show link to minutes" do
+        assert_select "a", /minutes/
+      end
+    end
+    
     context "with xml request" do
       setup do
         get :show, :id => @meeting.id, :format => "xml"
