@@ -6,7 +6,7 @@ class Scraper < ActiveRecord::Base
   belongs_to :parser
   belongs_to :council
   validates_presence_of :council_id
-
+  named_scope :stale, lambda { { :conditions => ["last_scraped < ?", 7.days.ago] } }
   accepts_nested_attributes_for :parser
   attr_accessor :related_objects, :parsing_results
   attr_protected :results
@@ -46,9 +46,9 @@ class Scraper < ActiveRecord::Base
   end
   
   def process(options={})
-    # debugger
     self.parsing_results = parser.process(_data(url), self).results
     update_with_results(parsing_results, options)
+    update_attribute(:last_scraped, Time.now) if options[:save_results]&&!parsing_results.blank?
     self
   rescue ScraperError => e
     errors.add_to_base(e.message)
@@ -57,6 +57,10 @@ class Scraper < ActiveRecord::Base
   
   def results
     @results ||=[]
+  end
+  
+  def stale?
+    !last_scraped||(last_scraped < 7.days.ago)
   end
   
   # build url from council's base_url and parsers path unless url is set

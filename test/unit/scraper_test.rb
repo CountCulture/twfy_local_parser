@@ -22,6 +22,20 @@ class ScraperTest < ActiveSupport::TestCase
     should "define ParsingError as child of ScraperError" do
       assert_equal Scraper::ScraperError, Scraper::ParsingError.superclass
     end
+    
+    should "have stale named_scope" do
+      expected_options = { :conditions => ["last_scraped < ?", 7.days.ago] }
+      actual_options = Scraper.stale.proxy_options
+      assert_equal expected_options[:conditions].first, actual_options[:conditions].first
+      assert_in_delta expected_options[:conditions].last, actual_options[:conditions].last, 2
+    end
+    
+    should "return stale scrapers" do
+      # just checking...
+      fresh_scraper = Factory(:scraper, :last_scraped => 6.days.ago)
+      stale_scraper = Factory(:item_scraper, :last_scraped => 8.days.ago)
+      assert_equal [stale_scraper], Scraper.stale
+    end
   end
   
   context "A Scraper instance" do
@@ -41,6 +55,20 @@ class ScraperTest < ActiveSupport::TestCase
       # just checking...
       s = Scraper.new(:council => @council, :parser_id => @parser.id)
       assert s.save
+    end
+    
+    should "be stale if last_scraped more than 1 week ago" do
+      @scraper.update_attribute(:last_scraped, 8.days.ago)
+      assert @scraper.stale?
+    end
+    
+    should "not be stale if last_scraped less than 1 week ago" do
+      @scraper.update_attribute(:last_scraped, 6.days.ago)
+      assert !@scraper.stale?
+    end
+    
+    should "be stale if last_scraped nil" do
+      assert @scraper.stale?
     end
     
     should "delegate result_model to parser" do
@@ -256,6 +284,11 @@ class ScraperTest < ActiveSupport::TestCase
         assert_equal [dummy_member], @scraper.process.results
       end
       
+      should "not update last_scraped attribute" do
+        @scraper.process
+        assert_nil @scraper.last_scraped
+      end
+      
       context "and problem parsing" do
 
         should "not build or update instance of result_class if no results" do
@@ -310,7 +343,23 @@ class ScraperTest < ActiveSupport::TestCase
           Member.stubs(:build_or_update).returns(dummy_member)
           assert_equal [dummy_member], @scraper.process(:save_results => true).results
         end
-
+        
+        should "update last_scraped attribute" do
+          @scraper.process(:save_results => true)
+          assert_in_delta(Time.now, @scraper.last_scraped, 2)
+        end
+        
+        should "not update last_scraped result attribute when problem getting data" do
+          @scraper.expects(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
+          @scraper.process(:save_results => true)
+          assert_nil @scraper.last_scraped
+        end
+        
+        should "not update last_scraped result attribute when problem parsing" do
+          @parser.stubs(:results) # => returns nil
+          @scraper.process(:save_results => true)
+          assert_nil @scraper.last_scraped
+        end
       end
 
     end
