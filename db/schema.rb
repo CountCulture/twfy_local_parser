@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090619172611) do
+ActiveRecord::Schema.define(:version => 20090619201816) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(:version => 20090619172611) do
   end
 
   create_table "meetings", :force => true do |t|
-    t.date     "date_held"
+    t.datetime "date_held"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "committee_id"

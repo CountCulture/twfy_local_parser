@@ -4,7 +4,7 @@ class MeetingTest < ActiveSupport::TestCase
   context "The Meeting Class" do
     setup do
       @committee = Committee.create!(:title => "Audit Group", :url => "some.url", :uid => 33, :council_id => 1)
-      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee, :uid => 22, :council_id => @committee.council_id)
+      @meeting = Meeting.create!(:date_held => "6 November 2008 7:30pm", :committee => @committee, :uid => 22, :council_id => @committee.council_id)
     end
 
     should_belong_to :committee
@@ -13,7 +13,7 @@ class MeetingTest < ActiveSupport::TestCase
     should_validate_presence_of :committee_id
     should_validate_presence_of :uid
     should_validate_uniqueness_of :uid, :scoped_to => :council_id
-    should_have_one :minutes # no macro for polymorphic stuff so tested below
+    should_have_one :minutes # no shoulda macro for polymorphic stuff so tested below
     should_have_db_columns :venue
 
     should "include ScraperModel mixin" do
@@ -25,15 +25,15 @@ class MeetingTest < ActiveSupport::TestCase
   context "A Meeting instance" do
     setup do
       @committee = Committee.create!(:title => "Audit Group", :url => "some.url", :uid => 33, :council_id => 1)
-      @meeting = Meeting.create!(:date_held => "6 November 2008", :committee => @committee, :uid => 22, :council_id => @committee.council_id, :url => "http//council.gov.uk/meeting/22")
+      @meeting = Meeting.create!(:date_held => "6 November 2008 7:30pm", :committee => @committee, :uid => 22, :council_id => @committee.council_id, :url => "http//council.gov.uk/meeting/22")
     end
 
     should "convert date string to date" do
-      assert_equal Date.new(2008, 11, 6), @meeting.date_held
+      assert_equal DateTime.new(2008, 11, 6, 19, 30), @meeting.date_held
     end
     
     should "return committee name and date as title" do
-      assert_equal "Audit Group meeting, 2008-11-06", @meeting.title
+      assert_equal "Audit Group meeting, November 6 2008, 7.30PM", @meeting.title
     end
     
     should "have polymorphic document as minutes" do

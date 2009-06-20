@@ -73,3 +73,5 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
 end
 require 'open-uri'
+
+ActiveSupport::CoreExtensions::Time::Conversions::DATE_FORMATS.merge!(:custom_long => "%B %e %Y, %l.%M%p") # add custom time format so we get some unity

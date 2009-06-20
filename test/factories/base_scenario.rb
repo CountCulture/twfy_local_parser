@@ -67,7 +67,7 @@ Factory.define :meeting do |f|
   f.uid 123
   f.association :council
   f.association :committee
-  f.date_held 2.weeks.ago.to_date
+  f.date_held 2.weeks.ago
   f.url "http://www.anytown.gov.uk/meeting/123"
 end
 
