@@ -1,6 +1,6 @@
 <h1><%= link_for @committee.council %> committees: <%= @committee.title %> <em><%= council_page_for @committee %></em></h1>
 <p>
-  <em>(<%= link_to "see all #{h(@committee.council.name)} Council committees", committees_path(:council_id => @council.id) %> )</em>
+  <em>(<%= link_to "see all #{h(@committee.council.name)} committees", committees_path(:council_id => @council.id) %> )</em>
 </p>
 
 <div id="members" class="item_grouping">
