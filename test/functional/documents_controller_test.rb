@@ -4,7 +4,10 @@ class DocumentsControllerTest < ActionController::TestCase
   
   context "on GET to :show" do
     setup do
-      # @doc_owner = Factory(:meeting)
+      #set up doc owner
+      @committee = Factory(:committee)
+      @council = @committee.council
+      @doc_owner = Factory(:meeting, :council => @committee.council, :committee => @committee)
       @document = Factory(:document, :document_owner => @doc_owner)
       get :show, :id => @document.id
     end
@@ -13,10 +16,10 @@ class DocumentsControllerTest < ActionController::TestCase
     should_respond_with :success
     should_render_template :show
     
-    # should_assign_to(:councils) { @portal.councils }
+    should_assign_to(:council) { @council }
   
-    should "show document title in body" do
-      
+    should "show document title in title" do
+      assert_select "title", /#{@document.title}/
     end
     
     should "show body of document" do

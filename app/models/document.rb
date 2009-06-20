@@ -9,6 +9,14 @@ class Document < ActiveRecord::Base
     write_attribute(:body, sanitize_body(raw_text))#self[:body] = sanitize_body(raw_text)
   end
   
+  def document_type
+    self[:document_type] || "Document"
+  end
+  
+  def title
+    self[:title] || "#{document_type} for #{document_owner.title}"
+  end
+  
   protected
   def sanitize_body(raw_text)
     return if raw_text.blank?

@@ -14,8 +14,33 @@ class DocumentTest < ActiveSupport::TestCase
   end
   
   context "A Document instance" do
-    setup do
-      # @document = Factory(:document)
+    
+    context "in general" do
+      setup do
+        @committee = Factory(:committee)
+        @council = @committee.council
+        @doc_owner = Factory(:meeting, :council => @committee.council, :committee => @committee)
+        @document = Factory(:document, :document_owner => @doc_owner)
+      end
+      
+      should "return document type and document owner as title" do
+        @document.stubs(:document_type).returns("FooDocument")
+        assert_equal "FooDocument for #{@doc_owner.title}", @document.title
+      end
+      
+      should "return title attribute if set" do
+        @document.title = "new title"
+        assert_equal "new title", @document.title
+      end
+      
+      should "return 'Document' as document_type if not set" do
+        assert_equal "Document", @document.document_type
+      end
+      
+      should "return document_type if set" do
+        @document.document_type = "Minutes"
+        assert_equal "Minutes", @document.document_type
+      end
     end
     
     context "when setting body" do

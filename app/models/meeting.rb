@@ -11,6 +11,6 @@ class Meeting < ActiveRecord::Base
   end
   
   def minutes_body=(doc_body=nil)
-    minutes ? minutes.update_attribute(:body, doc_body) : create_minutes(:body => doc_body, :url => url)
+    minutes ? minutes.update_attributes(:body => doc_body, :document_type => "Minutes") : create_minutes(:body => doc_body, :url => url, :document_type => "Minutes")
   end
 end

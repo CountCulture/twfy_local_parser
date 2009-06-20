@@ -44,42 +44,48 @@ class MeetingTest < ActiveSupport::TestCase
     end
     
     context "when calling minutes_body setter" do
-      should "create new minutes document" do
+      setup do
         @meeting.minutes_body = "some document text"
+      end
+      should "create new minutes document" do
         assert_kind_of Document, @meeting.minutes
       end
       
       should "save new minutes document" do
-        @meeting.minutes_body = "some document text"
         assert !@meeting.minutes.new_record?
       end
       
       should "store passed value in document body" do
-        @meeting.minutes_body = "some document text"
         assert_equal "some document text", @meeting.minutes.body
       end
       
       should "save meeting url as document url" do
-        @meeting.minutes_body = "some document text"
         assert_equal "http//council.gov.uk/meeting/22", @meeting.minutes.url
       end
       
-      context "when meeting has existing minutes" do
-        setup do
-          @existing_minutes = Factory(:document)
-          @meeting.minutes = @existing_minutes
-          @existing_minutes.save!
-        end
+      should "set document type to be 'Minutes'" do
+        assert_equal "Minutes", @meeting.minutes.document_type
+      end
+    end
+    
+    context "when calling minutes_body setter and meeting has existing minutes" do
+      setup do
+        @existing_minutes = Factory(:document)
+        @meeting.minutes = @existing_minutes
+        @existing_minutes.save!
+        @meeting.minutes_body = "some document text"
+      end
 
-        should "not replace minutes" do
-          @meeting.minutes_body = "some document text"
-          assert_equal @existing_minutes.id, @meeting.minutes.id
-        end
-        
-        should "update existing minutes body" do
-          @meeting.minutes_body = "some document text"
-          assert_equal "some document text", @existing_minutes.reload.body
-        end
+      should "not replace minutes" do
+        assert_equal @existing_minutes.id, @meeting.minutes.id
+      end
+      
+      should "update existing minutes body" do
+        assert_equal "some document text", @existing_minutes.reload.body
+      end
+      
+      should "set document_type to be 'Minutes'" do
+        assert_equal "Minutes", @meeting.minutes.document_type
       end
     end
         

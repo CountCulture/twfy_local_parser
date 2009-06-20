@@ -1,7 +1,8 @@
 class DocumentsController < ApplicationController
   def show
     @document = Document.find(params[:id])
-    @title = "Meeting Minutes"
+    @council = @document.document_owner.council
+    @title = @document.title
   end
 
 end
