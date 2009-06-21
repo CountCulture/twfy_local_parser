@@ -1,0 +1,39 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>They Work For You Local :: System down for maintenance</title>
+  
+  <link rel="stylesheet" href="/stylesheets/blueprint/screen.css" type="text/css" media="screen, projection">
+  <link rel="stylesheet" href="/stylesheets/blueprint/print.css" type="text/css" media="print"> 
+  <!--[if IE]>
+    <link rel="stylesheet" href="/stylesheets/blueprint/ie.css" type="text/css" media="screen, projection">
+  <![endif]-->
+  <link rel="stylesheet" href="/stylesheets/twfy_local.css" type="text/css" media="screen" charset="utf-8">
+</head>
+<body class="maintenance">
+  <div class="container">
+    <div id="header">
+      <h2><%= link_to "They Work For You <em>Local</em>", root_path %></h2>
+    </div>
+      <div id="content">
+        <div>
+          <p>
+            TheyWorkForYou :: Local is temporarily <strong>down for <%= reason ? reason : "maintenance" %></strong>
+            as of <%= Time.now.strftime("%H:%M %Z") %>.
+          </p>
+          <p>
+            We'll be back <%= deadline ? deadline : "shortly" %>.
+          </p>
+        </div>
+      </div>
+    <div id="footer">
+      Put together for sheer hell of it in spare time by <%= link_to "CountCulture", "http://countculture.wordpress.com", :class => "external" %>. Code at <a href="http://github.com/CountCulture/twfy_local_parser/" class="external">Github</a> (<a href="http://github.com/CountCulture/twfy_local_parser/issues" class="external">Report Bugs</a>). 
+    </div>
+  </div>
+</body>
+</html>
