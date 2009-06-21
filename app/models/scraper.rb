@@ -6,7 +6,7 @@ class Scraper < ActiveRecord::Base
   belongs_to :parser
   belongs_to :council
   validates_presence_of :council_id
-  named_scope :stale, lambda { { :conditions => ["last_scraped < ?", 7.days.ago] } }
+  named_scope :stale, lambda { { :conditions => ["(last_scraped IS NULL) OR (last_scraped < ?)", 7.days.ago], :order => "last_scraped" } }
   accepts_nested_attributes_for :parser
   attr_accessor :related_objects, :parsing_results
   attr_protected :results
@@ -29,7 +29,7 @@ class Scraper < ActiveRecord::Base
   
   def title
     getting = self.is_a?(InfoScraper) ? 'Info' : 'Items'
-    "#{result_model} #{getting} scraper for #{council.name} council"
+    "#{result_model} #{getting} scraper for #{council.name}"
   end
   
   def parsing_errors

@@ -696,7 +696,6 @@ class ScrapersControllerTest < ActionController::TestCase
       stub_authentication
       put :update, { :id => @scraper.id, 
                      :scraper => { :council_id => @scraper.council_id, 
-                                   :result_model => "Committee", 
                                    :url => "http://anytown.com/new_committees", 
                                    :parser_attributes => { :id => @scraper.parser.id, :description => "new parsing description", :item_parser => "some code" }}}
     end

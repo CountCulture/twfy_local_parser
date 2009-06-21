@@ -24,18 +24,35 @@ class ScraperTest < ActiveSupport::TestCase
     end
     
     should "have stale named_scope" do
-      expected_options = { :conditions => ["last_scraped < ?", 7.days.ago] }
+      expected_options = { :conditions => ["(last_scraped IS NULL) OR (last_scraped < ?)", 7.days.ago], :order => "last_scraped" }
       actual_options = Scraper.stale.proxy_options
       assert_equal expected_options[:conditions].first, actual_options[:conditions].first
       assert_in_delta expected_options[:conditions].last, actual_options[:conditions].last, 2
+      assert_equal expected_options[:order], actual_options[:order]
     end
     
     should "return stale scrapers" do
       # just checking...
       fresh_scraper = Factory(:scraper, :last_scraped => 6.days.ago)
       stale_scraper = Factory(:item_scraper, :last_scraped => 8.days.ago)
-      assert_equal [stale_scraper], Scraper.stale
+      never_used_scraper = Factory(:info_scraper)
+      assert_equal [never_used_scraper, stale_scraper], Scraper.stale
     end
+    
+    # context "when finding all by type" do
+    #   setup do
+    #     
+    #   end
+    # 
+    #   should "return all with given result model" do
+    #     find_by_result_model
+    #   end
+    #   
+    #   should "return all with given scraper type" do
+    # 
+    #   end
+    # end
+    
   end
   
   context "A Scraper instance" do
@@ -118,11 +135,11 @@ class ScraperTest < ActiveSupport::TestCase
     end
     
     should "build title from council name result class and scraper type when ItemScraper" do
-      assert_equal "Member Items scraper for Anytown council", @scraper.title
+      assert_equal "Member Items scraper for Anytown", @scraper.title
     end
     
     should "build title from council name result class and scraper type when InfoScraper" do
-      assert_equal "Member Info scraper for Anothertown council", Factory.build(:info_scraper).title
+      assert_equal "Member Info scraper for Anothertown", Factory.build(:info_scraper).title
     end
     
     should "return errors in parser as parsing errors" do
