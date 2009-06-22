@@ -28,6 +28,7 @@ class Parser < ActiveRecord::Base
   def process(doc, scraper=nil)
     @raw_response = doc
     @current_scraper = scraper
+    @results = nil # wipe previous results if they exist (same parser instance may be called more than once by scraper)
     now_parsing = "items"
     parsing_code = item_parser
     object_to_be_parsed = doc
@@ -35,7 +36,7 @@ class Parser < ActiveRecord::Base
     items = item_parser.blank? ? doc : eval_parsing_code(item_parser, doc)
     now_parsing = "attributes"
     items = [items] unless items.is_a?(Array)
-    @results = items.collect do |item|
+    @results = items.compact.collect do |item| # remove nil items
       result_hash = {}
       attribute_parser.each do |key, value|
         parsing_code = value

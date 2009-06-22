@@ -8,6 +8,7 @@ class ItemScraper < Scraper
       related_objects.each do |obj|
         target_url = url.blank? ? obj.url : obj.instance_eval("\"" + url + "\"") # if we have url evaluate it AS A STRING in context of related object (which allows us to interpolate uid etc), otherwise just use related object's url
         raw_results = parser.process(_data(target_url), self).results
+        logger.debug { "\n\n**************RESULTS from parsing #{target_url}:\n#{raw_results}" }
         update_with_results(raw_results.collect{ |r| r.merge("#{obj.class.to_s.downcase}_id".to_sym => obj.id) }, options) unless raw_results.blank?
       end
       self

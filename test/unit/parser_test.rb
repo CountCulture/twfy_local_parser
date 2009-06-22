@@ -216,10 +216,35 @@ class ParserTest < Test::Unit::TestCase
         end
       end
             
+      context "and array of items returned includes nil" do
+        setup do
+          @dummy_item_1 = stub
+          @dummy_hpricot = stub
+          @parser.stubs(:eval_parsing_code).with(@parser.item_parser, @dummy_hpricot).returns([@dummy_item_1, nil])
+        end
+      
+        should "evaluate each attribute_parser on non-nil items only" do
+          @parser.stubs(:eval_parsing_code).with(){ |code, item| item == @dummy_item_1 }
+          @parser.expects(:eval_parsing_code).never.with(){ |code, item| (code == "\"bar1\"")&&item.nil? }
+          assert @parser.process(@dummy_hpricot).errors.empty? # failing expectation will raise exception, which will get caught and added to errors. Maybe move functionality into own method, but for the moment this works
+        end
+        
+        should "return no results for nil item" do
+          @parser.stubs(:eval_parsing_code).with(anything, @dummy_item_1).returns("some value")
+          #  @parser.stubs(:eval_parsing_code).with(){ |code, item| (code =~ /bar/)&&(item == @dummy_item_2) }.returns("another value")
+           assert_equal ([{ :foo => "some value", :foo1 => "some value" }]), @parser.process(@dummy_hpricot).results
+        end
+        
+        # should "return not raise exception if attribute parser code as results" do
+        #   assert_nothing_raised(Exception) { @parser.process(@dummy_hpricot) }
+        # end
+      end
+            
       context "and problems occur when parsing items" do
         setup do
           @dummy_hpricot_for_problem_parser = Hpricot("some text")
           @problem_parser = Parser.new(:item_parser => "foo + bar")
+          @problem_parser.instance_eval("@results='foo'") # doesn't like instance_variable_set
         end
       
         should "not raise exception" do
@@ -237,6 +262,9 @@ class ParserTest < Test::Unit::TestCase
           assert_match /Hpricot.+#{@dummy_hpricot_for_problem_parser.inspect}/m, errors
         end
         
+        should "wipe previous results variable" do
+          assert_nil @problem_parser.process(@dummy_hpricot_for_problem_parser).results
+        end
       end
       
       context "and problems occur when parsing attributes" do
