@@ -74,4 +74,6 @@ Rails::Initializer.run do |config|
 end
 require 'open-uri'
 
-ActiveSupport::CoreExtensions::Time::Conversions::DATE_FORMATS.merge!(:custom_long => "%B %e %Y, %l.%M%p") # add custom time format so we get some unity
+# Add custom date/time formats
+Time::DATE_FORMATS[:event_date] = "%B %e %Y, %l.%M%p" 
+Date::DATE_FORMATS[:custom_short] = "%B %e %Y" # add custom time format so we get some unity

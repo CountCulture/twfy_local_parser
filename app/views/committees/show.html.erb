@@ -2,7 +2,7 @@
 <p>
   <em>(<%= link_to "see all #{h(@committee.council.name)} committees", committees_path(:council_id => @council.id) %> )</em>
 </p>
-
+<%= content_tag(:div, simple_format(@committee.description), :class => "description intro") unless @committee.description.blank? %>
 <div id="members" class="item_grouping">
   <h3>Members</h3>
   <%= list_all @committee.members %>

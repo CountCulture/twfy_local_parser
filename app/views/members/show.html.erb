@@ -2,6 +2,7 @@
 <p>Council <strong><%= link_to h(@member.council.name), @member.council %></strong></p>
 <p>Party <strong><%= @member.party %></strong></p>
 <p>Email <strong><%= @member.email ? mail_to(@member.email, @member.email, :encode => "javascript") : 'not known' %></strong></p>
+<p>Date elected <strong><%= @member.date_elected ? @member.date_elected.to_s(:custom_short) : 'not known' %></strong></p>
 
 <div id="committees" class="item_grouping">
   <h3>Council Committee Memberships</h3>

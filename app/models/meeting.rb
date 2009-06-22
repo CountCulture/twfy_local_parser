@@ -7,7 +7,7 @@ class Meeting < ActiveRecord::Base
   validates_uniqueness_of :uid, :scope => :council_id
   
   def title
-    "#{committee.title} meeting, #{date_held.to_s(:custom_long).squish}"
+    "#{committee.title} meeting, #{date_held.to_s(:event_date).squish}"
   end
   
   def minutes_body=(doc_body=nil)

@@ -76,7 +76,7 @@ class MeetingsControllerTest < ActionController::TestCase
       end
       
       should "show meeting date in title" do
-        assert_select "title", /#{@meeting.date_held.to_s(:custom_long).squish}/
+        assert_select "title", /#{@meeting.date_held.to_s(:event_date).squish}/
       end
       
       should "list members" do
