@@ -30,7 +30,7 @@ class MeetingsControllerTest < ActionController::TestCase
       end
       
       should "have title" do
-        assert_select "title", /Committee meetings for #{@council.title}/
+        assert_select "title", /Committee meetings :: #{@council.title}/
       end
     end
         

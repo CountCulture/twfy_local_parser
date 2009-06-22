@@ -3,6 +3,7 @@ class CouncilsController < ApplicationController
 
   def index
     @councils = params[:include_unparsed] ? Council.find(:all, :order => "name") : Council.parsed
+    @title = "All Councils"
     respond_to do |format|
       format.html
       format.xml { render :xml => @councils.to_xml }
@@ -13,7 +14,6 @@ class CouncilsController < ApplicationController
   def show
     @council = Council.find(params[:id])
     @members = @council.members.current
-    @title = @council.name
     respond_to do |format|
       format.html
       format.xml { render :xml => @council.to_xml }

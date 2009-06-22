@@ -4,10 +4,12 @@ class ScrapersController < ApplicationController
   
   def index
     @councils = Council.find(:all, :include => :scrapers, :order => "name")
+    @title = "All scrapers"
   end
   
   def show
     @scraper = Scraper.find(params[:id])
+    @title = @scraper.title
     if params[:dry_run]
       @results = @scraper.process.results
     elsif params[:process]

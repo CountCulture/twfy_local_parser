@@ -3,7 +3,8 @@
   
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <title><%= @title ? "#{@page_title || @title} :: TWFY Local" : "They Work For You Local" %></title>
+    <meta name="verify-v1" content="NzpNKPfTKdphqcFS3qiUmxtQSE0n2gViSNqrhrEs9BI=" >
+    <title><%= "#{@page_title || @title} :: " if @title %><%= "#{@council.title} :: " if @council %>They Work For You Local</title>
     <link rel="stylesheet" href="/stylesheets/blueprint/screen.css" type="text/css" media="screen, projection">
     <link rel="stylesheet" href="/stylesheets/blueprint/print.css" type="text/css" media="print"> 
     <!--[if IE]>
@@ -25,4 +26,13 @@
         Put together for sheer hell of it in spare time by <%= link_to "CountCulture", "http://countculture.wordpress.com", :class => "external" %>. Code at <a href="http://github.com/CountCulture/twfy_local_parser/" class="external">Github</a> (<a href="http://github.com/CountCulture/twfy_local_parser/issues" class="external">Report Bugs</a>). 
       </div>
     </div>
+    <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+    try {
+    var pageTracker = _gat._getTracker("UA-9440277-1");
+    pageTracker._trackPageview();
+    } catch(err) {}</script>
   </body>

@@ -35,6 +35,10 @@ class ScrapersControllerTest < ActionController::TestCase
       end
     end
     
+    should "show title" do
+      assert_select "title", /All scrapers/
+    end
+    
     should "list scrapers for each council" do
       assert_select "#council_#{@scraper1.council.id}" do
         assert_select "li a", @scraper1.title
@@ -73,6 +77,10 @@ class ScrapersControllerTest < ActionController::TestCase
     should_assign_to :scraper
     should_respond_with :success
     should_render_template :show
+    
+    should "show scraper title in page title" do
+      assert_select "title", /#{@scraper.title}/
+    end
     
     should "show link to perform dry run" do
       assert_select "#scraper a", /perform test scrape/

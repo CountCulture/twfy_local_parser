@@ -2,7 +2,7 @@ class MeetingsController < ApplicationController
   
   def index
     @council = Council.find(params[:council_id])
-    @title = "Committee meetings for #{@council.title}"
+    @title = "Committee meetings"
     @meetings = @council.meetings.find(:all, :order => "date_held DESC")
     respond_to do |format|
       format.html
@@ -16,7 +16,7 @@ class MeetingsController < ApplicationController
     @council = @meeting.council
     @committee = @meeting.committee
     @other_meetings = @committee.meetings - [@meeting]
-    @title = "#{@meeting.title} :: #{@council.title}"
+    @title = "#{@meeting.title}"
     respond_to do |format|
       format.html
       format.xml { render :xml => @meeting.to_xml }
