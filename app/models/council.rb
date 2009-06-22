@@ -15,10 +15,6 @@ class Council < ActiveRecord::Base
     read_attribute(:base_url) || url
   end
   
-  # def self.parsed
-  #   find(:all, :conditions => "members.council_id = councils.id", :joins => "INNER JOIN members", :group => "councils.id")
-  # end
-  
   def parsed?
     !members.blank?
   end
