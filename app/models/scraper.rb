@@ -127,6 +127,6 @@ class Scraper < ActiveRecord::Base
 
   private
   def update_last_scraped
-    self.class.update_all(:last_scraped => Time.zone.now, :id => id)
+    self.class.update_all({:last_scraped => Time.zone.now}, {:id => id})
   end  
 end
