@@ -2,7 +2,7 @@ desc "Finds stale scrapers and runs them"
 task :run_stale_scrapers => :environment do
   # stale_scrapers = Scraper.stale.find_all_by_type(:conditions => :result_model => result_model, :scraper_type => scraper_type)
   limit = ENV["LIMIT"] || 5
-  stale_scrapers = Scraper.unproblematic.stale
+  stale_scrapers = Scraper.unproblematic.stale.find(:all, :limit => 5)
   puts "About to run #{stale_scrapers.size} stale scrapers:\n"
   stale_scrapers.each do |scraper|
     
