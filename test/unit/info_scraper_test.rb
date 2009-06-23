@@ -101,12 +101,31 @@ class InfoScraperTest < ActiveSupport::TestCase
           assert_equal [@dummy_related_object], @scraper.process(:objects => @dummy_related_object).results
         end
         
+        should "not update last_scraped attribute if not saving results" do
+          assert_nil @scraper.process(:objects => @dummy_related_object).last_scraped
+        end
+        
+        should "update last_scraped attribute when saving results" do
+          @scraper.process(:save_results => true, :objects => @dummy_related_object)
+          assert_in_delta(Time.now, @scraper.last_scraped, 2)
+        end
+        
         context "and problem parsing" do
+          setup do
+            @parser.stubs(:errors => stub(:empty? => false))
+          end
+          
           should "not build or update instance of result_class if no results" do
-            @parser.stubs(:results) # => returns nil
+            @parser.stubs(:results) # => returns nil            
             Member.expects(:attributes=).never
             @scraper.process(:objects => @dummy_related_object)
           end
+          
+          should "not update last_scraped attribute" do
+            @scraper.process(:objects => @dummy_related_object)
+            assert_nil @scraper.last_scraped
+          end
+
         end
         
         context "and problem getting data" do
@@ -186,6 +205,16 @@ class InfoScraperTest < ActiveSupport::TestCase
           assert_equal @dummy_collection, @scraper.process(:objects => @dummy_collection).results
         end
       
+        should "not pdate last_scraped attribute when not saving" do
+          @scraper.process(:objects => @dummy_collection)
+          assert_nil @scraper.last_scraped
+        end
+        
+        should "update last_scraped attribute when saving" do
+          @scraper.process(:save_results => true, :objects => @dummy_collection)
+          assert_in_delta(Time.now, @scraper.last_scraped, 2)
+        end
+        
         context "and problem getting data" do
           setup do
             @scraper.expects(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
@@ -202,6 +231,11 @@ class InfoScraperTest < ActiveSupport::TestCase
 
           should "return self" do
             assert_equal @scraper, @scraper.process(:objects => @dummy_collection)
+          end
+
+          should "not update last_scraped attribute when saving" do
+            @scraper.process(:save_results => true, :objects => @dummy_collection)
+            assert_nil @scraper.last_scraped
           end
         end
 

@@ -231,13 +231,9 @@ class ParserTest < Test::Unit::TestCase
         
         should "return no results for nil item" do
           @parser.stubs(:eval_parsing_code).with(anything, @dummy_item_1).returns("some value")
-          #  @parser.stubs(:eval_parsing_code).with(){ |code, item| (code =~ /bar/)&&(item == @dummy_item_2) }.returns("another value")
            assert_equal ([{ :foo => "some value", :foo1 => "some value" }]), @parser.process(@dummy_hpricot).results
         end
         
-        # should "return not raise exception if attribute parser code as results" do
-        #   assert_nothing_raised(Exception) { @parser.process(@dummy_hpricot) }
-        # end
       end
             
       context "and problems occur when parsing items" do

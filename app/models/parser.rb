@@ -45,7 +45,6 @@ class Parser < ActiveRecord::Base
       end
       result_hash
     end
-    logger.debug { "*********results from processing parser = #{@results.inspect}" }
     self
   rescue Exception => e
     message = "Exception raised parsing #{now_parsing}: #{e.message}\n\n" +

@@ -373,7 +373,7 @@ class ScraperTest < ActiveSupport::TestCase
         end
         
         should "not update last_scraped result attribute when problem parsing" do
-          @parser.stubs(:results) # => returns nil
+          @parser.stubs(:errors => stub(:empty? => false))
           @scraper.process(:save_results => true)
           assert_nil @scraper.last_scraped
         end

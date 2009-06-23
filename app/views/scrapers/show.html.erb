@@ -11,7 +11,9 @@
     <%= render :partial => '/parsers/parser', :object => @scraper.parser %>
     
   </div>
-  <p><strong>Last updated</strong> <%= @scraper.updated_at %></p>
+  <p>
+    <strong>Last scraped</strong> <%= @scraper.last_scraped %><br />
+    <strong>Last updated</strong> <%= @scraper.updated_at %></p>
   <p>
     <%= link_to "edit", edit_scraper_path(@scraper) %> 
     <%= link_to "destroy", scraper_path(@scraper), :method => :delete %> 

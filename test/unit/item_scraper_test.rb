@@ -62,6 +62,21 @@ class ItemScraperTest < ActiveSupport::TestCase
           @scraper.process
         end
         
+        should "not update last_scraped attribute if not saving results" do
+          assert_nil @scraper.process.last_scraped
+        end
+
+        should "update last_scraped attribute if saving results" do
+          @scraper.process(:save_results => true)
+          assert_in_delta(Time.now, @scraper.last_scraped, 2)
+        end
+        
+        should "not update last_scraped if problem parsing" do
+          @parser.stubs(:errors => stub(:empty? => false))
+          @scraper.process(:save_results => true)
+          assert_nil @scraper.last_scraped
+        end
+
       end
 
       context "and problem getting data" do
@@ -82,6 +97,11 @@ class ItemScraperTest < ActiveSupport::TestCase
         should "return self" do
           assert_equal @scraper, @scraper.process
         end
+
+        should "not update last_scraped attribute when saving results" do
+          assert_nil @scraper.process(:save_results => true).last_scraped
+        end
+
       end
 
       context "item_scraper with related_model" do
@@ -118,6 +138,21 @@ class ItemScraperTest < ActiveSupport::TestCase
             @parser.expects(:process).twice.with(anything, @scraper).returns(stub_everything(:results => []))
             @scraper.process
           end
+          
+          should "not update last_scraped attribute if not saving results" do
+            assert_nil @scraper.process.last_scraped
+          end
+
+          should "update last_scraped attribute if saving results" do
+            @scraper.process(:save_results => true)
+            assert_in_delta(Time.now, @scraper.last_scraped, 2)
+          end
+
+          should "not update last_scraped if problem parsing" do
+            @parser.stubs(:errors => stub(:empty? => false))
+            @scraper.process(:save_results => true)
+            assert_nil @scraper.last_scraped
+          end
         end
         
         context "and no url" do
@@ -140,6 +175,22 @@ class ItemScraperTest < ActiveSupport::TestCase
             @scraper.expects(:update_with_results).with(anything, {:foo => "bar"})
             @scraper.process({:foo => "bar"})
           end
+          
+          should "not update last_scraped attribute if not saving results" do
+            assert_nil @scraper.process.last_scraped
+          end
+
+          should "update last_scraped attribute if saving results" do
+            @scraper.process(:save_results => true)
+            assert_in_delta(Time.now, @scraper.last_scraped, 2)
+          end
+
+          should "not update last_scraped if problem parsing" do
+            @parser.stubs(:errors => stub(:empty? => false))
+            @scraper.process(:save_results => true)
+            assert_nil @scraper.last_scraped
+          end
+          
         end
         
         context "and problem getting data" do
