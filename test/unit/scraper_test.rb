@@ -44,6 +44,26 @@ class ScraperTest < ActiveSupport::TestCase
       assert_equal [never_used_scraper, stale_scraper], Scraper.stale
     end
     
+    should "return stale scrapers" do
+      # just checking...
+      fresh_scraper = Factory(:scraper, :last_scraped => 6.days.ago)
+      stale_scraper = Factory(:item_scraper, :last_scraped => 8.days.ago)
+      never_used_scraper = Factory(:info_scraper)
+      assert_equal [never_used_scraper, stale_scraper], Scraper.stale
+    end
+    
+    should "have problematic named_scope" do
+      expected_options = { :conditions => { :problematic => true } }
+      actual_options = Scraper.problematic.proxy_options
+      assert_equal expected_options, actual_options
+    end
+    
+    should "have unproblematic named_scope" do
+      expected_options = { :conditions => { :problematic => false } }
+      actual_options = Scraper.unproblematic.proxy_options
+      assert_equal expected_options, actual_options
+    end
+    
     # context "when finding all by type" do
     #   setup do
     #     

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090623100038) do
+ActiveRecord::Schema.define(:version => 20090623165754) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -123,7 +123,7 @@ ActiveRecord::Schema.define(:version => 20090623100038) do
     t.string   "type"
     t.string   "related_model"
     t.datetime "last_scraped"
-    t.boolean  "problematic"
+    t.boolean  "problematic",                :default => false
   end
 
 end

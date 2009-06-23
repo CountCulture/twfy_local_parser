@@ -9,6 +9,7 @@ class Council < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
   named_scope :parsed, :conditions => "members.council_id = councils.id", :joins => "INNER JOIN members", :group => "councils.id"
+  # default_scope
   alias_attribute :title, :name
   
   def base_url
