@@ -1,6 +1,11 @@
 require 'test_helper'
 
-
+#  TO DO: Sort out testing and behavious of #process method. At the 
+# moment Scraper#process method is never called directly, only via 
+# a super in a single case of ItemScraper. So tests are being 
+# duplicated, as is code, and since we enver have an instance of the base
+# Scraper model, prob shouldn't be testing it, rather should test a 
+# basic scraper that inherits from it. 
 class ScraperTest < ActiveSupport::TestCase
   
   should_belong_to :parser
@@ -88,6 +93,10 @@ class ScraperTest < ActiveSupport::TestCase
       assert @scraper.stale?
     end
     
+    should "not be problematic by default" do
+      assert !@scraper.problematic?
+    end
+    
     should "delegate result_model to parser" do
       @parser.expects(:result_model).returns("result_model")
       assert_equal "result_model", @scraper.result_model
@@ -153,7 +162,16 @@ class ScraperTest < ActiveSupport::TestCase
       ItemScraper.record_timestamps = true
       @scraper.send(:update_last_scraped)
       assert_in_delta 2.days.ago, @scraper.reload.updated_at, 2 # check timestamp hasn't changed...
-      assert_in_delta Time.now, @scraper.reload.last_scraped, 2 #...but last_scraped has
+      assert_in_delta Time.now, @scraper.last_scraped, 2 #...but last_scraped has
+    end
+    
+    should "mark as problematic without changing updated_at timestamp" do
+      ItemScraper.record_timestamps = false # update timestamp without triggering callbacks
+      @scraper.update_attributes(:updated_at => 2.days.ago) #... though thought from Rails 2.3 you could do this turning off timestamps
+      ItemScraper.record_timestamps = true
+      @scraper.send(:mark_as_problematic)
+      assert_in_delta 2.days.ago, @scraper.reload.updated_at, 2 # check timestamp hasn't changed...
+      assert @scraper.problematic?
     end
     
     context "if scraper has url attribute" do
@@ -315,12 +333,24 @@ class ScraperTest < ActiveSupport::TestCase
         assert_nil @scraper.reload.last_scraped
       end
       
+      should "not mark scraper as problematic" do
+        @scraper.process
+        assert !@scraper.reload.problematic?
+      end
+      
       context "and problem parsing" do
+        setup do
+          @parser.stubs(:results) # => returns nil
+          @parser.stubs(:errors => stub(:empty? => false))
+        end
 
         should "not build or update instance of result_class if no results" do
-          @parser.stubs(:results) # => returns nil
           Member.expects(:build_or_update).never
+        end
+        
+        should "mark scraper as problematic" do
           @scraper.process
+          assert @scraper.reload.problematic?
         end
       end
       
@@ -341,6 +371,11 @@ class ScraperTest < ActiveSupport::TestCase
         
         should "return self" do
           assert_equal @scraper, @scraper.process
+        end
+      
+        should "mark as problematic when problem getting page" do
+          @scraper.process
+          assert @scraper.reload.problematic?
         end
       end
 

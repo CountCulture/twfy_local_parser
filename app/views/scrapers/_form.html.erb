@@ -9,6 +9,10 @@
     <%= content_tag(:p, "Will use #{link_to(@scraper.computed_url, @scraper.computed_url, :class => 'external')} by default", :class => "faint", :id => "scraper_default_url") if @scraper.computed_url %>
   <%- end -%>
   
+  <p>
+    <%= f.label :problematic, "Problematic <em>(this is set when there have been problems running this scraper)</em>" %>
+    <%= f.check_box :problematic %>
+  </p>
   <%- if @scraper.portal_parser? && !params[:dedicated_parser] -%>
     <%= f.hidden_field :parser_id %>
     <%= render :partial => '/parsers/parser', :object => @scraper.parser %>

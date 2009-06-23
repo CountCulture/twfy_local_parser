@@ -2,6 +2,7 @@
 <p><%= link_to "#{@scraper.council.name} scrapers", scrapers_path(:anchor => dom_id(@scraper.council)) %> :: <%= link_to "All scrapers", scrapers_path %></p>
 <div id="scraper">
   
+  <%= content_tag(:p, "This scraper is problematic, and will not be automatically be run again until it is fixed", :class => "error") if @scraper.problematic? %>
   <div id="core_info">
     <h3><%= @scraper.class %></h3>
     <p>

@@ -77,6 +77,10 @@ class ItemScraperTest < ActiveSupport::TestCase
           assert_nil @scraper.reload.last_scraped
         end
 
+        should "not mark scraper as problematic" do
+          @scraper.process
+          assert !@scraper.reload.problematic?
+        end
       end
 
       context "and problem getting data" do
@@ -102,6 +106,10 @@ class ItemScraperTest < ActiveSupport::TestCase
           assert_nil @scraper.process(:save_results => true).last_scraped
         end
 
+        should "mark scraper as problematic" do
+          @scraper.process
+          assert @scraper.reload.problematic?
+        end
       end
 
       context "item_scraper with related_model" do
@@ -185,10 +193,25 @@ class ItemScraperTest < ActiveSupport::TestCase
             assert_in_delta(Time.now, @scraper.reload.last_scraped, 2)
           end
 
-          should "not update last_scraped if problem parsing" do
-            @parser.stubs(:errors => stub(:empty? => false))
-            @scraper.process(:save_results => true)
-            assert_nil @scraper.reload.last_scraped
+          should "not mark scraper as problematic" do
+            @scraper.process
+            assert !@scraper.reload.problematic?
+          end
+          
+          context "and problem parsing" do
+            setup do
+              @parser.stubs(:errors => stub(:empty? => false))
+              @scraper.process(:save_results => true)
+            end
+            
+            should "not update last_scraped if problem parsing" do
+              assert_nil @scraper.reload.last_scraped
+            end
+
+            should "mark scraper as problematic" do
+              @scraper.process
+              assert @scraper.reload.problematic?
+            end
           end
           
         end
@@ -210,6 +233,11 @@ class ItemScraperTest < ActiveSupport::TestCase
 
           should "return self" do
             assert_equal @scraper, @scraper.process
+          end
+
+          should "mark scraper as problematic" do
+            @scraper.process
+            assert @scraper.reload.problematic?
           end
         end
       end

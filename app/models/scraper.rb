@@ -49,9 +49,12 @@ class Scraper < ActiveRecord::Base
     self.parsing_results = parser.process(_data(url), self).results
     update_with_results(parsing_results, options)
     update_last_scraped if options[:save_results]&&parser.errors.empty?
+    mark_as_problematic unless parser.errors.empty?
     self
   rescue ScraperError => e
+    logger.debug { "*******#{e.message} while processing #{self.inspect}" }
     errors.add_to_base(e.message)
+    mark_as_problematic
     self
   end
   
@@ -126,7 +129,12 @@ class Scraper < ActiveRecord::Base
   end
 
   private
+  # marks as problematic without changing timestamps
+  def mark_as_problematic
+    self.class.update_all({ :problematic => true }, { :id => id })
+  end
+  
   def update_last_scraped
-    self.class.update_all({:last_scraped => Time.zone.now}, {:id => id})
+    self.class.update_all({ :last_scraped => Time.zone.now }, { :id => id })
   end  
 end

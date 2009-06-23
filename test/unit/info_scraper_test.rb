@@ -110,6 +110,11 @@ class InfoScraperTest < ActiveSupport::TestCase
           assert_in_delta(Time.now, @scraper.reload.last_scraped, 2)
         end
         
+        should "not mark scraper as problematic" do
+          @scraper.process
+          assert !@scraper.reload.problematic?
+        end
+        
         context "and problem parsing" do
           setup do
             @parser.stubs(:errors => stub(:empty? => false))
@@ -126,6 +131,10 @@ class InfoScraperTest < ActiveSupport::TestCase
             assert_nil @scraper.reload.last_scraped
           end
 
+          should "mark scraper as problematic" do
+            @scraper.process(:objects => @dummy_related_object)
+            assert @scraper.reload.problematic?
+          end
         end
         
         context "and problem getting data" do
@@ -144,6 +153,11 @@ class InfoScraperTest < ActiveSupport::TestCase
 
           should "return self" do
             assert_equal @scraper, @scraper.process(:objects => @dummy_related_object)
+          end
+
+          should "mark scraper as problematic" do
+            @scraper.process(:objects => @dummy_related_object)
+            assert @scraper.reload.problematic?
           end
         end
       end
@@ -205,7 +219,12 @@ class InfoScraperTest < ActiveSupport::TestCase
           assert_equal @dummy_collection, @scraper.process(:objects => @dummy_collection).results
         end
       
-        should "not pdate last_scraped attribute when not saving" do
+        should "not mark scraper as problematic" do
+          @scraper.process(:objects => @dummy_collection)
+          assert !@scraper.reload.problematic?
+        end
+        
+        should "not update last_scraped attribute when not saving" do
           @scraper.process(:objects => @dummy_collection)
           assert_nil @scraper.reload.last_scraped
         end
@@ -236,6 +255,11 @@ class InfoScraperTest < ActiveSupport::TestCase
           should "not update last_scraped attribute when saving" do
             @scraper.process(:save_results => true, :objects => @dummy_collection)
             assert_nil @scraper.reload.last_scraped
+          end
+          
+          should "mark scraper as problematic" do
+            @scraper.process(:save_results => true, :objects => @dummy_collection)
+            assert @scraper.reload.problematic?
           end
         end
 
