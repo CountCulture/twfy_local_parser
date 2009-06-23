@@ -107,7 +107,7 @@ class InfoScraperTest < ActiveSupport::TestCase
         
         should "update last_scraped attribute when saving results" do
           @scraper.process(:save_results => true, :objects => @dummy_related_object)
-          assert_in_delta(Time.now, @scraper.last_scraped, 2)
+          assert_in_delta(Time.now, @scraper.reload.last_scraped, 2)
         end
         
         context "and problem parsing" do
@@ -123,7 +123,7 @@ class InfoScraperTest < ActiveSupport::TestCase
           
           should "not update last_scraped attribute" do
             @scraper.process(:objects => @dummy_related_object)
-            assert_nil @scraper.last_scraped
+            assert_nil @scraper.reload.last_scraped
           end
 
         end
@@ -207,12 +207,12 @@ class InfoScraperTest < ActiveSupport::TestCase
       
         should "not pdate last_scraped attribute when not saving" do
           @scraper.process(:objects => @dummy_collection)
-          assert_nil @scraper.last_scraped
+          assert_nil @scraper.reload.last_scraped
         end
         
         should "update last_scraped attribute when saving" do
           @scraper.process(:save_results => true, :objects => @dummy_collection)
-          assert_in_delta(Time.now, @scraper.last_scraped, 2)
+          assert_in_delta(Time.now, @scraper.reload.last_scraped, 2)
         end
         
         context "and problem getting data" do
@@ -235,7 +235,7 @@ class InfoScraperTest < ActiveSupport::TestCase
 
           should "not update last_scraped attribute when saving" do
             @scraper.process(:save_results => true, :objects => @dummy_collection)
-            assert_nil @scraper.last_scraped
+            assert_nil @scraper.reload.last_scraped
           end
         end
 

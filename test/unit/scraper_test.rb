@@ -147,6 +147,15 @@ class ScraperTest < ActiveSupport::TestCase
       assert_equal "some error", @scraper.parsing_errors[:base]
     end
     
+    should "update last_scraped attribute without changing updated_at timestamp" do
+      ItemScraper.record_timestamps = false # update timestamp without triggering callbacks
+      @scraper.update_attributes(:updated_at => 2.days.ago) #... though thought from Rails 2.3 you could do this turning off timestamps
+      ItemScraper.record_timestamps = true
+      @scraper.send(:update_last_scraped)
+      assert_in_delta 2.days.ago, @scraper.reload.updated_at, 2 # check timestamp hasn't changed...
+      assert_in_delta Time.now, @scraper.reload.last_scraped, 2 #...but last_scraped has
+    end
+    
     context "if scraper has url attribute" do
       should "return url attribute as url" do
         assert_equal 'http://www.anytown.gov.uk/members/bob', @scraper.url
@@ -303,7 +312,7 @@ class ScraperTest < ActiveSupport::TestCase
       
       should "not update last_scraped attribute" do
         @scraper.process
-        assert_nil @scraper.last_scraped
+        assert_nil @scraper.reload.last_scraped
       end
       
       context "and problem parsing" do
@@ -363,19 +372,19 @@ class ScraperTest < ActiveSupport::TestCase
         
         should "update last_scraped attribute" do
           @scraper.process(:save_results => true)
-          assert_in_delta(Time.now, @scraper.last_scraped, 2)
+          assert_in_delta(Time.now, @scraper.reload.last_scraped, 2)
         end
         
         should "not update last_scraped result attribute when problem getting data" do
           @scraper.expects(:_data).raises(Scraper::RequestError, "Problem getting data from http://problem.url.com: OpenURI::HTTPError: 404 Not Found")
           @scraper.process(:save_results => true)
-          assert_nil @scraper.last_scraped
+          assert_nil @scraper.reload.last_scraped
         end
         
         should "not update last_scraped result attribute when problem parsing" do
           @parser.stubs(:errors => stub(:empty? => false))
           @scraper.process(:save_results => true)
-          assert_nil @scraper.last_scraped
+          assert_nil @scraper.reload.last_scraped
         end
       end
 

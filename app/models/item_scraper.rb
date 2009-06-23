@@ -11,7 +11,7 @@ class ItemScraper < Scraper
         logger.debug { "\n\n**************RESULTS from parsing #{target_url}:\n#{raw_results.inspect}" }
         update_with_results(raw_results.collect{ |r| r.merge("#{obj.class.to_s.downcase}_id".to_sym => obj.id) }, options) unless raw_results.blank?
       end
-      update_attribute(:last_scraped, Time.now) if options[:save_results]&&parser.errors.empty?
+      update_last_scraped if options[:save_results]&&parser.errors.empty?
       self
     end
   rescue ScraperError => e

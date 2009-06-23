@@ -6,7 +6,7 @@ class InfoScraper < Scraper
       raw_results = parser.process(_data(obj.url), self).results
       update_with_results(raw_results, obj, options)
     end
-    update_attribute(:last_scraped, Time.now) if options[:save_results]&&parser.errors.empty?
+    update_last_scraped if options[:save_results]&&parser.errors.empty?
     self
   rescue ScraperError => e
     errors.add_to_base(e.message)

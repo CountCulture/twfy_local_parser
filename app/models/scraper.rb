@@ -48,7 +48,7 @@ class Scraper < ActiveRecord::Base
   def process(options={})
     self.parsing_results = parser.process(_data(url), self).results
     update_with_results(parsing_results, options)
-    update_attribute(:last_scraped, Time.now) if options[:save_results]&&parser.errors.empty?
+    update_last_scraped if options[:save_results]&&parser.errors.empty?
     self
   rescue ScraperError => e
     errors.add_to_base(e.message)
@@ -124,5 +124,9 @@ class Scraper < ActiveRecord::Base
       end
     end
   end
-  
+
+  private
+  def update_last_scraped
+    self.class.update_all(:last_scraped => Time.zone.now, :id => id)
+  end  
 end

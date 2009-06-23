@@ -68,13 +68,13 @@ class ItemScraperTest < ActiveSupport::TestCase
 
         should "update last_scraped attribute if saving results" do
           @scraper.process(:save_results => true)
-          assert_in_delta(Time.now, @scraper.last_scraped, 2)
+          assert_in_delta(Time.now, @scraper.reload.last_scraped, 2)
         end
         
         should "not update last_scraped if problem parsing" do
           @parser.stubs(:errors => stub(:empty? => false))
           @scraper.process(:save_results => true)
-          assert_nil @scraper.last_scraped
+          assert_nil @scraper.reload.last_scraped
         end
 
       end
@@ -145,13 +145,13 @@ class ItemScraperTest < ActiveSupport::TestCase
 
           should "update last_scraped attribute if saving results" do
             @scraper.process(:save_results => true)
-            assert_in_delta(Time.now, @scraper.last_scraped, 2)
+            assert_in_delta(Time.now, @scraper.reload.last_scraped, 2)
           end
 
           should "not update last_scraped if problem parsing" do
             @parser.stubs(:errors => stub(:empty? => false))
             @scraper.process(:save_results => true)
-            assert_nil @scraper.last_scraped
+            assert_nil @scraper.reload.last_scraped
           end
         end
         
@@ -182,13 +182,13 @@ class ItemScraperTest < ActiveSupport::TestCase
 
           should "update last_scraped attribute if saving results" do
             @scraper.process(:save_results => true)
-            assert_in_delta(Time.now, @scraper.last_scraped, 2)
+            assert_in_delta(Time.now, @scraper.reload.last_scraped, 2)
           end
 
           should "not update last_scraped if problem parsing" do
             @parser.stubs(:errors => stub(:empty? => false))
             @scraper.process(:save_results => true)
-            assert_nil @scraper.last_scraped
+            assert_nil @scraper.reload.last_scraped
           end
           
         end
