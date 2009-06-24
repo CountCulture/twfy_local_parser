@@ -9,5 +9,6 @@ config/initializers/authentication_details.rb
 config/initializers/hoptoad.rb
 config/database.yml
 config/deploy.rb
+config/smtp_gmail.yml
 config/nginx_production.conf
 Capfile
