@@ -32,7 +32,10 @@ module ScrapersHelper
     Parser::ALLOWED_RESULT_CLASSES.each do |r|
       Scraper::SCRAPER_TYPES.each do |st|
         if es = scrapers.detect{ |s| s.type == st && s.result_model == r }
-          existing_scraper_links << link_for(es)
+          css_classes = [] << (es.problematic? ? "problem" : nil )
+          css_classes << (es.stale? ? "stale" : nil )
+          css_classes = css_classes.compact.blank? ? nil : css_classes.compact.join(" ")
+          existing_scraper_links << link_for(es, :class => css_classes)
         else
           new_scraper_links << link_to("Add #{r} #{st.sub('Scraper', '').downcase} scraper for #{council.name} council", new_scraper_path(:council_id => council.id, :result_model => r, :type => st), :class => "new_scraper_link")
         end

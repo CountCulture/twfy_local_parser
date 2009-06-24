@@ -89,7 +89,7 @@ class ScrapersHelperTest < ActionView::TestCase
  
   context "scraper_links_for_council helper method" do
     setup do
-      @scraper = Factory(:scraper)
+      @scraper = Factory(:scraper, :last_scraped => 2.days.ago)
       @council = @scraper.council
     end
 
@@ -103,6 +103,22 @@ class ScrapersHelperTest < ActionView::TestCase
     
     should "return links for all possible scrapers" do
       assert_equal Scraper::SCRAPER_TYPES.size*Parser::ALLOWED_RESULT_CLASSES.size, scraper_links_for_council(@council).size
+    end
+    
+    should "class as problem if scraper is problematic" do
+      @scraper.class.any_instance.stubs(:problematic?).returns(true)
+      assert_equal link_for(@scraper, :class => "problem"), scraper_links_for_council(@council).first
+    end
+    
+    should "class as stale if scraper is stale" do
+      @scraper.class.any_instance.stubs(:stale?).returns(true)
+      assert_equal link_for(@scraper, :class => "stale"), scraper_links_for_council(@council).first
+    end
+    
+    should "class as problem and stale if scraper is problematic and stale" do
+      @scraper.class.any_instance.stubs(:stale?).returns(true)
+      @scraper.class.any_instance.stubs(:problematic?).returns(true)
+      assert_equal link_for(@scraper, :class => "problem stale"), scraper_links_for_council(@council).first
     end
     
     should "return links for not yet created scrapers" do

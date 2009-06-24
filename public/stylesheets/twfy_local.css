@@ -51,7 +51,27 @@ a.new {
 a.updated {
 	padding-left: 46px;
 	background: transparent url(../images/updated_flash.gif) no-repeat left;}
-
+a.stale {
+	color: #740;
+}
+a.problem {
+	color: #a11;
+}
+a.problem:before, a.stale:before {
+	text-transform: uppercase;
+	color:#fff;
+	font-size:.8em;
+	padding: 1px 3px;
+	margin-right: 3px;
+}
+a.stale:before {
+	content: "Stale";
+	background-color:#740;
+}
+a.problem:before {
+	content: "Problem";
+	background-color:#a11;
+}
 /*General template format*/
 body { 
 	background-color:#ddd; }
