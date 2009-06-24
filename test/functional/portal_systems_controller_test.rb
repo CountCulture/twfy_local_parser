@@ -56,13 +56,13 @@ class PortalSystemsControllerTest < ActionController::TestCase
     should_assign_to(:councils) { @portal.councils }
   
     should "list all councils" do
-      assert_select "ul#councils li", @portal.councils.size do
+      assert_select "#councils li", @portal.councils.size do
         assert_select "a", @council.title
       end
     end
     
     should "list all parsers" do
-      assert_select "ul#parsers li" do
+      assert_select "#parsers li" do
         assert_select "a", @parser.title
       end
     end
