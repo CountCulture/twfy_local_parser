@@ -12,6 +12,10 @@
     <%= render :partial => '/parsers/parser', :object => @scraper.parser %>
     
   </div>
+  <div class="notes">
+    <h4>Notes</h4>
+    <%= simple_format @scraper.notes %>
+  </div> 
   <p>
     <strong>Last scraped</strong> <%= @scraper.last_scraped %><br />
     <strong>Last updated</strong> <%= @scraper.updated_at %></p>

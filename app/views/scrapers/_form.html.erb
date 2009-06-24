@@ -56,5 +56,9 @@
       <% end %>
     </fieldset>
   <%- end -%>
+  <p>
+    <%= f.label :notes, "Notes <em>e.g. how parser or URL differs from normal</em>" %>
+    <%= f.text_area :notes %>
+  </p>
   <%= f.submit "Submit" %>
 <% end -%>
