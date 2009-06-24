@@ -1,0 +1,6 @@
+<h1>Admin</h1>
+<h2>Common Actions</h2>
+<ul>
+  <li><%= link_to "All scrapers", scrapers_path %></li>
+  <li><%= link_to "All councils (including unparsed)", councils_path(:include_unparsed => true) %></li>
+</ul>

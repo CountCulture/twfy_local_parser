@@ -2,12 +2,11 @@
   "http://www.w3.org/TR/html4/loose.dtd">
   
 <%= render :partial => 'shared/layout_head' %>
-<body class='<%= @controller.controller_name %>'>
+<body class='admin' onLoad="javascript:pageTracker._setVar('test_value');">
   <div class="container">
     <%= render :partial => 'shared/header' %>
     <div id="content">
       <%= yield %>
-      <%= render :partial => 'shared/share_block' if @share_this %>
     </div>
     <%= render :partial => 'shared/footer' %>
   </div>
