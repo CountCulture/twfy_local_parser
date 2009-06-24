@@ -9,6 +9,7 @@ class ScraperRunner
   
   def refresh_stale
     stale_scrapers = Scraper.unproblematic.stale.find(:all, :limit => limit)
+    error_total = 0
     output_result "About to run #{stale_scrapers.size} stale scrapers:\n"
     stale_scrapers.each do |scraper|
 
@@ -18,13 +19,16 @@ class ScraperRunner
         output_result "No results"
         output_result "\n\nScraper Errors:\n* #{scraper.errors.full_messages.join("\n* ")}"
         output_result "\n\nParser Errors:\n* #{scraper.parser.errors.full_messages.join("\n* ")}"
+        error_total +=1
       else
         results.each do |result|
           output_result "\n*#{result.title}\nChanges: #{result.changes}"
         end
       end
     end
-    ScraperMailer.deliver_auto_scraping_report!(result_output) if email_results
+    @summary = "#{stale_scrapers.size} scrapers processed, " + (error_total > 0 ? "#{error_total} problem(s)" : "No problems")
+    email_results ? ScraperMailer.deliver_auto_scraping_report!(:report => result_output, :summary => @summary) :
+                    output_result("*****"*10 + "\n" + @summary)
   end
   
   protected

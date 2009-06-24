@@ -48,11 +48,26 @@ class ScraperRunnerTest < ActiveSupport::TestCase
         @runner.refresh_stale
       end
       
+      should "summarize results in summary" do
+        Scraper.expects(:find).returns([@scraper]*3)
+        @scraper.stubs(:process).returns(stub(:results => stub_everything)).then.returns(stub(:results => stub_everything)).then.returns(stub(:results))
+        @runner.refresh_stale
+        assert_equal "3 scrapers processed, 1 problem(s)", @runner.instance_variable_get(:@summary)
+      end
+      
       should "email results if email_results is true" do
         @runner.result_output = "some output"
         @runner.refresh_stale
         assert_sent_email do |email|
            email.subject =~ /Auto Scraping Report/ && email.body =~ /some output/
+         end
+      end
+      
+      should "use summary in email subject" do
+        @scraper.stubs(:process).returns(stub(:results => stub_everything))
+        @runner.refresh_stale
+        assert_sent_email do |email|
+           email.subject =~ /1 scrapers processed/
          end
       end
       
