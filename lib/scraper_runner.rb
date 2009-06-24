@@ -22,7 +22,7 @@ class ScraperRunner
         error_total +=1
       else
         results.each do |result|
-          output_result "\n*#{result.title}\nChanges: #{result.changes}"
+          output_result "\n*#{result.title}\nChanges: #{result.changes.inspect}"
         end
       end
     end
