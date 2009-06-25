@@ -37,10 +37,17 @@ module ScrapedModel
       instance_variable_get(:@new_record_before_save)
     end
 
+    protected
+    # Updates timestamp of council when member details are updated, new member is added or deleted
+    def mark_council_as_updated
+      council.update_attribute(:updated_at, Time.now) if council
+    end
   end
   
-  def self.included(receiver)
-    receiver.extend         ClassMethods
-    receiver.send :include, InstanceMethods
+  def self.included(i_class)
+    i_class.extend         ClassMethods
+    i_class.send :include, InstanceMethods
+    i_class.after_save :mark_council_as_updated
+    i_class.after_destroy :mark_council_as_updated
   end
 end

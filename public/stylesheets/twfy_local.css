@@ -71,7 +71,9 @@ a.problem:before {
 	background-color:#a11;
 }
 a.button {
-	border:1px solid #ddd;
+	border:1px solid #9e9e9e;
+	background-color:#ddd;
+	padding:1px 4px;
 }
 p.more_info {
 	text-align:right;

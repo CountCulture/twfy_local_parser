@@ -1,11 +1,12 @@
 require "test_helper"
 
 class TestModel <ActiveRecord::Base
+  attr_accessor :council
   include ScrapedModel
   set_table_name "members"
 end
 
-class ScrapedModelTest < Test::Unit::TestCase
+class ScrapedModelTest < ActiveSupport::TestCase
   
   context "A class that includes ScrapedModel mixin" do
     setup do
@@ -167,6 +168,27 @@ class ScrapedModelTest < Test::Unit::TestCase
      end
      
    end
+   
+   context "with an associated council" do
+     setup do
+       @council = Factory(:council)
+       @test_model.council = @council
+       Council.record_timestamps = false # update timestamp without triggering callbacks
+       @council.update_attributes(:updated_at => 2.days.ago) #... though thought from Rails 2.3 you could do this without turning off timestamps
+       Council.record_timestamps = true
+     end
+     
+       should "mark council as updated when member is updated" do
+         @test_model.update_attribute(:last_name, "Wilson")
+         assert_in_delta Time.now, @council.updated_at, 2
+       end
+       should "mark council as updated when member is deleted" do
+         @test_model.destroy
+         assert_in_delta Time.now, @council.updated_at, 2
+       end
+
+   end
+   
  end
   
 end
