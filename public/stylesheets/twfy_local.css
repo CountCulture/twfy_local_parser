@@ -43,9 +43,6 @@ a.feed {
 	background: transparent url(../images/feed_icon.gif) no-repeat scroll right center;
 	margin-right:2px;
 	padding-right:18px; }
-p.more_info {
-	text-align:right;
-}
 a.new {
 	padding-left: 24px;
 	background: transparent url(../images/new_flash.gif) no-repeat left;}
@@ -73,6 +70,16 @@ a.problem:before {
 	content: "Problem";
 	background-color:#a11;
 }
+a.button {
+	border:1px solid #ddd;
+}
+p.more_info {
+	text-align:right;
+	font-style: italic; 
+}
+.more_info a:after {
+	content: "»"; }
+	
 /*General template format*/
 body { 
 	background-color:#ddd; }
