@@ -179,7 +179,7 @@ class ScraperTest < ActiveSupport::TestCase
     
     should "mark as problematic without changing updated_at timestamp" do
       ItemScraper.record_timestamps = false # update timestamp without triggering callbacks
-      @scraper.update_attributes(:updated_at => 2.days.ago) #... though thought from Rails 2.3 you could do this turning off timestamps
+      @scraper.update_attributes(:updated_at => 2.days.ago) #... though thought from Rails 2.3 you could do this without turning off timestamps
       ItemScraper.record_timestamps = true
       @scraper.send(:mark_as_problematic)
       assert_in_delta 2.days.ago, @scraper.reload.updated_at, 2 # check timestamp hasn't changed...

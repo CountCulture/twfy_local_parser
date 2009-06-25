@@ -11,6 +11,8 @@ class Member < ActiveRecord::Base
   alias_attribute :title, :full_name
   delegate :uids, :to => :committees, :prefix => "committee"
   delegate :uids=, :to => :committees, :prefix => "committee"
+  after_save :mark_council_as_updated
+  after_destroy :mark_council_as_updated
       
   
   def full_name=(full_name)
@@ -31,4 +33,11 @@ class Member < ActiveRecord::Base
   def party=(party_name)
     self[:party] = party_name.gsub(/party/i, '').strip
   end
+  
+  protected
+  # Updates timestamp of council when member details are updated, new member is added or deleted
+  def mark_council_as_updated
+    council.update_attribute(:updated_at, Time.now)
+  end
+  
 end

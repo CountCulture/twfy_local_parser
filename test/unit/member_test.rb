@@ -103,6 +103,36 @@ class MemberTest < ActiveSupport::TestCase
       end
       
     end
+    
+    context "with council" do
+      setup do
+        @member = Factory(:member)
+        @council = @member.council
+        Council.record_timestamps = false # update timestamp without triggering callbacks
+        @council.update_attributes(:updated_at => 2.days.ago) #... though thought from Rails 2.3 you could do this without turning off timestamps
+        Council.record_timestamps = true
+      end
+      context "when member is updated" do
+        setup do
+          @member.update_attribute(:last_name, "Wilson")
+        end
+
+        should "mark council as updated" do
+          assert_in_delta Time.now, @council.updated_at, 2
+        end
+      end
+      context "when member is deleted" do
+        setup do
+          @member.destroy
+        end
+
+        should "mark council as updated" do
+          assert_in_delta Time.now, @council.updated_at, 2
+        end
+      end
+      
+    end
+    
   end
   
   
