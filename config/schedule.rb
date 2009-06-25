@@ -13,7 +13,7 @@
 #   rake "some:great:rake:task"
 # end
 every 1.hours do
-  command "rm -rf #{RAILS_ROOT}/tmp/cache/views"
+  command "rm -rf ~/sites/twfy_local/tmp/views"
 end
 every 2.hours do
   runner "ScraperRunner.new(:limit => 5, :email_results => true).refresh_stale"
