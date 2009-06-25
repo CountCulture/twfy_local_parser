@@ -4,7 +4,7 @@
   <p>
     <strong>We currently have:</strong>
     <ul>
-      <li><%= Council.parsed.all.size %> councils parsed</li>
+      <li><%= link_to "#{Council.parsed.all.size} councils", councils_path %> parsed</li>
       <li><%= Member.count %> councillors</li>
       <li><%= Committee.count %> committees</li>
       <li><%= Meeting.count %> committee meetings</li>
@@ -13,12 +13,8 @@
   <p>The open-source code behind the site is visible for anyone to see at <%= link_to 'Github', 'http://github.com/CountCulture/twfy_local_parser', :class => "external" %></p>
   <p>Most of the data is accessible as <%= link_to "XML", 'http://en.wikipedia.org/wiki/XML', :class => 'external' %> or <%= link_to "json", 'http://en.wikipedia.org/wiki/JSON', :class => 'external' %> data through a rough and ready API (basically add .xml or .js to the main part of the URL)</p>
 </div>
-<div id="latest_councils">
+<div id="latest_councils"  class="item_grouping">
   <h3>Most recently updated councils</h3>
-  <ul>
-    <% for council in @councils %>
-      <li><%= link_for council %></li>
-    <% end %>
-  </ul>
-  <p><%= link_to "See all councils", councils_path %></p>
+  <%= list_all @councils %>
+  <p class="more_info"><%= link_to "See all councils", councils_path %></p>
 </div>

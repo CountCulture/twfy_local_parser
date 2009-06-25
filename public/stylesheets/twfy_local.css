@@ -1,8 +1,9 @@
 /*Global formats*/
 /*See also blueprint styles*/
 h1 {font-size: 2em;}
-h1 a {text-decoration: none;}
-h1 a:hover {text-decoration: underline;}
+
+a {text-decoration: none;}
+a:hover {text-decoration: underline;}
 
 label { 
 	float: left; 
