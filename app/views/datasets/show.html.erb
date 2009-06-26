@@ -1,0 +1,14 @@
+<h1><%= @title %></h1>
+
+<p>
+  <strong>Key</strong> <%= @dataset.key %>
+</p>
+
+<p>
+  <strong>Query</strong> <%= @dataset.query %>
+</p>
+
+<p>
+  <strong>Query url</strong> <%= link_to @dataset.query_url, @dataset.query_url, :class => "external" %>
+</p>
+

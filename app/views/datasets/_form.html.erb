@@ -1,0 +1,19 @@
+<%= error_messages_for :dataset %>
+
+<% form_for @dataset do |f| -%>
+  <p>
+    <%= f.label :title, "Title" %>
+    <%= f.text_field :title %>
+  </p>
+  <p>
+    <%= f.label :key, "Key" %>
+    <%= f.text_field :key %>
+  </p>
+  <p>
+    <%= f.label :query, "Query" %>
+    <%= f.text_area :query %>
+  </p>
+  <p>
+    <%= f.submit "Submit" %>
+  </p>
+<% end -%>

@@ -7,8 +7,8 @@ class Dataset < ActiveRecord::Base
     response = FasterCSV.parse(_http_get(query_url(council)), :headers => true).by_col.collect{|c| c.flatten}
   end
   
-  def query_url(council)
-    BASE_URL + '&tq=' + CGI.escape(query + " where A contains '#{council.short_name}'") + "&key=#{key}"
+  def query_url(council=nil)
+    BASE_URL + '&tq=' + CGI.escape(query + (council ? " where A contains '#{council.short_name}'" : '')) + "&key=#{key}"
   end
   
   protected

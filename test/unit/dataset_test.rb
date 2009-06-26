@@ -41,9 +41,14 @@ class DatasetTest < ActiveSupport::TestCase
       end
     end
     
+    should "build query_url from query, key when no council given" do
+      @council.stubs(:short_name).returns("Foo bar")
+      assert_equal Dataset::BASE_URL+'&tq=select+A%2CB%2CC%2CD%2CE%2CF%2CG&key=abc123', @dataset.query_url
+    end
+    
     should "build query_url from query, key and council short title" do
       @council.stubs(:short_name).returns("Foo bar")
-      assert_equal Dataset::BASE_URL+'&tq=select+A%2CB%2CC%2CD%2CE%2CF%2CG+where+A+contains+%27Foo+bar%27&key=abc123', @dataset.send(:query_url, @council)
+      assert_equal Dataset::BASE_URL+'&tq=select+A%2CB%2CC%2CD%2CE%2CF%2CG+where+A+contains+%27Foo+bar%27&key=abc123', @dataset.query_url(@council)
     end
     
   end
