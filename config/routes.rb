@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :datasets
+
   map.resources :portal_systems
 
   map.resources :scrapers

@@ -81,3 +81,9 @@ Factory.define :document do |f|
   f.body "This is a document"
 end
 
+Factory.define :dataset do |f|
+  f.key "abc123"
+  f.title "Dummy dataset"
+  f.query "some query"
+end
+
