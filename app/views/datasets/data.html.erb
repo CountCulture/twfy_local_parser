@@ -1,0 +1,20 @@
+<h1><%= @title %></h1>
+<div id="dataset_data">
+  <% if @data.blank? %>
+    <p class="alert">Sorry, not data found</p>
+  <% else %>
+    <table>
+      <caption><%= @dataset.title %> :: data for <%= @council.title %></caption>
+      <tr>    
+        <%- for column in @data -%>
+          <th><%= column[0] %></th>
+        <%- end -%>
+      </tr>
+      <tr>    
+        <%- for column in @data -%>
+          <td><%= column[1] %></td>
+        <%- end -%>
+      </tr>
+    </table>
+  <% end %>
+</div>

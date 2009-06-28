@@ -1,5 +1,5 @@
 class DatasetsController < ApplicationController
-  before_filter :authenticate, :except => [:index, :show]
+  before_filter :authenticate, :except => [:index, :show, :data]
 
   def index
     @datasets = Dataset.find(:all)
@@ -7,7 +7,7 @@ class DatasetsController < ApplicationController
   
   def show
     @dataset = Dataset.find(params[:id])
-    @title = @dataset.title
+    @title   = @dataset.title
   end
   
   def new
@@ -34,5 +34,13 @@ class DatasetsController < ApplicationController
     redirect_to dataset_url(@dataset)
   rescue
     render :action => "edit"
+  end
+  
+  # returns data for given dataset
+  def data
+    @dataset = Dataset.find(params[:id])
+    @council = Council.find(params[:council_id])
+    @data    = @dataset.data_for(@council)
+    @title   = "Data for #{@dataset.title}"
   end
 end

@@ -203,3 +203,10 @@ span.error {
 /*Scraper-specific formatting*/
 a.new_scraper_link {
 	color:#9e9e9e; }
+/*Dataset specific formatting*/
+div#dataset_data {
+	overflow:auto;
+}
+div#dataset_data th {
+	min-width:7em;
+	vertical-align:bottom;}

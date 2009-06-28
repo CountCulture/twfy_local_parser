@@ -23,7 +23,6 @@ class DatasetsControllerTest < ActionController::TestCase
   # show test
   context "on GET to :show" do
     setup do
-      @council = Factory(:council)
       get :show, :id => @dataset.id
     end
   
@@ -35,17 +34,6 @@ class DatasetsControllerTest < ActionController::TestCase
       assert_select "title", /#{@dataset.title}/
     end
     
-    # should "list all councils" do
-    #   assert_select "#councils li", @dataset.councils.size do
-    #     assert_select "a", @council.title
-    #   end
-    # end
-    # 
-    # should "list all parsers" do
-    #   assert_select "#parsers li" do
-    #     assert_select "a", @parser.title
-    #   end
-    # end
   end  
   
   # new test
@@ -170,6 +158,40 @@ class DatasetsControllerTest < ActionController::TestCase
       should_render_template :edit
       should_not_set_the_flash
     end
-  
   end  
+  
+  context "on GET to data with dataset and council_id" do
+    setup do
+      Dataset.any_instance.expects(:data_for).returns([["LOCAL AUTHORITY", "Some City "], ["% who are foo", "37"]])
+      @council = Factory(:council)
+      get :data, :id => @dataset, :council_id => @council.id
+    end
+
+    should_assign_to(:dataset) { @dataset }
+    should_assign_to(:council) { @council }
+    should_respond_with :success
+    should_render_template :data
+
+    should "show dataset in title" do
+      assert_select "title", /#{@dataset.title}/
+    end
+    
+    should "show council in title" do
+      assert_select "title", /#{@council.title}/
+    end
+    
+    should "get data for council" do
+      Dataset.any_instance.expects(:data_for).with(responds_with(:id, @council.id))
+      get :data, :id => @dataset, :council_id => @council.id
+    end
+    
+    should "show council data in table" do
+      assert_select "#dataset_data table th", 2 do
+        assert_select "th", "% who are foo"
+      end
+      assert_select "#dataset_data table td", "37"
+    end
+    
+  end
+  
 end

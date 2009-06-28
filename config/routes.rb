@@ -1,13 +1,14 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :datasets
+  map.resources :datasets, :member => { :data => :get }
 
-  map.resources :portal_systems
+  map.resources 
 
   map.resources :scrapers
   map.resources :item_scrapers, :controller => "scrapers"
   map.resources :info_scrapers, :controller => "scrapers"
 
-  map.resources :committees, :councils, :documents, :meetings, :members, :parsers
+  map.resources :committees, :councils, :documents, :meetings, :members, :parsers, :portal_systems
 
 
   # The priority is based upon order of creation: first created -> highest priority.

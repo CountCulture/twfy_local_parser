@@ -4,7 +4,8 @@ class Dataset < ActiveRecord::Base
   validates_presence_of :title, :key, :query
   
   def data_for(council)
-    response = FasterCSV.parse(_http_get(query_url(council)), :headers => true).by_col.collect{|c| c.flatten}
+    raw_response = _http_get(query_url(council))
+    FasterCSV.parse(raw_response, :headers => true).by_col.collect{|c| c.flatten} unless raw_response.blank?
   end
   
   # This is the url where original datasheet in spreadsheet can be seen

@@ -43,6 +43,11 @@ class DatasetTest < ActiveSupport::TestCase
         parsed_response = [["LOCAL AUTHORITY", "Bristol City "], ["Authority Type", "UA"]]
         assert_equal parsed_response, @dataset.data_for(@council)
       end
+      
+      should "return nil if no data found" do
+        @dataset.expects(:_http_get).returns(nil) # using expects overrides stubbing
+        assert_nil @dataset.data_for(@council)
+      end
     end
     
     should "build query_url from query, key when no council given" do
