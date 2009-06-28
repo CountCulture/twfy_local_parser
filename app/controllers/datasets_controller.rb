@@ -3,11 +3,22 @@ class DatasetsController < ApplicationController
 
   def index
     @datasets = Dataset.find(:all)
+    @title   = "All Datasets"
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @datasets.to_xml }
+      format.json { render :xml => @datasets.to_json }
+    end
   end
   
   def show
     @dataset = Dataset.find(params[:id])
     @title   = @dataset.title
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @dataset.to_xml }
+      format.json { render :xml => @dataset.to_json }
+    end
   end
   
   def new

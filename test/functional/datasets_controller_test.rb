@@ -7,33 +7,87 @@ class DatasetsControllerTest < ActionController::TestCase
   
   # index test
   context "on GET to :index" do
-    setup do
-      get :index
+    context "with basic request" do
+      setup do
+        get :index
+      end
+
+      should_assign_to(:datasets) { Dataset.find(:all)}
+      should_respond_with :success
+      should_render_template :index
+      should_respond_with_content_type 'text/html'
+      should "list datasets" do
+        assert_select "li a", @dataset.title
+      end
+      
+      should "have title" do
+        assert_select "title", /Datasets/
+      end
     end
+        
+    context "with xml requested" do
+      setup do
+        get :index, :format => "xml"
+      end
   
-    should_assign_to(:datasets) { Dataset.find(:all)}
-    should_respond_with :success
-    should_render_template :index
-    should "list datasets" do
-      assert_select "li a", @dataset.title
+      should_assign_to(:datasets) { Dataset.find(:all)}
+      should_respond_with :success
+      should_render_without_layout
+      should_respond_with_content_type 'application/xml'
+    end
+
+    context "with json requested" do
+      setup do
+        get :index, :format => "json"
+      end
+  
+      should_assign_to(:datasets) { Dataset.find(:all)}
+      should_respond_with :success
+      should_render_without_layout
+      should_respond_with_content_type 'application/json'
     end
     
   end  
 
   # show test
   context "on GET to :show" do
-    setup do
-      get :show, :id => @dataset.id
-    end
-  
-    should_assign_to(:dataset) { @dataset}
-    should_respond_with :success
-    should_render_template :show
+    context "with basic request" do
+      setup do
+        get :show, :id => @dataset.id
+      end
 
-    should "show title" do
-      assert_select "title", /#{@dataset.title}/
+      should_assign_to(:dataset) { @dataset }
+      should_respond_with :success
+      should_render_template :show
+      should_respond_with_content_type 'text/html'
+
+      should "show title" do
+        assert_select "title", /#{@dataset.title}/
+      end
     end
     
+    context "with xml requested" do
+      setup do
+        get :show, :id => @dataset.id, :format => "xml"
+      end
+  
+      should_assign_to(:dataset) { @dataset }
+      should_respond_with :success
+      should_render_without_layout
+      should_respond_with_content_type 'application/xml'
+    end
+
+    context "with json requested" do
+      setup do
+        get :show, :id => @dataset.id, :format => "json"
+      end
+  
+      should_assign_to(:dataset) {  @dataset }
+      should_respond_with :success
+      should_render_without_layout
+      should_respond_with_content_type 'application/json'
+    end
+        
   end  
   
   # new test
