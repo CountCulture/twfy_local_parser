@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090626133315) do
+ActiveRecord::Schema.define(:version => 20090628130158) do
 
   create_table "committees", :force => true do |t|
     t.string   "title"
@@ -45,6 +45,9 @@ ActiveRecord::Schema.define(:version => 20090626133315) do
     t.string   "query"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "description"
+    t.string   "originator"
+    t.string   "originator_url"
   end
 
   create_table "documents", :force => true do |t|

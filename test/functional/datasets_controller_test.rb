@@ -6,17 +6,8 @@ class DatasetsControllerTest < ActionController::TestCase
   end
   
   # index test
-  context "on GET to :index without auth" do
-    setup do
-      get :index
-    end
-  
-    should_respond_with 401
-  end
-
   context "on GET to :index" do
     setup do
-      stub_authentication
       get :index
     end
   
@@ -27,32 +18,23 @@ class DatasetsControllerTest < ActionController::TestCase
       assert_select "li a", @dataset.title
     end
     
-    should "not show share block" do
-      assert_select "#share_block", false
-    end
   end  
 
   # show test
-  context "on GET to :show without auth" do
-    setup do
-      get :show, :id => @dataset.id
-    end
-  
-    should_respond_with 401
-  end
-
-  context "on GET to :show for first record" do
+  context "on GET to :show" do
     setup do
       @council = Factory(:council)
-      stub_authentication
       get :show, :id => @dataset.id
     end
   
     should_assign_to(:dataset) { @dataset}
     should_respond_with :success
     should_render_template :show
-    # should_assign_to(:councils) { @dataset.councils }
-  
+
+    should "show title" do
+      assert_select "title", /#{@dataset.title}/
+    end
+    
     # should "list all councils" do
     #   assert_select "#councils li", @dataset.councils.size do
     #     assert_select "a", @council.title
@@ -63,10 +45,6 @@ class DatasetsControllerTest < ActionController::TestCase
     #   assert_select "#parsers li" do
     #     assert_select "a", @parser.title
     #   end
-    # end
-    # 
-    # should "not show share block" do
-    #   assert_select "#share_block", false
     # end
   end  
   

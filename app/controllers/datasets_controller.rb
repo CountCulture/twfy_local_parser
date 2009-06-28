@@ -1,6 +1,5 @@
 class DatasetsController < ApplicationController
-  before_filter :authenticate
-  skip_before_filter :share_this
+  before_filter :authenticate, :except => [:index, :show]
 
   def index
     @datasets = Dataset.find(:all)

@@ -2,16 +2,32 @@
 
 <% form_for @dataset do |f| -%>
   <p>
-    <%= f.label :title, "Title" %>
+    <%= f.label :title %>
     <%= f.text_field :title %>
   </p>
   <p>
-    <%= f.label :key, "Key" %>
+    <%= f.label :description %>
+    <%= f.text_area :description %>
+  </p>
+  <p>
+    <%= f.label :source, "Original source url" %>
+    <%= f.text_field :source %>
+  </p>
+  <p>
+    <%= f.label :key %>
     <%= f.text_field :key %>
   </p>
   <p>
-    <%= f.label :query, "Query" %>
+    <%= f.label :query %>
     <%= f.text_area :query %>
+  </p>
+  <p>
+    <%= f.label :originator %>
+    <%= f.text_field :originator %>
+  </p>
+  <p>
+    <%= f.label :originator_url %>
+    <%= f.text_field :originator_url %>
   </p>
   <p>
     <%= f.submit "Submit" %>

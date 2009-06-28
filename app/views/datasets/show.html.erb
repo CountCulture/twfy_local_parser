@@ -1,14 +1,17 @@
 <h1><%= @title %></h1>
 
+<div class="intro">
+  <strong>Description</strong> <%= simple_format h(@dataset.description) %>
+</div>
+
 <p>
-  <strong>Key</strong> <%= @dataset.key %>
+  <strong>Data url</strong> <%= link_to h(@dataset.public_url), @dataset.public_url, :class => "external" %>
 </p>
 
 <p>
-  <strong>Query</strong> <%= @dataset.query %>
+  <strong>Original source</strong> <%= @dataset.source ? link_to(h(@dataset.source), @dataset.source, :class => "external") : 'not known' %>
 </p>
 
 <p>
-  <strong>Query url</strong> <%= link_to @dataset.query_url, @dataset.query_url, :class => "external" %>
+  <strong>Originator</strong> <%= @dataset.originator_url ? link_to(h(@dataset.originator), @dataset.originator_url, :class => "external") : 'not known' %>
 </p>
-

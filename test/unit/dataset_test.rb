@@ -4,7 +4,7 @@ class DatasetTest < ActiveSupport::TestCase
   
   context "The Dataset class" do
 
-    should_have_db_columns :title, :source, :key, :query
+    should_have_db_columns :title, :source, :key, :query, :description, :originator, :originator_url
     should_validate_presence_of :title, :key, :query
 
     should "have base_url" do
@@ -18,6 +18,10 @@ class DatasetTest < ActiveSupport::TestCase
       @council = Factory(:council)
     end
 
+    should "constuct public_url from key" do
+      assert_equal "http://spreadsheets.google.com/pub?key=abc123", @dataset.public_url
+    end
+    
     context "when getting data for council" do
       setup do
         @csv_response = "\"LOCAL AUTHORITY\",\"Authority Type\"\n\"Bristol City \",\"UA\""
@@ -25,12 +29,12 @@ class DatasetTest < ActiveSupport::TestCase
         @dataset.stubs(:_http_get).returns(@csv_response)
       end
 
-      should "build url using council" do
+      should "build query_url using council" do
         @dataset.expects(:query_url).with(@council)
         @dataset.data_for(@council)
       end
       
-      should "get data from url" do
+      should "get data from query_url" do
         @dataset.expects(:_http_get).with("some_url").returns(@csv_response)
         @dataset.data_for(@council)
       end
@@ -43,12 +47,12 @@ class DatasetTest < ActiveSupport::TestCase
     
     should "build query_url from query, key when no council given" do
       @council.stubs(:short_name).returns("Foo bar")
-      assert_equal Dataset::BASE_URL+'&tq=select+A%2CB%2CC%2CD%2CE%2CF%2CG&key=abc123', @dataset.query_url
+      assert_equal 'http://spreadsheets.google.com/tq?tqx=out:csv&tq=select+A%2CB%2CC%2CD%2CE%2CF%2CG&key=abc123', @dataset.query_url
     end
     
     should "build query_url from query, key and council short title" do
       @council.stubs(:short_name).returns("Foo bar")
-      assert_equal Dataset::BASE_URL+'&tq=select+A%2CB%2CC%2CD%2CE%2CF%2CG+where+A+contains+%27Foo+bar%27&key=abc123', @dataset.query_url(@council)
+      assert_equal 'http://spreadsheets.google.com/tq?tqx=out:csv&tq=select+A%2CB%2CC%2CD%2CE%2CF%2CG+where+A+contains+%27Foo+bar%27&key=abc123', @dataset.query_url(@council)
     end
     
   end
