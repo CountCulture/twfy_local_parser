@@ -13,7 +13,7 @@
 </p>
 
 <p>
-  <strong>Originator</strong> <%= @dataset.originator_url ? link_to(h(@dataset.originator), @dataset.originator_url, :class => "external") : 'not known' %>
+  <strong>Dataset creator</strong> <%= @dataset.originator_url ? link_to(h(@dataset.originator), @dataset.originator_url, :class => "external") : 'not known' %>
 </p>
 <%= render :partial => '/shared/api_info' %>
 <p class="attribution">Last updated <%= @dataset.updated_at.to_s(:short) %> (<%= time_ago_in_words(@dataset.updated_at) %> ago)</p>

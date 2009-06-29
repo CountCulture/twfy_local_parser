@@ -87,3 +87,8 @@ Factory.define :dataset do |f|
   f.query "some query"
 end
 
+Factory.define :datapoint do |f|
+  f.association :council
+  f.association :dataset
+  f.data        "some data"
+end

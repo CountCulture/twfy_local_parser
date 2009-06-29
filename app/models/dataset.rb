@@ -1,11 +1,23 @@
 class Dataset < ActiveRecord::Base
   BASE_URL = 'http://spreadsheets.google.com/'
-  
+  has_many :datapoints
   validates_presence_of :title, :key, :query
   
   def data_for(council)
     raw_response = _http_get(query_url(council))
     FasterCSV.parse(raw_response, :headers => true).by_col.collect{|c| c.flatten} unless raw_response.blank?
+  end
+  
+  def process
+    raw_response = _http_get(query_url)
+    return if raw_response.blank?
+    rows = FasterCSV.parse(raw_response, :headers => true).to_a
+    header_row = rows.shift
+    all_councils = Council.find(:all)
+    all_councils.each do |council|
+      c_row = rows.detect { |row_data| row_data.first.match(council.short_name) }
+      council.datapoints.create!(:data => [header_row, c_row], :dataset_id => id) if c_row
+    end
   end
   
   # This is the url where original datasheet in spreadsheet can be seen

@@ -5,6 +5,7 @@ class Council < ActiveRecord::Base
   has_many :committees
   has_many :scrapers
   has_many :meetings
+  has_many :datapoints
   belongs_to :portal_system
   validates_presence_of :name
   validates_uniqueness_of :name

@@ -12,6 +12,7 @@ class CouncilTest < ActiveSupport::TestCase
     should_have_many :committees
     should_have_many :scrapers
     should_have_many :meetings
+    should_have_many :datapoints
     should_belong_to :portal_system
     should_have_db_column :notes
     should_have_db_column :wikipedia_url
