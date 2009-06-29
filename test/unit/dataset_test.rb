@@ -81,6 +81,24 @@ class DatasetTest < ActiveSupport::TestCase
         @dataset.process
         assert_equal [["LOCAL AUTHORITY", "Authority Type"], ["Anytown Council", "LB"]], @council.datapoints.find(:first, :order => "id DESC").data
       end
+      
+      context "and datapoint already exists for council and dataset" do
+        setup do
+          @old_datapoint = Factory(:datapoint, :council => @council, :dataset => @dataset)
+        end
+        
+        should "not create new datapoint" do
+          old_count = Datapoint.count
+          @dataset.process
+          assert_equal old_count, Datapoint.count
+        end
+
+        should "update data for datapoint" do
+          @dataset.process
+          assert_equal [["LOCAL AUTHORITY", "Authority Type"], ["Anytown Council", "LB"]], @old_datapoint.reload.data
+        end
+      end
+      
     end
     
     context "when getting data for council" do

@@ -51,7 +51,7 @@ class DatasetsController < ApplicationController
   def data
     @dataset = Dataset.find(params[:id])
     @council = Council.find(params[:council_id])
-    @data    = @dataset.data_for(@council)
+    @datapoint    = Datapoint.find_by_council_id_and_dataset_id(@council.id, @dataset.id)
     @title   = "Data for #{@dataset.title}"
   end
 end

@@ -1,18 +1,18 @@
 <h1><%= @title %></h1>
 <div id="dataset_data">
-  <% if @data.blank? %>
-    <p class="alert">Sorry, not data found</p>
+  <% if @datapoint.blank? %>
+    <p class="alert">Sorry, no data found</p>
   <% else %>
     <table>
       <caption><%= @dataset.title %> :: data for <%= @council.title %></caption>
       <tr>    
-        <%- for column in @data -%>
-          <th><%= column[0] %></th>
+        <%- for column in @datapoint.data[0] -%>
+          <th><%= column %></th>
         <%- end -%>
       </tr>
       <tr>    
-        <%- for column in @data -%>
-          <td><%= column[1] %></td>
+        <%- for column in @datapoint.data[1] -%>
+          <td><%= column %></td>
         <%- end -%>
       </tr>
     </table>

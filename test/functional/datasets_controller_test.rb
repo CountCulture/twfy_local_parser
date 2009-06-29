@@ -214,11 +214,12 @@ class DatasetsControllerTest < ActionController::TestCase
     end
   end  
   
-  context "on GET to data with dataset and council_id" do
+  # data tests
+  context "on GET to data with dataset and council" do
     setup do
-      Dataset.any_instance.expects(:data_for).returns([["LOCAL AUTHORITY", "Some City "], ["% who are foo", "37"]])
       @council = Factory(:council)
-      get :data, :id => @dataset, :council_id => @council.id
+      @datapoint = Factory(:datapoint, :data => [["LOCAL AUTHORITY", "% who are foo"], ["Some City ", "37"]], :council => @council, :dataset_id => @dataset.id)
+      get :data, :id => @dataset.id, :council_id => @council.id
     end
 
     should_assign_to(:dataset) { @dataset }
@@ -234,16 +235,32 @@ class DatasetsControllerTest < ActionController::TestCase
       assert_select "title", /#{@council.title}/
     end
     
-    should "get data for council" do
-      Dataset.any_instance.expects(:data_for).with(responds_with(:id, @council.id))
-      get :data, :id => @dataset, :council_id => @council.id
-    end
-    
-    should "show council data in table" do
+    should "show datapoint data in table" do
       assert_select "#dataset_data table th", 2 do
         assert_select "th", "% who are foo"
       end
       assert_select "#dataset_data table td", "37"
+    end
+    
+  end
+  
+  context "on GET to data with no datapoint for dataset and council" do
+    setup do
+      @council = Factory(:council)
+      get :data, :id => @dataset.id, :council_id => @council.id
+    end
+
+    should_assign_to(:dataset) { @dataset }
+    should_assign_to(:council) { @council }
+    should_respond_with :success
+    should_render_template :data
+
+    should "show dataset in title" do
+      assert_select "title", /#{@dataset.title}/
+    end
+    
+    should "show message" do
+      assert_select "p.alert", /no data/
     end
     
   end

@@ -16,7 +16,10 @@ class Dataset < ActiveRecord::Base
     all_councils = Council.find(:all)
     all_councils.each do |council|
       c_row = rows.detect { |row_data| row_data.first.match(council.short_name) }
-      council.datapoints.create!(:data => [header_row, c_row], :dataset_id => id) if c_row
+      if c_row
+        dp = council.datapoints.find_or_initialize_by_dataset_id(id)
+        dp.update_attributes(:data => [header_row, c_row])
+      end
     end
   end
   
