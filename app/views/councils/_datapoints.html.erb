@@ -1,0 +1,11 @@
+    <div id="datapoints">
+      <h4>Statistics</h4>
+      <ul>
+      <%- for datapoint in @datapoints -%>
+        <li class="datapoint">
+          <strong><%= datapoint.summary[0] %></strong> <%= datapoint.summary[1] %> 
+          (<%= link_to "more like this", data_dataset_path(:id => datapoint.dataset, :council_id => @council.id), :class => "more_info" %>)
+        </li>
+      <%- end -%>
+      </ul>
+    </div>

@@ -76,10 +76,10 @@ class CouncilsControllerTest < ActionController::TestCase
       should_assign_to(:members) { @council.members.current }
 
       should "list all members" do
-       assert_select "#members li", @council.members.current.size
+        assert_select "#members li", @council.members.current.size
       end
       should "list all committees" do
-       assert_select "#committees li", @council.committees.size
+        assert_select "#committees li", @council.committees.size
       end
     end
     
@@ -104,6 +104,51 @@ class CouncilsControllerTest < ActionController::TestCase
       should_render_without_layout
       should_respond_with_content_type 'application/json'
     end
+    
+    context "when council has datapoints" do
+      setup do
+        @datapoint = Factory(:datapoint, :council => @council)
+        @dataset = @datapoint.dataset
+        Council.any_instance.stubs(:datapoints).returns([@datapoint, @datapoint])
+      end
+      
+      context "with summary" do
+        setup do
+          @datapoint.stubs(:summary => ["heading_1", "data_1"])
+          get :show, :id => @council.id
+        end
+        
+        should_assign_to :datapoints
+        
+        should "show datapoint data" do
+          assert_select "#datapoints" do
+            assert_select ".datapoint", 2 do
+              assert_select "li", /data_1/
+            end
+          end
+        end
+
+        should "show links to full datapoint data" do
+          assert_select "#datapoints" do
+            assert_select "a.more_info[href*='datasets/#{@dataset.id}/data']"
+          end
+        end
+      end
+            
+      context "without summary" do
+        setup do
+          @datapoint.stubs(:summary)
+          get :show, :id => @council.id, :format => "json"
+        end
+        
+        should_assign_to(:datapoints) {[]}
+        
+        should "not show datapoint data" do
+          assert_select "#datapoints", false
+        end
+      end
+    end
+    
   end  
 
   # new test

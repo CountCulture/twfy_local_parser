@@ -14,6 +14,7 @@ class CouncilsController < ApplicationController
   def show
     @council = Council.find(params[:id])
     @members = @council.members.current
+    @datapoints = @council.datapoints.select{ |d| d.summary }
     respond_to do |format|
       format.html
       format.xml { render :xml => @council.to_xml }
