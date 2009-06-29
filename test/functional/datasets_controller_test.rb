@@ -119,7 +119,7 @@ class DatasetsControllerTest < ActionController::TestCase
     
      context "without auth" do
        setup do
-         post :create, :dataset => {:title => "New Dataset"}
+         post :create, :dataset => Factory.attributes_for(:dataset)
        end
 
        should_respond_with 401
@@ -128,7 +128,7 @@ class DatasetsControllerTest < ActionController::TestCase
      context "with valid params" do
        setup do
          stub_authentication
-         post :create, :dataset => Factory.attributes_for(:dataset)
+         post :create, :dataset => Factory.attributes_for(:dataset, :key => "foo123")
        end
      
        should_change "Dataset.count", :by => 1
