@@ -18,6 +18,10 @@
     <%= f.text_field :key %>
   </p>
   <p>
+    <%= f.label :summary_column, "Column to be used as summary (0 is first column)" %>
+    <%= f.text_field :summary_column %>
+  </p>
+  <p>
     <%= f.label :query %>
     <%= f.text_area :query %>
   </p>

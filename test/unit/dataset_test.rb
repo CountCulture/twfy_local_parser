@@ -4,7 +4,7 @@ class DatasetTest < ActiveSupport::TestCase
   
   context "The Dataset class" do
 
-    should_have_db_columns :title, :source, :key, :query, :description, :originator, :originator_url
+    should_have_db_columns :title, :source, :key, :query, :description, :originator, :originator_url, :summary_column
     should_validate_presence_of :title, :key, :query
     should_have_many :datapoints
 
