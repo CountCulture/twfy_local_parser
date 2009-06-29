@@ -1,10 +1,10 @@
-<h1><%= @title %></h1>
+<h1><%= link_for @dataset %></h1>
 <div id="dataset_data">
   <% if @datapoint.blank? %>
-    <p class="alert">Sorry, no data found</p>
+    <p class="alert">Sorry, no data found for <%= link_for @council %></p>
   <% else %>
     <table>
-      <caption><%= @dataset.title %> :: data for <%= @council.title %></caption>
+      <caption><%= link_for @dataset %> :: data for <%= link_for @council %></caption>
       <tr>    
         <%- for column in @datapoint.data[0] -%>
           <th><%= column %></th>

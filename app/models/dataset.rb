@@ -2,6 +2,7 @@ class Dataset < ActiveRecord::Base
   BASE_URL = 'http://spreadsheets.google.com/'
   has_many :datapoints
   validates_presence_of :title, :key, :query
+  validates_uniqueness_of :key
   
   def data_for(council)
     raw_response = _http_get(query_url(council))
@@ -21,6 +22,10 @@ class Dataset < ActiveRecord::Base
         dp.update_attributes(:data => [header_row, c_row])
       end
     end
+  end
+  
+  def self.process_stale
+    find(:all, :conditions => ["updated_at < ?", 7.days.ago]).each(&:process)
   end
   
   # This is the url where original datasheet in spreadsheet can be seen

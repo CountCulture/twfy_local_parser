@@ -11,6 +11,27 @@ class DatasetTest < ActiveSupport::TestCase
     should "have base_url" do
       assert_match /spreadsheets.google/, Dataset::BASE_URL
     end
+    
+    context "when processing stale datasets" do
+      setup do
+        @fresh_dataset = Factory(:dataset)
+        @stale_dataset = Factory(:dataset, :key => "foo123", :title => "Stale dataset")
+        Dataset.record_timestamps = false # update timestamp without triggering callbacks
+        @stale_dataset.update_attribute( :updated_at, 8.days.ago )
+        Dataset.record_timestamps = true # update timestamp without triggering callbacks
+      end
+
+      should "process and return stale datasets" do
+        # pretty cruddy test but not sure how best to do this
+        assert Dataset.process_stale.include?(@stale_dataset)
+      end
+      
+      should "not process and return fresh datasets" do
+        # pretty cruddy test but not sure how best to do this
+        assert !Dataset.process_stale.include?(@fresh_dataset)
+      end
+    end
+    
   end
   
   context "A Dataset instance" do
@@ -20,6 +41,8 @@ class DatasetTest < ActiveSupport::TestCase
       @another_council = Factory(:another_council)
     end
 
+    should_validate_uniqueness_of :key
+    
     should "constuct public_url from key" do
       assert_equal "http://spreadsheets.google.com/pub?key=abc123", @dataset.public_url
     end

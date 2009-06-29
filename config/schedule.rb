@@ -18,6 +18,9 @@ end
 every 2.hours do
   runner "ScraperRunner.new(:limit => 5, :email_results => true).refresh_stale"
 end
+every 7.days do
+  runner "Dataset.process_stale"
+end
 #
 # every 4.days do
 #   runner "AnotherModel.prune_old_records"
