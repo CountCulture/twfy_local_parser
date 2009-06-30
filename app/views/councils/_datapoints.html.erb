@@ -4,7 +4,8 @@
       <%- for datapoint in @datapoints -%>
         <li class="datapoint">
           <%= datapoint.summary[0] %> <strong><%= datapoint.summary[1] %></strong> 
-          <span class="citation">source: <%= link_to datapoint.dataset.title, datapoint.dataset %></span> <%= link_to "more data", data_dataset_path(:id => datapoint.dataset, :council_id => @council.id), :class => "more_info" %>
+          <%= link_to "more data", data_dataset_path(:id => datapoint.dataset, :council_id => @council.id), :class => "more_info" %>
+          <span class="citation">source: <%= link_to datapoint.dataset.title, datapoint.dataset %></span> 
         </li>
       <%- end -%>
       </ul>

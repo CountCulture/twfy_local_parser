@@ -63,7 +63,7 @@ class CouncilsControllerTest < ActionController::TestCase
   end
 
   # show test
-  context "on GET to :show for first record" do
+  context "on GET to :show " do
     
     context "with basic request" do
       setup do
@@ -138,13 +138,35 @@ class CouncilsControllerTest < ActionController::TestCase
       context "without summary" do
         setup do
           @datapoint.stubs(:summary)
-          get :show, :id => @council.id, :format => "json"
+          get :show, :id => @council.id
         end
         
         should_assign_to(:datapoints) {[]}
         
         should "not show datapoint data" do
           assert_select "#datapoints", false
+        end
+      end
+
+      context "with xml requested" do
+        setup do
+          @datapoint.stubs(:summary => ["heading_1", "data_1"])
+          get :show, :id => @council.id, :format => "xml"
+        end
+
+        should "show associated datasets" do
+          assert_select "council>datasets>dataset>id", @datapoint.dataset.id
+        end
+      end
+      
+      context "with json requested" do
+        setup do
+          @datapoint.stubs(:summary => ["heading_1", "data_1"])
+          get :show, :id => @council.id, :format => "json"
+        end
+
+        should "show associated datasets" do
+          assert_match /dataset.+#{@datapoint.dataset.title}/, @response.body
         end
       end
     end

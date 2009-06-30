@@ -6,6 +6,7 @@ class Council < ActiveRecord::Base
   has_many :scrapers
   has_many :meetings
   has_many :datapoints
+  has_many :datasets, :through => :datapoints#, :source => :join_association_table_foreign_key_to_datasets_table
   belongs_to :portal_system
   validates_presence_of :name
   validates_uniqueness_of :name

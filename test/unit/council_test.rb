@@ -32,6 +32,10 @@ class CouncilTest < ActiveSupport::TestCase
       assert_equal [@another_council], Council.parsed
     end
     
+    should "have many datasets through datapoints" do
+      @datapoint = Factory(:datapoint, :council => @council)
+      assert_equal [@datapoint.dataset], @council.datasets
+    end
   end
   
   context "A Council instance" do

@@ -17,8 +17,8 @@ class CouncilsController < ApplicationController
     @datapoints = @council.datapoints.select{ |d| d.summary }
     respond_to do |format|
       format.html
-      format.xml { render :xml => @council.to_xml }
-      format.json { render :json =>  @council.to_json }
+      format.xml { render :xml => @council.to_xml(:include => :datasets) }
+      format.json { render :json =>  @council.to_json(:include => :datasets) }
     end
   end
   

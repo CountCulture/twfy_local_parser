@@ -30,6 +30,7 @@ p.attribution {
 .extra_info {
 	border: 1px solid #ddd;
 	background-color: #f3f3f3;
+	margin-bottom: 2em;
 	padding:4px;
 	width: 100%;
 	overflow: auto;
@@ -219,6 +220,8 @@ div#dataset_data {
 div#dataset_data th {
 	min-width:7em;
 	vertical-align:bottom;}
-#datapoints a.more_info {
+div#dataset_data table {
+	width:auto;}
+/*#datapoints a.more_info {
 	display:block;
-}
+}*/
