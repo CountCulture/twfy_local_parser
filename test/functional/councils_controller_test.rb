@@ -123,7 +123,7 @@ class CouncilsControllerTest < ActionController::TestCase
         should "show datapoint data" do
           assert_select "#datapoints" do
             assert_select ".datapoint", 2 do
-              assert_select "li", /data_1/
+              assert_select "div", /data_1/
             end
           end
         end
