@@ -7,18 +7,23 @@
   <p class="clear"><strong>Wikipedia page</strong> <%= link_to @council.wikipedia_url, @council.wikipedia_url, :class => 'external' %></p>
   <div class="extra_info">
     <h3>Other info</h3>
-    <ul>
-      <%- unless @council.wdtk_name.blank? -%>
-        <li><%= link_to "WhatDoTheyKnow.com FoI requests", "http://www.whatdotheyknow.com/body/ #{@council.wdtk_name}", :class => 'external' %> (<%= link_to "feed", "http://www.whatdotheyknow.com/feed/body/#{@council.wdtk_name}", :class => "feed" %>)</li>
-      <%- end -%>
-      <li><%= link_to "Office for National Statistics page", @council.ons_url, :class => 'external' %></li>
-      <li><%= link_to "eGovernment Register page", "http://www.brent.gov.uk/egr.nsf/laref/#{@council.egr_id}", :class => 'external' %></li>
-    </ul>
+    <div id="external_links" class="item_grouping">
+      <h4>External links</h4>
+      <ul>
+        <%- unless @council.wdtk_name.blank? -%>
+          <li><%= link_to "WhatDoTheyKnow.com FoI requests", "http://www.whatdotheyknow.com/body/ #{@council.wdtk_name}", :class => 'external' %> (<%= link_to "feed", "http://www.whatdotheyknow.com/feed/body/#{@council.wdtk_name}", :class => "feed" %>)</li>
+        <%- end -%>
+        <li><%= link_to "Office for National Statistics page", @council.ons_url, :class => 'external' %></li>
+        <li><%= link_to "eGovernment Register page", "http://www.brent.gov.uk/egr.nsf/laref/#{@council.egr_id}", :class => 'external' %></li>
+      </ul>
+    </div>
     <!-- <div class="notes">
       <h4>Notes</h4>
       <%#= simple_format @council.notes %>
     </div>  -->
-    <%= render :partial => 'datapoints' unless @datapoints.blank? %>
+    <div id="statistics" class="item_grouping">
+      <%= render :partial => 'datapoints' unless @datapoints.blank? %>
+    </div>
   </div>
 </div>
 
