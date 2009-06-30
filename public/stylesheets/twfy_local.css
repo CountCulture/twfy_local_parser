@@ -219,6 +219,10 @@ span.error {
 a.new_scraper_link {
 	color:#9e9e9e; }
 /*Dataset specific formatting*/
+#statistics {
+	width: 600px;
+	overflow:auto;
+}
 div#dataset_data {
 	overflow:auto;
 }
@@ -227,3 +231,25 @@ div#dataset_data th {
 	vertical-align:bottom;}
 div#dataset_data table {
 	width:auto;} /*override blueprint*/
+.datapoint {
+	width:280px;
+	float:left;
+	margin-right:20px;
+}
+.datapoint a.more_info {
+	display:block;
+	float:right;
+}
+.datapoint .data {
+	clear:both;
+	overflow:auto;
+	width:100%;
+}
+.datapoint .data .description {
+	float:left;
+	width: 70%;
+}
+.datapoint .data .value {
+	float:right;
+	font-weight:bold;
+}
