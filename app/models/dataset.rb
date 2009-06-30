@@ -11,6 +11,7 @@ class Dataset < ActiveRecord::Base
   
   def process
     raw_response = _http_get(query_url)
+    update_attribute(:last_checked, Time.now)
     return if raw_response.blank?
     rows = FasterCSV.parse(raw_response, :headers => true).to_a
     header_row = rows.shift
@@ -24,8 +25,8 @@ class Dataset < ActiveRecord::Base
     end
   end
   
-  def self.process_stale
-    find(:all, :conditions => ["updated_at < ?", 7.days.ago]).each(&:process)
+  def self.stale
+    find(:all, :conditions => ["last_checked < ? OR last_checked IS NULL", 7.days.ago], :order => "last_checked ASC")
   end
   
   # This is the url where original datasheet in spreadsheet can be seen

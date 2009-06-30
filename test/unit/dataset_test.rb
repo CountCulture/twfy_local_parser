@@ -4,7 +4,7 @@ class DatasetTest < ActiveSupport::TestCase
   
   context "The Dataset class" do
 
-    should_have_db_columns :title, :source, :key, :query, :description, :originator, :originator_url, :summary_column
+    should_have_db_columns :title, :source, :key, :query, :description, :originator, :originator_url, :summary_column, :last_checked
     should_validate_presence_of :title, :key, :query
     should_have_many :datapoints
 
@@ -12,24 +12,17 @@ class DatasetTest < ActiveSupport::TestCase
       assert_match /spreadsheets.google/, Dataset::BASE_URL
     end
     
-    context "when processing stale datasets" do
-      setup do
-        @fresh_dataset = Factory(:dataset)
-        @stale_dataset = Factory(:dataset, :key => "foo123", :title => "Stale dataset")
-        Dataset.record_timestamps = false # update timestamp without triggering callbacks
-        @stale_dataset.update_attribute( :updated_at, 8.days.ago )
-        Dataset.record_timestamps = true # update timestamp without triggering callbacks
-      end
-
-      should "process and return stale datasets" do
-        # pretty cruddy test but not sure how best to do this
-        assert Dataset.process_stale.include?(@stale_dataset)
-      end
+    should "should return stale datasets" do
+      @never_checked_dataset = Factory(:dataset)
+      @fresh_dataset = Factory(:dataset, :key => "foo123", :last_checked => 6.days.ago)
+      @stale_dataset = Factory(:dataset, :key => "bar456", :last_checked => 8.days.ago)
+      stale_datasets = Dataset.stale
       
-      should "not process and return fresh datasets" do
-        # pretty cruddy test but not sure how best to do this
-        assert !Dataset.process_stale.include?(@fresh_dataset)
-      end
+      assert_equal 2, stale_datasets.size
+      
+      assert stale_datasets.include?(@stale_dataset)
+      assert stale_datasets.include?(@never_checked_dataset)
+      assert !stale_datasets.include?(@fresh_dataset)
     end
     
   end
@@ -103,6 +96,11 @@ class DatasetTest < ActiveSupport::TestCase
       should "save data as datapoint data for council" do
         @dataset.process
         assert_equal [["LOCAL AUTHORITY", "Authority Type"], ["Anytown Council", "LB"]], @council.datapoints.find(:first, :order => "id DESC").data
+      end
+      
+      should "update last_checked timestamp" do
+        @dataset.process
+        assert_in_delta Time.now, @dataset.last_checked, 2
       end
       
       context "and datapoint already exists for council and dataset" do

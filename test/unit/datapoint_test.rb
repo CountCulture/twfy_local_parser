@@ -4,7 +4,7 @@ class DatapointTest < ActiveSupport::TestCase
 
   context "The Datapoint class" do
 
-    should_have_db_columns :data, :data_summary
+    should_have_db_columns :data
     should_validate_presence_of :data, :dataset_id, :council_id
     
     should_belong_to :council

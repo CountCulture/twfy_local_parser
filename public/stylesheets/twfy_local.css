@@ -2,7 +2,9 @@
 /*See also blueprint styles*/
 h1 {font-size: 2em;}
 
-a {text-decoration: none;}
+a {
+	text-decoration: none;
+	color:#036;}
 a:hover {text-decoration: underline;}
 
 label { 
@@ -75,13 +77,20 @@ a.button {
 	background-color:#ddd;
 	padding:1px 4px;
 }
-p.more_info {
+p.more_info, a.more_info{
 	text-align:right;
 	font-style: italic; 
+	color: #69a;
 }
-.more_info a:after {
+.more_info a:after, a.more_info:after {
 	content: "»"; }
-	
+.citation {
+	vertical-align: super;
+	font-size: 80%;
+}
+.citation a {
+	color: #9e9e9e;
+}
 /*General template format*/
 body { 
 	background-color:#ddd; }
@@ -210,3 +219,6 @@ div#dataset_data {
 div#dataset_data th {
 	min-width:7em;
 	vertical-align:bottom;}
+#datapoints a.more_info {
+	display:block;
+}
